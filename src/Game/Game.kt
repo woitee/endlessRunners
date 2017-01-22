@@ -15,7 +15,8 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
         INTERACTIVE, SIMULATION
     }
 
-    val gameState = GameState(levelGenerator)
+    val gameInfo = GameDescription()
+    val gameState = GameState(this, levelGenerator)
 
     val updateThread = TimedThread({ time -> update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null
@@ -59,5 +60,9 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
 
     private fun update(time: Long) {
         gameState.advance(time, true)
+
+        val gameAction = playerController.onUpdate(gameState)
+        if (gameAction?.isPerformableOn(gameState) == true)
+            gameAction!!.performOn(gameState)
     }
 }

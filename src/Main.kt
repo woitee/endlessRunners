@@ -34,11 +34,24 @@ fun test() {
     grid.debugPrint()
 }
 
-fun main(args: Array<String>) {
+fun runGame() {
     val visualiser = GamePanelVisualizer()
     val levelGenerator = FlatLevelGenerator()
     val playerController = RandomPlayerController()
 
     val game = Game(levelGenerator, playerController, visualiser)
     game.run()
+}
+
+fun main(args: Array<String>) {
+    val visualiser = GamePanelVisualizer()
+    val levelGenerator = FlatLevelGenerator()
+    val playerController = RandomPlayerController()
+
+    val game = Game(levelGenerator, playerController, visualiser)
+    val gameState = game.gameState
+    val res = gameState.gridLocationsBetween(5.0, 26.0, 5.0, 5.0)
+    for (point in res) {
+        println(point)
+    }
 }

@@ -1,5 +1,6 @@
 package Game.PlayerControllers
 
+import Game.GameActions.IGameAction
 import Game.GameState
 
 /**
@@ -7,5 +8,5 @@ import Game.GameState
  */
 
 interface IPlayerController {
-    fun onUpdate(gameState: GameState)
+    fun onUpdate(gameState: GameState): IGameAction?
 }

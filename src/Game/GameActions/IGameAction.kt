@@ -7,5 +7,6 @@ import Game.GameState
  */
 
 interface IGameAction {
+    fun isPerformableOn(gameState: GameState): Boolean
     fun performOn(gameState: GameState)
 }

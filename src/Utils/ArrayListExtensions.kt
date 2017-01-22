@@ -40,3 +40,12 @@ fun <T> ArrayList<T>.shift(amount: Int, factory: ()->T) {
         }
     }
 }
+
+fun <T> ArrayList<T>.reverse(): ArrayList<T> {
+    for (i in 0 .. (this.size / 2) - 1) {
+        val tmp = this[i]
+        this[i] = this[this.lastIndex - i]
+        this[this.lastIndex - i] = tmp
+    }
+    return this
+}

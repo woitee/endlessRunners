@@ -1,5 +1,7 @@
 package Game.PlayerControllers
 
+import Game.GameActions.IGameAction
+import Game.GameActions.JumpAction
 import Game.GameState
 import Game.PlayerControllers.IPlayerController
 
@@ -8,8 +10,9 @@ import Game.PlayerControllers.IPlayerController
  */
 
 class RandomPlayerController: IPlayerController {
-    override fun onUpdate(gameState: GameState) {
-        throw UnsupportedOperationException("not implemented")
+    override fun onUpdate(gameState: GameState): IGameAction? {
+        if (gameState.gridX == 5)
+            return JumpAction()
+        return null
     }
-
 }

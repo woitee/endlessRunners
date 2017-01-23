@@ -1,5 +1,6 @@
 package Game
 
+import Geom.Vector2Int
 import java.util.*
 import Utils.arrayList
 import Utils.shift
@@ -15,6 +16,10 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
 
     operator fun get(x: Int, y: Int): T {
         return grid[x][y]
+    }
+
+    operator fun get(p: Vector2Int): T {
+        return this[p.x, p.y]
     }
 
     operator fun set(x: Int, y: Int, obj: T): Grid2D<T> {

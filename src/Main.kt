@@ -1,6 +1,8 @@
 import GUI.GamePanelVisualizer
 import Game.Game
+import Game.GameState
 import Game.GameObjects.GameObject
+import Game.GameObjects.SolidBlock
 import Game.Grid2D
 import Game.PCG.*
 import Game.PlayerControllers.*
@@ -10,7 +12,7 @@ import Utils.StopWatch
  * Created by woitee on 09/01/2017.
  */
 
-fun test() {
+fun testBasic() {
     val stopWatch = StopWatch()
     stopWatch.start()
     println("Hello world!")
@@ -22,11 +24,11 @@ fun test() {
     println("Time to print hello world, ${res}ms")
 
     val grid = Grid2D<GameObject?>(3, 2, { null })
-    grid[0, 0] = GameObject()
-    grid[0, 1] = GameObject()
-    grid[1, 0] = GameObject()
-    grid[2, 0] = GameObject()
-    grid[2, 1] = GameObject()
+    grid[0, 0] = SolidBlock()
+    grid[0, 1] = SolidBlock()
+    grid[1, 0] = SolidBlock()
+    grid[2, 0] = SolidBlock()
+    grid[2, 1] = SolidBlock()
     grid.debugPrint()
 
     println("After")
@@ -34,24 +36,25 @@ fun test() {
     grid.debugPrint()
 }
 
-fun runGame() {
+fun test() {
+    val game = createGame()
+    val coll = game.collHandler.nearestCollision(game.gameState, 5.0, 15.0, 25.0, 5.0)
+    println(coll)
+}
+
+fun createGame(): Game {
     val visualiser = GamePanelVisualizer()
     val levelGenerator = FlatLevelGenerator()
     val playerController = RandomPlayerController()
 
-    val game = Game(levelGenerator, playerController, visualiser)
-    game.run()
+    return Game(levelGenerator, playerController, visualiser)
+}
+
+fun runGame() {
+    createGame().run()
 }
 
 fun main(args: Array<String>) {
-    val visualiser = GamePanelVisualizer()
-    val levelGenerator = FlatLevelGenerator()
-    val playerController = RandomPlayerController()
-
-    val game = Game(levelGenerator, playerController, visualiser)
-    val gameState = game.gameState
-    val res = gameState.gridLocationsBetween(5.0, 26.0, 5.0, 5.0)
-    for (point in res) {
-        println(point)
-    }
+    runGame()
+//    test()
 }

@@ -21,6 +21,6 @@ class JumpAction: IGameAction {
     }
 
     override fun performOn(gameState: GameState) {
-        gameState.player.yspeed = 0.1
+        gameState.player.yspeed = 0.5
     }
 }

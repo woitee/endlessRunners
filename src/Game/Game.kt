@@ -3,6 +3,7 @@ package Game
 import Utils.TimedThread
 import Game.PCG.ILevelGenerator
 import Game.PlayerControllers.IPlayerController
+import Game.Collisions.CollisionHandler
 
 /**
  * Created by woitee on 13/01/2017.
@@ -15,8 +16,11 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
         INTERACTIVE, SIMULATION
     }
 
-    val gameInfo = GameDescription()
+    val gameDescription = GameDescription()
+    val collHandler = CollisionHandler(this)
     val gameState = GameState(this, levelGenerator)
+    val updateTime: Long
+        get() = (1000/updateRate).toLong()
 
     val updateThread = TimedThread({ time -> update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null

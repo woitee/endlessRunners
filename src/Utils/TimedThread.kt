@@ -9,6 +9,7 @@ import javafx.scene.paint.Stop
 class TimedThread(val task: (Long)->Unit, var targetFrameRate: Double, val useRealTime:Boolean = false): Runnable {
     var running = false
     val thread = Thread(this)
+    val cycleTimeMillis = (1000 / targetFrameRate).toLong()
 
     fun start() {
         running = true
@@ -17,7 +18,6 @@ class TimedThread(val task: (Long)->Unit, var targetFrameRate: Double, val useRe
 
     override fun run() {
         val stopWatch = StopWatch()
-        val cycleTimeMillis = (1000 / targetFrameRate).toLong()
         val timeTakenStopwatch:StopWatch = StopWatch()
         running = true
 

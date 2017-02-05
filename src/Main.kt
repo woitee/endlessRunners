@@ -37,9 +37,11 @@ fun testBasic() {
 }
 
 fun test() {
+    //Moving by x:1.40, y:-0.54 from (514.10, 24.52)
     val game = createGame()
-    val coll = game.collHandler.nearestCollision(game.gameState, 5.0, 15.0, 25.0, 5.0)
-    println(coll)
+    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
+
+    println(locs)
 }
 
 fun createGame(): Game {

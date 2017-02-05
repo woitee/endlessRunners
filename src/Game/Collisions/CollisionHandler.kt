@@ -84,7 +84,6 @@ class CollisionHandler(val game: Game) {
 
     fun handleCollisions(movingObject: MovingObject) {
         val collision = getCollision(movingObject) ?: return
-        println("Collision $collision")
 
         collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
             movingObject.gameObjectClass,

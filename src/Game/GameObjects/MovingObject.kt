@@ -23,7 +23,7 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): GameObject(x, y) {
 
     override fun update(time: Long) {
         gameState.game.collHandler.handleCollisions(this)
-
+        
         this.x += xspeed * time
         this.y += yspeed * time
     }

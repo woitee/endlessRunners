@@ -127,12 +127,12 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
             val contactY = ay + (borderX - ax) * dir.y
             val curGridY = (contactY / BlockHeight).toInt()
             for (gridY in autoRange(lastGridY, curGridY)) {
-                res.add(Vector2Int(gridX, gridY))
+                res.add(Vector2Int(gridX - this.gridX, gridY))
             }
             lastGridY = curGridY
         }
         for (gridY in autoRange(lastGridY, bGrid.y)) {
-            res.add(Vector2Int(bGrid.x, gridY))
+            res.add(Vector2Int(bGrid.x - this.gridX, gridY))
         }
         return res
     }

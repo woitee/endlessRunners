@@ -11,5 +11,7 @@ class GameOver(): GameEffect() {
         println("-------------")
         println("| GAME OVER |")
         println("-------------")
+        gameState.isGameOver = true
+        gameState.game.onGameOver()
     }
 }

@@ -27,6 +27,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     var lastAdvanceTime = 0L
         private set
 
+    var isGameOver = false
+
     val lastColumnX: Int
         get() = gridX + WidthBlocks
     val lastColumnXpx: Double

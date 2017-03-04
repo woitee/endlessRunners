@@ -46,7 +46,7 @@ fun test() {
 
 fun createGame(): Game {
     val visualiser = GamePanelVisualizer()
-    val levelGenerator = FlatLevelGenerator()
+    val levelGenerator = SimpleLevelGenerator()
     val playerController = RandomPlayerController()
 
     return Game(levelGenerator, playerController, visualiser)

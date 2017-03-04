@@ -12,10 +12,9 @@ import java.util.Random
  */
 
 class RandomPlayerController: IPlayerController {
-    val random = Random()
 
     override fun onUpdate(gameState: GameState): IGameAction? {
-        if (random.nextDouble() >= 0.99)
+        if (gameState.game.random.nextDouble() >= 0.99)
             return JumpAction()
         return null
     }

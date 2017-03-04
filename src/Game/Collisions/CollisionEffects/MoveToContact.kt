@@ -20,13 +20,15 @@ class MoveToContact: CollisionEffect() {
                 val yDistTravel = source.yspeed * updateTime
                 val yDistCollision = collision.location.y - collision.myLocation.y
                 assert(Math.abs(yDistCollision) < Math.abs(yDistTravel))
-                source.yspeed *= yDistCollision / yDistTravel
+                source.y += yDistCollision
+                source.yspeed = 0.0
             }
             Direction4.LEFT, Direction4.RIGHT -> {
                 val xDistTravel = source.xspeed * updateTime
                 val xDistCollision = collision.location.x - collision.myLocation.x
                 assert(Math.abs(xDistCollision) < Math.abs(xDistTravel))
-                source.xspeed *= xDistCollision / xDistTravel
+                source.x += xDistCollision
+                source.xspeed = 0.0
             }
             Direction4.NONE -> {}
         }

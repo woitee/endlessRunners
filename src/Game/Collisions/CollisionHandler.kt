@@ -22,6 +22,9 @@ import Geom.flagsToDirections
  */
 
 class CollisionHandler(val game: Game) {
+    // How many collisions with one object should be handled at most
+    val MAX_COLLISIONS = 10
+
     data class CollisionHandlerEntry(val srcClass: GameObjectClass, val targetClass: GameObjectClass, val directionFlags: Int) {
         constructor (srcClass: GameObjectClass, targetClass: GameObjectClass, direction4: Direction4): this(srcClass, targetClass, direction4.value)
     }
@@ -83,12 +86,17 @@ class CollisionHandler(val game: Game) {
     }
 
     fun handleCollisions(movingObject: MovingObject) {
-        val collision = getCollision(movingObject) ?: return
+        for (i in 1 .. MAX_COLLISIONS) {
+            val collision = getCollision(movingObject) ?: return
 
-        collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
-            movingObject.gameObjectClass,
-            collision.other.gameObjectClass,
-            collision.direction
-        ))?.apply(movingObject, collision)
+            collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
+                    movingObject.gameObjectClass,
+                    collision.other.gameObjectClass,
+                    collision.direction
+            ))?.apply(movingObject, collision)
+
+            if (movingObject.gameState.isGameOver) return
+        }
+        println("Collision limit ($MAX_COLLISIONS}) reached with object ${movingObject}! Maybe collision handling is done improperly?")
     }
 }

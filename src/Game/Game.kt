@@ -4,13 +4,15 @@ import Utils.TimedThread
 import Game.PCG.ILevelGenerator
 import Game.PlayerControllers.IPlayerController
 import Game.Collisions.CollisionHandler
+import java.util.*
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
 class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerController, val visualizer: IGameVisualizer?,
-           val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE) {
+           val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
+           seed: Long = Random().nextLong()) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION
@@ -18,12 +20,24 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
 
     val gameDescription = GameDescription()
     val collHandler = CollisionHandler(this)
-    val gameState = GameState(this, levelGenerator)
+    var gameState = GameState(this, levelGenerator)
+    val random = Random(seed)
     // This shows time since last update, and can be used in methods
     var updateTime = (1000/updateRate).toLong()
 
     val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null
+
+    var onGameOver = { this.reset(); }
+
+    /**
+     * Runs the game synchronously - this function will not exit until the game finishes.
+     */
+    fun run() {
+        init()
+        updateThread.run()
+        stop()
+    }
 
     /**
      * Starts an asynchronous run of the game.
@@ -34,16 +48,6 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
     }
 
     /**
-     * Runs the game synchronously - this function will not exit until the game finishes.
-     */
-    fun run() {
-        init()
-        updateThread.run()
-        // done
-        stop()
-    }
-
-    /**
      * Requests to stop the game peacefully and waits until it finished.
      */
     fun stop() {
@@ -51,6 +55,10 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
         animatorThread?.stop()
         updateThread.join()
         animatorThread?.join()
+    }
+
+    fun reset() {
+        gameState = GameState(this, levelGenerator)
     }
 
     private fun init() {

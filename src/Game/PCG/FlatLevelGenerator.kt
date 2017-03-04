@@ -17,4 +17,7 @@ class FlatLevelGenerator: ILevelGenerator {
         col[0] = SolidBlock()
         return col
     }
+
+    override fun reset() {
+    }
 }

@@ -10,4 +10,5 @@ import java.util.*
 
 interface ILevelGenerator {
     fun generateNextColumn(gameState: GameState): ArrayList<GameObject?>
+    fun reset()
 }

@@ -58,6 +58,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
     }
 
     fun reset() {
+        levelGenerator.reset()
         gameState = GameState(this, levelGenerator)
     }
 

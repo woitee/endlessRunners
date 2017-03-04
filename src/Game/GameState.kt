@@ -116,7 +116,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
 
         val aGrid = gridLocation(ax, ay)
-        val bGrid = gridLocation(bx - epsilon, by - epsilon)
+        val bGrid = gridLocation(bx - epsilon, by + (if (by - ay > 0) epsilon else -epsilon))
         val res = ArrayList<Vector2Int>(bGrid.x - aGrid.x + Math.abs(bGrid.y - aGrid.y))
         val dir = Vector2Double(1.0, (by - ay) / (bx - ax))
 

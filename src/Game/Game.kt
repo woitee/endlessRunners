@@ -19,10 +19,10 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
     val gameDescription = GameDescription()
     val collHandler = CollisionHandler(this)
     val gameState = GameState(this, levelGenerator)
-    val updateTime: Long
-        get() = (1000/updateRate).toLong()
+    // This shows time since last update, and can be used in methods
+    var updateTime = (1000/updateRate).toLong()
 
-    val updateThread = TimedThread({ time -> update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
+    val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null
 
     /**

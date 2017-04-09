@@ -1,7 +1,9 @@
 package Game.PlayerControllers
 
+import GUI.GamePanelVisualizer
 import Game.GameActions.IGameAction
 import Game.GameActions.IUndoableAction
+import Game.GameObjects.Player
 import Game.GameState
 import Game.Undoing.IUndo
 import Game.Undoing.MultiUndo
@@ -12,8 +14,8 @@ import java.util.*
  * Created by woitee on 09/04/2017.
  */
 class DFSPlayerController: PlayerController() {
-    val maxDepth = 10
-    var updateTime = 50L
+    val maxDepth = 90
+    var updateTime = -1.0
     var readyToDie = false
 
     override fun onUpdate(gameState: GameState): IGameAction? {
@@ -34,13 +36,14 @@ class DFSPlayerController: PlayerController() {
     }
 
     fun performDFS(gameState: GameState): IGameAction? {
+        val visualizer = gameState.game.visualizer as GamePanelVisualizer?
+        visualizer?.debugObjects?.clear()
+
         synchronized(gameState.gameObjects) {
-            var depth = 0
             val undoList = ArrayList<IUndo>()
             val actionList = ArrayList<Int>()
 
-            while (depth < maxDepth && gameState.player.positionOnScreen() < 600) {
-                depth++
+            while (undoList.count() < maxDepth && gameState.player.positionOnScreen() < 600) {
                 undoList.add(advanceState(gameState, null))
                 actionList.add(-1)
                 if (gameState.isGameOver) {
@@ -53,7 +56,6 @@ class DFSPlayerController: PlayerController() {
                             println("I don't fear death!")
                             return null
                         }
-                        depth--
                         undoList.pop().undo(gameState)
                         val action = actionList.pop() + 1
                         val actions = gameState.getPerformableActions()
@@ -65,8 +67,11 @@ class DFSPlayerController: PlayerController() {
                     }
                 }
             }
-            for (undo in undoList.asReversed())
+
+            for (undo in undoList.asReversed()) {
+                visualizer?.debugObjects?.add(Player(gameState.player.x, gameState.player.y))
                 undo.undo(gameState)
+            }
 
             val action = actionList[0]
             return if (action == -1) null else gameState.getPerformableActions()[action]
@@ -78,8 +83,8 @@ class DFSPlayerController: PlayerController() {
             return gameState.advanceUndoable(updateTime)
         else
             return MultiUndo(listOf(
-                    gameState.advanceUndoable(updateTime),
-                    (gameAction as IUndoableAction).applyUndoableOn(gameState)
+                gameState.advanceUndoable(updateTime),
+                (gameAction as IUndoableAction).applyUndoableOn(gameState)
             ))
     }
 }

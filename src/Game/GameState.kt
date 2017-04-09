@@ -27,7 +27,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     var gameObjects = arrayListOf<GameObject>(player)
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
     var gridX = 0
-    var lastAdvanceTime = 0L
+    var lastAdvanceTime = 0.0
         private set
 
     var isGameOver = false
@@ -69,7 +69,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         System.gc()
     }
 
-    fun advance(time: Long, scrolling:Boolean = false) {
+    fun advance(time: Double, scrolling:Boolean = false) {
         lastAdvanceTime = time
 
         for (gameObject in gameObjects) {
@@ -101,7 +101,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
             }
         }
     }
-    fun advanceUndoable(time: Long): IUndo {
+    fun advanceUndoable(time: Double): IUndo {
         val undoList = ArrayList<IUndo>()
         gameObjects.filter{ it.isUpdated }.map {
             val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)

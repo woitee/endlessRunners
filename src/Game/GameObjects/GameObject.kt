@@ -29,7 +29,7 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
     val heightPx: Int
         get() = heightBlocks * BlockHeight
 
-    open fun update(time: Long) {}
+    open fun update(time: Double) {}
 
     val corners: Array<Vector2Double>
         get() = arrayOf(

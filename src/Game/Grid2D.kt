@@ -17,8 +17,8 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
     operator fun get(x: Int, y: Int): T {
         try {
             return grid[x][y]
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            throw ArrayIndexOutOfBoundsException("Invalid index x:$x y:$y")
+        } catch (e: IndexOutOfBoundsException) {
+            throw IndexOutOfBoundsException("Invalid index x:$x y:$y (size ($width, $height))")
         }
     }
 

@@ -6,10 +6,11 @@ import javafx.scene.paint.Stop
  * Created by woitee on 14/01/2017.
  */
 
-class TimedThread(val task: (Long)->Unit, var targetFrameRate: Double, val useRealTime:Boolean = false): Runnable {
+class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val useRealTime:Boolean = false): Runnable {
     var running = false
     val thread = Thread(this)
     val cycleTimeMillis = (1000 / targetFrameRate).toLong()
+    val cycleTimeSeconds = 1 / targetFrameRate
 
     fun start() {
         running = true
@@ -17,28 +18,26 @@ class TimedThread(val task: (Long)->Unit, var targetFrameRate: Double, val useRe
     }
 
     override fun run() {
-        val stopWatch = StopWatch()
-        val timeTakenStopwatch:StopWatch = StopWatch()
         running = true
 
-        while (running) {
-            stopWatch.start()
-            if (!useRealTime) {
-                task(cycleTimeMillis)
-            } else {
-                // using real-time means measuring the time and passing it to called thread
-                var timeTaken: Long
-                if (timeTakenStopwatch.isStarted) {
-                    timeTaken = timeTakenStopwatch.stop()
-                } else {
-                    timeTaken = cycleTimeMillis
-                }
-                timeTakenStopwatch.start()
-                task(timeTaken)
+        if (!useRealTime) {
+            while (running) {
+                task(cycleTimeSeconds)
             }
-            val timeTaken = stopWatch.stop()
-            if (cycleTimeMillis > timeTaken)
-                Thread.sleep(cycleTimeMillis - timeTaken)
+        } else {
+            val timeTakenStopwatch = StopWatch()
+            val fullCycleStopwatch = StopWatch()
+
+            while (running) {
+                val cycleTime = if (fullCycleStopwatch.isStarted) fullCycleStopwatch.stop() else cycleTimeMillis
+                fullCycleStopwatch.start()
+                timeTakenStopwatch.start()
+//                task(cycleTime.toDouble() / 1000)
+                task(cycleTimeSeconds)
+                val timeTaken = timeTakenStopwatch.stop()
+                if (cycleTimeMillis > timeTaken)
+                    Thread.sleep(cycleTimeMillis - timeTaken)
+            }
         }
     }
 

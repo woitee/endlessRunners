@@ -59,7 +59,8 @@ class KeyboardPlayerController: PlayerController() {
         val keys = keyboardHelper.getKeys()
 //        if (KeyEvent.VK_UP in keys) {
         if (keys.count() > 0) {
-            return gameState.getPerformableActions().get(0)
+            val actions = gameState.getPerformableActions()
+            return if (actions.count() > 0) actions[0] else null
         }
         return null
     }

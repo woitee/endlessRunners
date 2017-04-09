@@ -15,7 +15,7 @@ import Geom.Vector2Int
 
 class Gravity(
         targetedAt: GameEffect.Target = GameEffect.Target.PLAYER,
-        var strength: Double = 0.03): UndoableGameEffect() {
+        var strength: Double = 0.5): UndoableGameEffect() {
 
     class GravityUndo(val gravity: Gravity): IUndo {
         override fun undo(gameState: GameState) {

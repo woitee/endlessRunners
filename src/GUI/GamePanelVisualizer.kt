@@ -4,6 +4,7 @@ import Game.*
 import Game.GameObjects.*
 import java.awt.*
 import java.awt.event.KeyListener
+import java.util.*
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -13,7 +14,7 @@ import javax.swing.SwingUtilities
  * Created by woitee on 15/01/2017.
  */
 
-class GamePanelVisualizer: IGameVisualizer {
+class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
     lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
@@ -22,6 +23,9 @@ class GamePanelVisualizer: IGameVisualizer {
     private var dbImage: Image? = null
 
     private var running = false
+
+    // Not a part of the game, can be used to add debug information
+    val debugObjects = ArrayList<GameObject>()
 
     override fun start() {
         SwingUtilities.invokeAndWait {
@@ -96,6 +100,10 @@ class GamePanelVisualizer: IGameVisualizer {
 
             for (gameObject in gameState.gameObjects)
                 drawGameObject(gameObject, g, playerX)
+
+            if (debugging)
+                for (debugObject in debugObjects)
+                    drawGameObject(debugObject, g, playerX)
         }
     }
 

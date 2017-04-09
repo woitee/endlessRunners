@@ -2,14 +2,9 @@ package Game.GameObjects
 
 import Game.BlockHeight
 import Game.BlockWidth
-import Game.GameObjects.GameObject
 import Game.GameState
 import Game.Undoing.IUndo
-import Game.Undoing.IUndoable
-import Geom.Direction4
 import Geom.Vector2Double
-import Geom.direction4
-import java.util.*
 
 /**
  * Created by woitee on 15/01/2017.
@@ -27,7 +22,7 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
     }
 
     override var isUpdated = true
-    // speeds are entered in pixels per second
+    // speeds are entered in blocks per second
     var xspeed = 0.0
     var yspeed = 0.0
 
@@ -35,20 +30,23 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
         get() = Vector2Double(xspeed, yspeed)
         set(value) {xspeed = value.x; yspeed = value.y}
 
-    override fun update(time: Long) {
+    override fun update(time: Double) {
         gameState.game.collHandler.handleCollisions(this)
-        
-        this.x += xspeed * time
-        this.y += yspeed * time
+
+        updateMovement(time)
     }
 
-    override fun undoableUpdate(time: Long): IUndo {
+    override fun undoableUpdate(time: Double): IUndo {
         val undoList = gameState.game.collHandler.handleCollisionsUndoable(this)
         val undo = MovingObjectUndo(this, undoList, this.x, this.y)
 
-        this.x += xspeed * time
-        this.y += yspeed * time
+        updateMovement(time)
 
         return undo
+    }
+
+    private fun updateMovement(time: Double) {
+        this.x += xspeed * time * BlockWidth
+        this.y += yspeed * time * BlockHeight
     }
 }

@@ -23,7 +23,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     var gameState = GameState(this, levelGenerator)
     val random = Random(seed)
     // This shows time since last update, and can be used in methods
-    var updateTime = (1000/updateRate).toLong()
+    var updateTime = 1.0 / updateRate
 
     val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null
@@ -72,7 +72,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
         visualizer?.update(gameState)
     }
 
-    private fun update(time: Long) {
+    private fun update(time: Double) {
         gameState.advance(time, true)
 
         val gameAction = playerController.onUpdate(gameState)

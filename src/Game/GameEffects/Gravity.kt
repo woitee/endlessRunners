@@ -20,7 +20,7 @@ class Gravity(
     class GravityUndo(val gravity: Gravity): IUndo {
         override fun undo(gameState: GameState) {
             val target = (gravity.findTarget(gameState) as MovingObject?) ?: return
-            target.yspeed += gravity.strength
+            target.yspeed += gravity.strength * Game.BlockHeight * gameState.game.updateTime
         }
     }
 
@@ -30,7 +30,7 @@ class Gravity(
     override fun applyOn(gameState: GameState) {
         val target = (findTarget(gameState) as MovingObject?) ?: return
 
-        target.yspeed -= strength
+        target.yspeed -= strength * Game.BlockHeight * gameState.game.updateTime
     }
 
     override fun applyUndoableOn(gameState: GameState): IUndo {

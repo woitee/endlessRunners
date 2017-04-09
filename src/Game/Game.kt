@@ -26,7 +26,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     var updateTime = 1.0 / updateRate
 
     val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
-    val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate) else null
+    val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate, useRealTime = true) else null
 
     var onGameOver = { this.reset(); }
 

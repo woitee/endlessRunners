@@ -24,7 +24,7 @@ class GameDescription {
 
     val allActions = listOf(JumpAction(18.0))
 
-    val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 0.7))
+    val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
 
     val collisionEffects = mapOf(
         Pair(

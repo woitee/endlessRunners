@@ -15,7 +15,11 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
     var grid = arrayList(width, { arrayList(height, factory) })
 
     operator fun get(x: Int, y: Int): T {
-        return grid[x][y]
+        try {
+            return grid[x][y]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            throw ArrayIndexOutOfBoundsException("Invalid index x:$x y:$y")
+        }
     }
 
     operator fun get(p: Vector2Int): T {

@@ -49,3 +49,7 @@ fun <T> ArrayList<T>.reverse(): ArrayList<T> {
     }
     return this
 }
+
+fun <T> ArrayList<T>.pop(): T {
+    return this.removeAt(this.count() - 1)
+}

@@ -7,6 +7,7 @@ import Game.Grid2D
 import Game.PCG.*
 import Game.PlayerControllers.*
 import Utils.StopWatch
+import kotlin.reflect.jvm.internal.impl.utils.DFS
 
 /**
  * Created by woitee on 09/01/2017.
@@ -47,7 +48,7 @@ fun test() {
 fun createGame(): Game {
     val visualiser = GamePanelVisualizer()
     val levelGenerator = SimpleLevelGenerator()
-    val playerController = RandomPlayerController()
+    val playerController = DFSPlayerController()
 
     return Game(levelGenerator, playerController, visualiser)
 }

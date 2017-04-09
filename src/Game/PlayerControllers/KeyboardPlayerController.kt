@@ -16,7 +16,7 @@ import java.util.*
  * Created by woitee on 14/01/2017.
  */
 
-class KeyboardPlayerController: IPlayerController {
+class KeyboardPlayerController: PlayerController() {
     class KeyboardHelper: KeyAdapter() {
         var pressedKeys = HashSet<Int>()
         var pressedSinceLastUpdate = HashSet<Int>()

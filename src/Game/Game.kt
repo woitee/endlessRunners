@@ -2,7 +2,7 @@ package Game
 
 import Utils.TimedThread
 import Game.PCG.ILevelGenerator
-import Game.PlayerControllers.IPlayerController
+import Game.PlayerControllers.PlayerController
 import Game.Collisions.CollisionHandler
 import java.util.*
 
@@ -10,7 +10,7 @@ import java.util.*
  * Created by woitee on 13/01/2017.
  */
 
-class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerController, val visualizer: IGameVisualizer?,
+class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
            seed: Long = Random().nextLong()) {
 
@@ -59,6 +59,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
 
     fun reset() {
         levelGenerator.reset()
+        playerController.reset()
         gameState = GameState(this, levelGenerator)
     }
 

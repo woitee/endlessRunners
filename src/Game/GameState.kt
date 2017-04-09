@@ -3,6 +3,7 @@ package Game
 import java.util.*
 
 import Game.Undoing.IUndo
+import Game.Undoing.MultiUndo
 
 import Game.GameObjects.Player
 import Game.GameObjects.SolidBlock
@@ -22,7 +23,6 @@ import java.awt.geom.Point2D
  */
 
 class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
-
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
@@ -101,7 +101,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
             }
         }
     }
-    fun advanceUndoable(time: Long): ArrayList<IUndo> {
+    fun advanceUndoable(time: Long): IUndo {
         val undoList = ArrayList<IUndo>()
         gameObjects.filter{ it.isUpdated }.map {
             val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
@@ -111,7 +111,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
             val undo = (it as UndoableGameEffect).applyUndoableOn(this)
             undoList.add(undo)
         }
-        return undoList
+        return MultiUndo(undoList)
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {

@@ -7,4 +7,8 @@ package Game.GameObjects
 class Player(x: Double = 0.0, y:Double = 0.0): MovingObject(x, y) {
     override val gameObjectClass = GameObjectClass.PLAYER
     override val heightBlocks = 2
+
+    fun positionOnScreen(): Double {
+        return this.x - (gameState.gridX * Game.BlockWidth)
+    }
 }

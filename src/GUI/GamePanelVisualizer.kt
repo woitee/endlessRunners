@@ -91,9 +91,9 @@ class GamePanelVisualizer: IGameVisualizer {
     }
 
     fun drawEverything(gameState: GameState, g: Graphics) {
-        val playerX = gameState.player.x
-
         synchronized(gameState.gameObjects) {
+            val playerX = gameState.player.x
+
             for (gameObject in gameState.gameObjects)
                 drawGameObject(gameObject, g, playerX)
         }

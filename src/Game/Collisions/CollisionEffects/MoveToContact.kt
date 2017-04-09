@@ -4,15 +4,25 @@ import Game.Collisions.Collision
 import Game.GameObjects.GameObject
 import Game.GameObjects.MovingObject
 import Game.GameState
+import Game.Undoing.IUndo
+import Game.Undoing.NoActionUndo
 import Geom.Direction4
+import Geom.Vector2Double
 
 /**
  * Created by woitee on 23/01/2017.
  */
 
-class MoveToContact: CollisionEffect() {
+class MoveToContact: IUndoableCollisionEffect {
+    class MoveToContactUndo(val source: MovingObject, val origPos:Vector2Double, val origVel:Vector2Double): IUndo {
+        override fun undo(gameState: GameState) {
+            source.location = origPos
+            source.velocity = origVel
+        }
+    }
+
     override fun apply(source: GameObject, collision: Collision) {
-        val movingSource = source as MovingObject? ?: return
+        source as MovingObject? ?: return
         val updateTime = source.gameState.lastAdvanceTime.toDouble()
 
         when (collision.direction) {
@@ -32,5 +42,12 @@ class MoveToContact: CollisionEffect() {
             }
             Direction4.NONE -> {}
         }
+    }
+
+    override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
+        val movingSource = source as MovingObject? ?: return NoActionUndo
+        val undo = MoveToContactUndo(source, movingSource.location, movingSource.velocity)
+        apply(source, collision)
+        return undo
     }
 }

@@ -7,7 +7,9 @@ import Game.Game
 import Game.GameState
 import Geom.direction4
 import Geom.Vector2Double
-import Game.Collisions.CollisionEffects.CollisionEffect
+import Game.Collisions.CollisionEffects.ICollisionEffect
+import Game.Collisions.CollisionEffects.IUndoableCollisionEffect
+import Game.Undoing.IUndo
 
 import Game.BlockHeight
 import Game.BlockWidth
@@ -28,7 +30,7 @@ class CollisionHandler(val game: Game) {
     data class CollisionHandlerEntry(val srcClass: GameObjectClass, val targetClass: GameObjectClass, val directionFlags: Int) {
         constructor (srcClass: GameObjectClass, targetClass: GameObjectClass, direction4: Direction4): this(srcClass, targetClass, direction4.value)
     }
-    val collisionHandlerMapping = HashMap<CollisionHandlerEntry, CollisionEffect>()
+    val collisionHandlerMapping = HashMap<CollisionHandlerEntry, ICollisionEffect>()
     init {
         // unwrap direction flags
         for ((entry, collEffect) in game.gameDescription.collisionEffects) {
@@ -86,17 +88,36 @@ class CollisionHandler(val game: Game) {
     }
 
     fun handleCollisions(movingObject: MovingObject) {
+        _handleCollisions(movingObject)
+    }
+    fun handleCollisionsUndoable(movingObject: MovingObject): ArrayList<IUndo> {
+        val undoList = ArrayList<IUndo>()
+        _handleCollisions(movingObject, true, undoList)
+        return undoList
+    }
+    private fun _handleCollisions(movingObject: MovingObject, undoable: Boolean = false, undoList: MutableList<IUndo>? = null) {
         for (i in 1 .. MAX_COLLISIONS) {
             val collision = getCollision(movingObject) ?: return
 
-            collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
-                    movingObject.gameObjectClass,
-                    collision.other.gameObjectClass,
-                    collision.direction
-            ))?.apply(movingObject, collision)
+            val collEffect: ICollisionEffect? =
+                    collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
+                            movingObject.gameObjectClass,
+                            collision.other.gameObjectClass,
+                            collision.direction
+                    ))
+            collEffect ?: continue
+
+            if (!undoable) {
+                collEffect.apply(movingObject, collision)
+            } else {
+                val undoableEffect = collEffect as IUndoableCollisionEffect
+                val undo = undoableEffect.applyUndoable(movingObject, collision)
+                undoList!!.add(undo)
+            }
 
             if (movingObject.gameState.isGameOver) return
         }
         println("Collision limit ($MAX_COLLISIONS}) reached with object ${movingObject}! Maybe collision handling is done improperly?")
     }
+
 }

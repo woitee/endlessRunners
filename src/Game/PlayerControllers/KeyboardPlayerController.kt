@@ -57,8 +57,9 @@ class KeyboardPlayerController: IPlayerController {
             inited = true
         }
         val keys = keyboardHelper.getKeys()
-        if (KeyEvent.VK_UP in keys) {
-            return JumpAction()
+//        if (KeyEvent.VK_UP in keys) {
+        if (keys.count() > 0) {
+            return gameState.getPerformableActions().get(0)
         }
         return null
     }

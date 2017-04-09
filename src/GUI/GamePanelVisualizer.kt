@@ -3,6 +3,7 @@ package GUI
 import Game.*
 import Game.GameObjects.*
 import java.awt.*
+import java.awt.event.KeyListener
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -13,7 +14,7 @@ import javax.swing.SwingUtilities
  */
 
 class GamePanelVisualizer: IGameVisualizer {
-    var frame: JFrame? = null
+    lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
         private set
@@ -52,7 +53,7 @@ class GamePanelVisualizer: IGameVisualizer {
     override fun stop() {
         println("Running STOP")
         SwingUtilities.invokeLater {
-            frame?.isVisible = false
+            frame.isVisible = false
         }
         running = false
         // TODO dispose of everything
@@ -78,14 +79,23 @@ class GamePanelVisualizer: IGameVisualizer {
             _dbg.color = Color.WHITE
             _dbg.fillRect(0, 0, GameWidth, GameHeight)
 
-            val playerX = gameState.player.x
-
-            synchronized(gameState.gameObjects) {
-                for (gameObject in gameState.gameObjects)
-                    drawGameObject(gameObject, _dbg, playerX)
-            }
+            drawEverything(gameState, _dbg)
+            frame.title = "Endless Runners GUI Score:${gameState.gridX / 10}"
 
             repaint()
+        }
+    }
+
+    override fun addKeyListener(listener: KeyListener) {
+        panel.addKeyListener(listener)
+    }
+
+    fun drawEverything(gameState: GameState, g: Graphics) {
+        val playerX = gameState.player.x
+
+        synchronized(gameState.gameObjects) {
+            for (gameObject in gameState.gameObjects)
+                drawGameObject(gameObject, g, playerX)
         }
     }
 

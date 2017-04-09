@@ -8,6 +8,6 @@ import Game.GameState
  * Created by woitee on 23/01/2017.
  */
 
-abstract class CollisionEffect {
-    abstract fun apply(source: GameObject, collision: Collision)
+interface ICollisionEffect {
+    fun apply(source: GameObject, collision: Collision)
 }

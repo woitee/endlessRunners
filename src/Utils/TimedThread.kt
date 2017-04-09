@@ -27,7 +27,7 @@ class TimedThread(val task: (Long)->Unit, var targetFrameRate: Double, val useRe
                 task(cycleTimeMillis)
             } else {
                 // using real-time means measuring the time and passing it to called thread
-                var timeTaken = 0L
+                var timeTaken: Long
                 if (timeTakenStopwatch.isStarted) {
                     timeTaken = timeTakenStopwatch.stop()
                 } else {

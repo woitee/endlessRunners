@@ -20,9 +20,9 @@ import java.util.*
  */
 
 class GameDescription {
-    val playerStartingSpeed = 0.1
+    val playerStartingSpeed = 0.3
 
-    val allActions = listOf(JumpAction())
+    val allActions = listOf(JumpAction(0.65))
 
     val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER))
 

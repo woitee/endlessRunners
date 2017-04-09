@@ -75,7 +75,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: IPlayerCon
         gameState.advance(time, true)
 
         val gameAction = playerController.onUpdate(gameState)
-        if (gameAction?.isPerformableOn(gameState) == true)
-            gameAction!!.performOn(gameState)
+        if (gameAction?.isApplicableOn(gameState) == true)
+            gameAction!!.applyOn(gameState)
     }
 }

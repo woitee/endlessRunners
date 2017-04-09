@@ -15,10 +15,10 @@ class SimpleLevelGenerator: ILevelGenerator {
     var currentHeight = 1
 
     var probableTransfers = mapOf(
-        -2 to 0.1,
-        -1 to 0.15,
-        0 to 0.45,
-        +1 to 0.30,
+        -2 to 0.10,
+        -1 to 0.14,
+        0 to 0.54,
+        +1 to 0.22,
         +2 to 0.00
     )
 
@@ -35,7 +35,7 @@ class SimpleLevelGenerator: ILevelGenerator {
                 break
             }
         }
-        currentHeight = currentHeight.coerceIn(1, 6)
+        currentHeight = currentHeight.coerceIn(1, 8)
         return col
     }
 

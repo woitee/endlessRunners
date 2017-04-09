@@ -15,7 +15,7 @@ class RandomPlayerController: IPlayerController {
 
     override fun onUpdate(gameState: GameState): IGameAction? {
         if (gameState.game.random.nextDouble() >= 0.99)
-            return JumpAction()
+            return gameState.getPerformableActions().get(0)
         return null
     }
 }

@@ -5,13 +5,21 @@ import Game.BlockHeight
 import Game.BlockWidth
 import Game.GameActions.IGameAction
 import Game.GameObjects.SolidBlock
+import Game.Undoing.IUndo
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
-class JumpAction: IGameAction {
-    override fun isPerformableOn(gameState: GameState): Boolean {
+class JumpAction(val power:Double): IUndoableAction {
+    class JumpActionUndo(val originalPlayerYSpeed: Double): IUndo {
+        override fun undo(gameState: GameState) {
+            gameState.player.yspeed = this.originalPlayerYSpeed
+        }
+    }
+    var oldSpeed = 0.0
+
+    override fun isApplicableOn(gameState: GameState): Boolean {
         val x = gameState.player.x
         val y = gameState.player.y - 1
         val gridX = (x / BlockWidth).toInt() - gameState.gridX
@@ -20,7 +28,13 @@ class JumpAction: IGameAction {
         return gameState.grid[gridX, gridY] is SolidBlock
     }
 
-    override fun performOn(gameState: GameState) {
-        gameState.player.yspeed = 0.5
+    override fun applyOn(gameState: GameState) {
+        gameState.player.yspeed = power
+    }
+
+    override fun applyUndoableOn(gameState: GameState): IUndo {
+        val undo = JumpActionUndo(gameState.player.yspeed)
+        gameState.player.yspeed = power
+        return undo
     }
 }

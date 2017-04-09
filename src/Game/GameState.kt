@@ -2,12 +2,15 @@ package Game
 
 import java.util.*
 
+import Game.Undoing.IUndo
+
 import Game.GameObjects.Player
 import Game.GameObjects.SolidBlock
 import Game.PCG.ILevelGenerator
 import Game.GameObjects.GameObject
 import Game.GameActions.IGameAction
-import Game.Settings.*
+import Game.GameObjects.UndoableUpdateGameObject
+import Game.GameEffects.UndoableGameEffect
 import Geom.Vector2Double
 import Geom.Vector2Int
 import Utils.reverse
@@ -75,7 +78,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
 
         for (gameEffect in game.gameDescription.permanentEffects) {
-            gameEffect.apply(this)
+            gameEffect.applyOn(this)
         }
 
         if (scrolling) {
@@ -97,6 +100,18 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
                 }
             }
         }
+    }
+    fun advanceUndoable(time: Long): ArrayList<IUndo> {
+        val undoList = ArrayList<IUndo>()
+        gameObjects.filter{ it.isUpdated }.map {
+            val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
+            undoList.add(undo)
+        }
+        game.gameDescription.permanentEffects.map {
+            val undo = (it as UndoableGameEffect).applyUndoableOn(this)
+            undoList.add(undo)
+        }
+        return undoList
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {
@@ -140,6 +155,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     }
 
     fun getPerformableActions(): List<IGameAction> {
-        return game.gameDescription.allActions.filter { it -> it.isPerformableOn(this) }
+        return game.gameDescription.allActions.filter { it -> it.isApplicableOn(this) }
     }
 }

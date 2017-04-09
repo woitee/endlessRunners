@@ -2,15 +2,21 @@ package Game.Collisions.CollisionEffects
 
 import Game.Collisions.Collision
 import Game.GameEffects.GameEffect
+import Game.GameEffects.UndoableGameEffect
 import Game.GameObjects.GameObject
 import Game.GameState
+import Game.Undoing.IUndo
 
 /**
  * Created by woitee on 23/01/2017.
  */
 
-class ApplyGameEffect(val gameEffect: GameEffect): CollisionEffect() {
+class ApplyGameEffect(val gameEffect: UndoableGameEffect): IUndoableCollisionEffect {
     override fun apply(source: GameObject, collision: Collision) {
-        gameEffect.apply(source.gameState)
+        gameEffect.applyOn(source.gameState)
+    }
+
+    override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
+        return gameEffect.applyUndoableOn(source.gameState)
     }
 }

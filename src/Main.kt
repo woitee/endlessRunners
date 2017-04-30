@@ -46,9 +46,10 @@ fun test() {
 }
 
 fun createGame(): Game {
-    val visualiser = GamePanelVisualizer(debugging = false)
+    val visualiser = GamePanelVisualizer(debugging = true)
     val levelGenerator = SimpleLevelGenerator()
     val playerController = DFSPlayerController()
+//    val playerController = KeyboardPlayerController()
 
     return Game(levelGenerator, playerController, visualiser)
 }

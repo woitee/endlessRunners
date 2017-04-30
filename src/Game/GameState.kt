@@ -91,7 +91,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
                 synchronized(gameObjects) {
                     for (i in 1..blockOffset) {
                         shiftGrid()
-                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
+//                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
                         val column = levelGenerator.generateNextColumn(this)
                         for (y in 0..column.lastIndex) {
                             addToGrid(column[y], WidthBlocks - 1, y)

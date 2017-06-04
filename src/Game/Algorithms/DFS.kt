@@ -6,7 +6,7 @@ import Game.GameState
 import Game.Undoing.IUndo
 import Game.GameActions.IGameAction
 import Game.GameActions.IUndoableAction
-import Game.Undoing.MultiUndo
+import Game.Undoing.UndoFactory
 import Utils.StopWatch
 import Utils.pop
 import java.util.*
@@ -87,9 +87,9 @@ object DFS {
         if (gameAction == null)
             return gameState.advanceUndoable(updateTime)
         else
-            return MultiUndo(listOf(
+            return UndoFactory.doubleUndo(
                 (gameAction as IUndoableAction).applyUndoableOn(gameState),
                 gameState.advanceUndoable(updateTime)
-            ))
+            )
     }
 }

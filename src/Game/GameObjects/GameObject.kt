@@ -5,6 +5,9 @@ import Game.BlockWidth
 import Game.GameState
 import Geom.Vector2Double
 import Geom.Vector2Int
+import Utils.Pools.DefaultVector2DoublePool
+import Utils.arrayList
+import java.util.*
 
 /**
  * Created by woitee on 13/01/2017.
@@ -31,12 +34,26 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
 
     open fun update(time: Double) {}
 
-    val corners: Array<Vector2Double>
-        get() = arrayOf(
-            Vector2Double(x, y),
-            Vector2Double(x + widthBlocks * BlockWidth, y),
-            Vector2Double(x, y + heightBlocks * BlockHeight),
-            Vector2Double(x + widthBlocks * BlockWidth, y + heightBlocks * BlockHeight)
-        )
+    var _corners:ArrayList<Vector2Double>? = null
+    val corners: ArrayList<Vector2Double>
+        get() {
+            if (_corners == null) {
+                _corners = arrayList(4, { -> Vector2Double() })
+            }
+
+            _corners!![0].x = x
+            _corners!![0].y = y
+
+            _corners!![1].x = x + widthBlocks * BlockWidth
+            _corners!![1].y = y
+
+            _corners!![2].x = x
+            _corners!![2].y = y + heightBlocks * BlockHeight
+
+            _corners!![3].x = x + widthBlocks * BlockWidth
+            _corners!![3].y = y + heightBlocks * BlockHeight
+
+            return _corners!!
+        }
 }
 

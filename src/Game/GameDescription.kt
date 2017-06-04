@@ -20,7 +20,7 @@ import java.util.*
  */
 
 class GameDescription {
-    val playerStartingSpeed = 8.0
+    val playerStartingSpeed = 12.0
 
     val allActions = listOf(JumpAction(22.0))
 

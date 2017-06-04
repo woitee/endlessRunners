@@ -3,7 +3,6 @@ package Game
 import java.util.*
 
 import Game.Undoing.IUndo
-import Game.Undoing.MultiUndo
 
 import Game.GameObjects.Player
 import Game.GameObjects.SolidBlock
@@ -12,11 +11,12 @@ import Game.GameObjects.GameObject
 import Game.GameActions.IGameAction
 import Game.GameObjects.UndoableUpdateGameObject
 import Game.GameEffects.UndoableGameEffect
+import Game.Undoing.NoActionUndo
+import Game.Undoing.UndoFactory
 import Geom.Vector2Double
 import Geom.Vector2Int
+import Utils.Pools.DefaultUndoListPool
 import Utils.reverse
-import java.awt.Point
-import java.awt.geom.Point2D
 
 /**
  * Created by woitee on 13/01/2017.
@@ -25,6 +25,7 @@ import java.awt.geom.Point2D
 class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
+    var updateObjects = arrayListOf<GameObject>(player)
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
     var gridX = 0
     var lastAdvanceTime = 0.0
@@ -50,6 +51,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     internal fun addToGrid(gameObject: GameObject?, x: Int, y:Int) {
         if (gameObject != null) {
             gameObjects.add(gameObject)
+            if (gameObject.isUpdated)
+                updateObjects.add(gameObject)
             gameObject.x = ((gridX + x) * BlockWidth).toDouble()
             gameObject.y = (y * BlockHeight).toDouble()
             gameObject.gameState = this
@@ -57,13 +60,20 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         grid[x, y] = gameObject
     }
     private fun removeFromGrid(gameObject: GameObject?, x: Int, y:Int) {
+        gameObject ?: return
         gameObjects.remove(gameObject)
+        if (gameObject.isUpdated)
+            updateObjects.remove(gameObject)
         grid[x, y] = null
     }
     private fun shiftGrid() {
         gridX += 1
         for (y in 0 .. grid.height - 1) {
-            gameObjects.remove(grid[0, y])
+            val gameObject = grid[0, y]
+            gameObject ?: continue
+            gameObjects.remove(gameObject)
+            if (gameObject.isUpdated)
+                updateObjects.remove(gameObject)
         }
         grid.shiftX(1)
         System.gc()
@@ -72,9 +82,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     fun advance(time: Double, scrolling:Boolean = false) {
         lastAdvanceTime = time
 
-        for (gameObject in gameObjects) {
-            if (gameObject.isUpdated)
-                gameObject.update(time)
+        for (gameObject in updateObjects) {
+            gameObject.update(time)
         }
 
         for (gameEffect in game.gameDescription.permanentEffects) {
@@ -102,22 +111,24 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
     }
     fun advanceUndoable(time: Double): IUndo {
-        val undoList = ArrayList<IUndo>()
-        gameObjects.filter{ it.isUpdated }.map {
+        val undoList = DefaultUndoListPool.borrowObject()
+//        println("Got object ${DefaultUndoListPool.numActive} ${DefaultUndoListPool.numIdle}")
+        updateObjects.map {
             val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
-            undoList.add(undo)
+            if (undo != NoActionUndo)
+                undoList.add(undo)
         }
         game.gameDescription.permanentEffects.map {
             val undo = (it as UndoableGameEffect).applyUndoableOn(this)
-            undoList.add(undo)
+            if (undo != NoActionUndo)
+                undoList.add(undo)
         }
-        return MultiUndo(undoList)
+        return UndoFactory.multiUndo(undoList)
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {
         return Vector2Int((x / BlockWidth).toInt(), (y / BlockHeight).toInt())
     }
-
     fun gridLocationsBetween(a: Vector2Double, b: Vector2Double): ArrayList<Vector2Int> {
         return gridLocationsBetween(a.x, a.y, b.x, b.y);
     }
@@ -126,7 +137,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         if (bx < ax) {
             return gridLocationsBetween(bx, by, ax, ay).reverse()
         }
-        val epsilon = 0.000001
+        val epsilon = 0.00000
 
         fun autoRange(a: Int, b: Int): IntProgression {
             return if (a <= b) a..b else a downTo b
@@ -135,13 +146,13 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         val aGrid = gridLocation(ax, ay)
         val bGrid = gridLocation(bx - epsilon, by + (if (by - ay > 0) epsilon else -epsilon))
         val res = ArrayList<Vector2Int>(bGrid.x - aGrid.x + Math.abs(bGrid.y - aGrid.y))
-        val dir = Vector2Double(1.0, (by - ay) / (bx - ax))
+        val dirY = (by - ay) / (bx - ax)
 
         var lastGridY = aGrid.y
         // we'll go by vertical
         for (gridX in aGrid.x .. bGrid.x - 1) {
             val borderX = (gridX + 1) * BlockWidth
-            val contactY = ay + (borderX - ax) * dir.y
+            val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()
             for (gridY in autoRange(lastGridY, curGridY)) {
                 res.add(Vector2Int(gridX - this.gridX, gridY))
@@ -152,6 +163,11 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
             res.add(Vector2Int(bGrid.x - this.gridX, gridY))
         }
         return res
+    }
+    fun atLocation(x: Double, y:Double): GameObject? {
+        val gridLoc = gridLocation(x, y)
+        gridLoc.x -= gridX
+        return grid[gridLoc]
     }
 
     fun getPerformableActions(): List<IGameAction> {

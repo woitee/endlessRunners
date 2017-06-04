@@ -26,7 +26,7 @@ data class Vector2Double(var x: Double = 0.0, var y: Double = 0.0) {
         return distanceFrom(p.x, p.y)
     }
     fun distanceFrom(ax: Double, ay: Double): Double {
-        return Math.sqrt((ax - x) * (ax - x) + (ay - y) * (ay - y))
+        return Distance2D.distance(x, y, ax, ay)
     }
 
     operator fun plus(b: Vector2Double): Vector2Double {

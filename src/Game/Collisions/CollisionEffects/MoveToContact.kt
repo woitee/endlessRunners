@@ -6,6 +6,7 @@ import Game.GameObjects.MovingObject
 import Game.GameState
 import Game.Undoing.IUndo
 import Game.Undoing.NoActionUndo
+import Game.Undoing.UndoFactory
 import Geom.Direction4
 import Geom.Vector2Double
 
@@ -28,14 +29,14 @@ class MoveToContact: IUndoableCollisionEffect {
         when (collision.direction) {
             Direction4.UP, Direction4.DOWN -> {
                 val yDistTravel = source.yspeed * updateTime
-                val yDistCollision = collision.location.y - collision.myLocation.y
+                val yDistCollision = collision.locationY - collision.myLocationY
                 assert(Math.abs(yDistCollision) < Math.abs(yDistTravel))
                 source.y += yDistCollision
                 source.yspeed = 0.0
             }
             Direction4.LEFT, Direction4.RIGHT -> {
                 val xDistTravel = source.xspeed * updateTime
-                val xDistCollision = collision.location.x - collision.myLocation.x
+                val xDistCollision = collision.locationX - collision.myLocationX
                 assert(Math.abs(xDistCollision) < Math.abs(xDistTravel))
                 source.x += xDistCollision
                 source.xspeed = 0.0

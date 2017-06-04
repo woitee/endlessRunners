@@ -9,8 +9,10 @@ import Game.GameActions.IUndoableAction
 import Game.GameObjects.Player
 import Game.GameState
 import Game.Undoing.IUndo
-import Game.Undoing.MultiUndo
 import Utils.pop
+import java.io.File
+import java.io.PrintWriter
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -18,6 +20,7 @@ import java.util.*
  */
 class DFSPlayerController: PlayerController() {
     var readyToDie = false
+    var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 75)
 
     override fun onUpdate(gameState: GameState): IGameAction? {
@@ -25,6 +28,14 @@ class DFSPlayerController: PlayerController() {
             return null
 
         val action = performDFS(gameState)
+
+        if (logFile == null) {
+            val logFileName = "log/DFSlog_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".csv"
+            logFile = File(logFileName).printWriter()
+            logFile!!.println("SearchedStates,Time")
+        }
+        logFile!!.println("${DFS.lastStats.searchedStates},${DFS.lastStats.timeTaken}")
+        logFile!!.flush()
         statsSummer.noteStats(DFS.lastStats)
         return action
     }

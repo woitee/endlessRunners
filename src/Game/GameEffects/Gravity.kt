@@ -3,6 +3,8 @@ package Game.GameEffects
 import Game.GameObjects.MovingObject
 import Game.GameState
 import Game.Undoing.IUndo
+import Game.Undoing.NoActionUndo
+import Game.Undoing.UndoFactory
 import Geom.Vector2Double
 import Geom.Vector2Int
 
@@ -29,12 +31,29 @@ class Gravity(
 
     override fun applyOn(gameState: GameState) {
         val target = (findTarget(gameState) as MovingObject?) ?: return
+        if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
+            return
+        }
 
         target.yspeed -= strength * Game.BlockHeight * gameState.game.updateTime
     }
 
+//    var statApplied = 0
+//    var statTotal = 0
+//    var printStatEvery = 75
     override fun applyUndoableOn(gameState: GameState): IUndo {
-        applyOn(gameState)
+//        statTotal++
+        val target = (findTarget(gameState) as MovingObject?) ?: return NoActionUndo
+        if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
+            return NoActionUndo
+        }
+        target.yspeed -= strength * Game.BlockHeight * gameState.game.updateTime
+//        statApplied += 1
+//        if (statApplied >= printStatEvery - 1) {
+//            println("$statApplied from $statTotal")
+//            statApplied = 0
+//            statTotal = 0
+//        }
         return GravityUndo(this)
     }
 }

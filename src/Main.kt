@@ -5,7 +5,9 @@ import Game.GameObjects.GameObject
 import Game.GameObjects.SolidBlock
 import Game.Grid2D
 import Game.PCG.*
+import Game.Undoing.*
 import Game.PlayerControllers.*
+import Utils.Pools.DefaultUndoListPool
 import Utils.StopWatch
 import kotlin.reflect.jvm.internal.impl.utils.DFS
 
@@ -39,19 +41,23 @@ fun testBasic() {
 
 fun test() {
     //Moving by x:1.40, y:-0.54 from (514.10, 24.52)
-    val game = createGame()
-    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
+//    val game = createGame()
+//    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
+//    println(locs)
 
-    println(locs)
 }
 
 fun createGame(): Game {
-    val visualiser = GamePanelVisualizer(debugging = true)
+//    val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
+    val visualiser: GamePanelVisualizer? = null
+
     val levelGenerator = SimpleLevelGenerator()
+
     val playerController = DFSPlayerController()
 //    val playerController = KeyboardPlayerController()
+//    val playerController = RandomPlayerController()
 
-    return Game(levelGenerator, playerController, visualiser)
+    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.SIMULATION)
 }
 
 fun runGame() {

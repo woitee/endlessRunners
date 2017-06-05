@@ -13,6 +13,7 @@ import Game.BlockHeight
 import Game.BlockWidth
 import Geom.*
 import Utils.Pools.DefaultVector2DoublePool
+import apple.laf.JRSUIConstants
 
 
 /**
@@ -21,7 +22,7 @@ import Utils.Pools.DefaultVector2DoublePool
  * Created by woitee on 23/01/2017.
  */
 
-class CollisionHandler(val game: Game) {
+open class BaseCollisionHandler(val game: Game) {
     // How many collisions with one object should be handled at most
     val MAX_COLLISIONS = 10
 
@@ -44,31 +45,85 @@ class CollisionHandler(val game: Game) {
     fun nearestCollision(gameState: GameState, a: Vector2Double, b: Vector2Double): Collision? {
         return nearestCollision(gameState, a.x, a.y, b.x, b.y)
     }
-    fun nearestCollision(gameState: GameState, ax: Double, ay: Double, bx: Double, by: Double): Collision? {
-        val gridsBetween = gameState.gridLocationsBetween(ax, ay, bx, by)
-        val velocityX = ax - bx
-        val velocityY = ay - by
-        for (i in 1 .. gridsBetween.lastIndex) {
-            val gridLoc = gridsBetween[i]
-            if (gameState.grid[gridLoc]?.isSolid == true) {
-                // We found collision
-                // Direction is given by difference from last block
-                val dir = gridLoc - gridsBetween[i-1]
-                val colX: Double
-                val colY: Double
-                if (dir.y == 0) {
-                    colX = ((if (dir.x > 0) gridLoc.x else gridLoc.x + 1) * BlockWidth).toDouble()
-                    val ratio = (colX - ax) / velocityX
-                    colY = ratio * velocityY + ay
-                } else {
-                    colY = ((if (dir.y > 0) gridLoc.y else gridLoc.y + 1) * BlockHeight).toDouble()
-                    val ratio = (colY - ay) / velocityY
-                    colX = ratio * velocityX + ax
-                }
-                return Collision(gameState.grid[gridLoc]!!, colX, colY, ax, ay, dir.direction4())
+    open fun nearestCollision(gameState: GameState, ax: Double, ay: Double, bx: Double, by: Double): Collision? {
+        val max = { a: Double, b: Double -> if (a > b) a else b }
+        val min = { a: Double, b: Double -> if (a > b) b else a }
+
+        val vecX = bx - ax
+        val vecY = by - ay
+
+        var collX = Double.NaN
+        var collY = Double.NaN
+        var collObject: GameObject? = null
+        var minCollDist = Double.POSITIVE_INFINITY
+
+        for (gameObject in gameState.gameObjects.filter{ it.isSolid }) {
+            var minPart = 0.0
+            var maxPart = 1.0
+
+            if (vecX != 0.0) {
+                val xPart1 = (gameObject.x - ax) / vecX
+                val xPart2 = (gameObject.x + gameObject.widthPx - ax) / vecX
+
+                minPart = max(minPart, min(xPart1, xPart2))
+                maxPart = min(maxPart, max(xPart1, xPart2))
+
+            } else {
+                if (ax > gameObject.x + gameObject.widthPx || ax < gameObject.x)
+                    continue
+            }
+            if (vecY != 0.0) {
+                val yPart1 = (gameObject.y - ay) / vecY
+                val yPart2 = (gameObject.y + gameObject.heightPx - ay) / vecY
+
+                minPart = max(minPart, min(yPart1, yPart2))
+                maxPart = min(maxPart, max(yPart1, yPart2))
+            } else {
+                if (ay > gameObject.y + gameObject.heightPx || ay < gameObject.y)
+                    continue
+            }
+
+            if (minPart >= maxPart)
+                continue
+
+            val thisCollX = ax + minPart * vecX
+            val thisCollY = ay + minPart * vecY
+            val dist = Distance2D.distance(ax, ay, thisCollX, thisCollY)
+            if (dist < minCollDist) {
+                minCollDist = dist
+                collX = thisCollX
+                collY = thisCollY
+                collObject = gameObject
             }
         }
-        return null
+        if (minCollDist == Double.POSITIVE_INFINITY)
+            return null
+
+        return Collision(collObject!!, collX, collY, ax, ay)
+//        val gridsBetween = gameState.gridLocationsBetween(ax, ay, bx, by)
+//        val velocityX = ax - bx
+//        val velocityY = ay - by
+//        for (i in 1 .. gridsBetween.lastIndex) {
+//            val gridLoc = gridsBetween[i]
+//            if (gameState.grid[gridLoc]?.isSolid == true) {
+//                // We found collision
+//                // Direction is given by difference from last block
+//                val dir = gridLoc - gridsBetween[i-1]
+//                val colX: Double
+//                val colY: Double
+//                if (dir.y == 0) {
+//                    colX = ((if (dir.x > 0) gridLoc.x else gridLoc.x + 1) * BlockWidth).toDouble()
+//                    val ratio = (colX - ax) / velocityX
+//                    colY = ratio * velocityY + ay
+//                } else {
+//                    colY = ((if (dir.y > 0) gridLoc.y else gridLoc.y + 1) * BlockHeight).toDouble()
+//                    val ratio = (colY - ay) / velocityY
+//                    colX = ratio * velocityX + ax
+//                }
+//                return Collision(gameState.grid[gridLoc]!!, colX, colY, ax, ay, dir.direction4())
+//            }
+//        }
+//        return null
     }
 
     fun getCollision(movingObject: MovingObject): Collision? {
@@ -104,7 +159,7 @@ class CollisionHandler(val game: Game) {
             val collision = getCollision(movingObject) ?: return
 
             val collEffect: ICollisionEffect? =
-                    collisionHandlerMapping.get(CollisionHandler.CollisionHandlerEntry(
+                    collisionHandlerMapping.get(BaseCollisionHandler.CollisionHandlerEntry(
                             movingObject.gameObjectClass,
                             collision.other.gameObjectClass,
                             collision.direction

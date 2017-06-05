@@ -45,19 +45,21 @@ fun test() {
 //    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
 //    println(locs)
 
+
+
 }
 
 fun createGame(): Game {
-//    val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
-    val visualiser: GamePanelVisualizer? = null
+    val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
+//    val visualiser: GamePanelVisualizer? = null
 
     val levelGenerator = SimpleLevelGenerator()
 
-    val playerController = DFSPlayerController()
+//    val playerController = DFSPlayerController()
 //    val playerController = KeyboardPlayerController()
-//    val playerController = RandomPlayerController()
+    val playerController = RandomPlayerController()
 
-    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.SIMULATION)
+    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.INTERACTIVE)
 }
 
 fun runGame() {

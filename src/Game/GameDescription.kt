@@ -3,7 +3,7 @@ package Game
 import Game.GameActions.*
 import Game.GameEffects.*
 import Game.Collisions.CollisionEffects.*
-import Game.Collisions.CollisionHandler.CollisionHandlerEntry
+import Game.Collisions.BaseCollisionHandler.CollisionHandlerEntry
 import Game.GameObjects.GameObjectClass
 import Geom.Direction4
 import java.util.*

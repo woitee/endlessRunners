@@ -3,7 +3,8 @@ package Game
 import Utils.TimedThread
 import Game.PCG.ILevelGenerator
 import Game.PlayerControllers.PlayerController
-import Game.Collisions.CollisionHandler
+import Game.Collisions.BaseCollisionHandler
+import Game.Collisions.GridDetectingCollisionHandler
 import java.util.*
 
 /**
@@ -19,7 +20,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     }
 
     val gameDescription = GameDescription()
-    val collHandler = CollisionHandler(this)
+    val collHandler = BaseCollisionHandler(this)
     var gameState = GameState(this, levelGenerator)
     val random = Random(seed)
     // This shows time since last update, and can be used in methods

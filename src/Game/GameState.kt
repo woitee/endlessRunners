@@ -164,6 +164,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
         return res
     }
+
     fun atLocation(x: Double, y:Double): GameObject? {
         val gridLoc = gridLocation(x, y)
         gridLoc.x -= gridX

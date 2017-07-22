@@ -20,7 +20,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     }
 
     val gameDescription = GameDescription()
-    val collHandler = BaseCollisionHandler(this)
+    val collHandler = GridDetectingCollisionHandler(this)
     var gameState = GameState(this, levelGenerator)
     val random = Random(seed)
     // This shows time since last update, and can be used in methods

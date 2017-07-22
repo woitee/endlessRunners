@@ -15,6 +15,14 @@ enum class Direction4(val value: Int) {
 }
 
 fun Vector2Int.direction4(): Direction4 {
+    return twoNumbers2Direction4(x, y)
+}
+
+fun Vector2Double.direction4(): Direction4 {
+    return twoNumbers2Direction4(x, y)
+}
+
+fun twoNumbers2Direction4(x: Int, y: Int): Direction4 {
     return if (x > 0) {
         if (y > x)
             Direction4.UP
@@ -38,8 +46,7 @@ fun Vector2Int.direction4(): Direction4 {
             Direction4.NONE
     }
 }
-
-fun Vector2Double.direction4(): Direction4 {
+fun twoNumbers2Direction4(x: Double, y: Double): Direction4 {
     return if (x > 0) {
         if (y > x)
             Direction4.UP

@@ -50,16 +50,17 @@ fun test() {
 }
 
 fun createGame(): Game {
-//    val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
-    val visualiser: GamePanelVisualizer? = null
+    val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
+//    val visualiser: GamePanelVisualizer? = null
 
-    val levelGenerator = SimpleLevelGenerator()
+//    val levelGenerator = SimpleLevelGenerator()
+    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
 
     val playerController = DFSPlayerController()
 //    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
-    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.SIMULATION)
+    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.INTERACTIVE)
 }
 
 fun runGame() {

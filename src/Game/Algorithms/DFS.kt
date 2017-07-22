@@ -1,6 +1,7 @@
 package Game.Algorithms
 
 import GUI.GamePanelVisualizer
+import Game.BlockWidth
 import Game.GameObjects.Player
 import Game.GameState
 import Game.Undoing.IUndo
@@ -33,7 +34,8 @@ object DFS {
             val undoList = ArrayList<IUndo>()
             val actionList = ArrayList<Int>()
 
-            while (undoList.count() < maxDepth && gameState.player.positionOnScreen() < Game.GameWidth) {
+            val maxX = (gameState.gridX + gameState.grid.width - 1) * BlockWidth
+            while (undoList.count() < maxDepth && gameState.player.nextX(_updateTime) < maxX) {
                 undoList.add(advanceState(gameState, null, _updateTime))
                 if (undoList.count() > lastStats.reachedDepth)
                     lastStats.reachedDepth = undoList.count()
@@ -44,6 +46,7 @@ object DFS {
                     while (!finishedBacktrack) {
                         if (undoList.isEmpty()) {
                             lastStats.timeTaken = ((System.nanoTime() - startTime)/1000).toDouble() / 1000
+                            // No option but to lose the game
                             return null
                         }
                         undoList.pop().undo(gameState)

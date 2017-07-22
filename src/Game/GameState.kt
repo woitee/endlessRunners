@@ -22,7 +22,7 @@ import Utils.reverse
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
+class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable {
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
     var updateObjects = arrayListOf<GameObject>(player)
@@ -59,7 +59,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
         grid[x, y] = gameObject
     }
-    private fun removeFromGrid(gameObject: GameObject?, x: Int, y:Int) {
+    internal fun removeFromGrid(gameObject: GameObject?, x: Int, y:Int) {
         gameObject ?: return
         gameObjects.remove(gameObject)
         if (gameObject.isUpdated)
@@ -173,5 +173,9 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
 
     fun getPerformableActions(): List<IGameAction> {
         return game.gameDescription.allActions.filter { it -> it.isApplicableOn(this) }
+    }
+
+    public override fun clone(): Any {
+        return super.clone()
     }
 }

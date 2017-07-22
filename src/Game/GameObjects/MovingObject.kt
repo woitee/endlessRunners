@@ -45,8 +45,15 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
         return undo
     }
 
+    fun nextX(time: Double): Double {
+        return this.x + xspeed * time * BlockWidth
+    }
+    fun nextY(time: Double): Double {
+        return this.y + yspeed * time * BlockHeight
+    }
+
     private fun updateMovement(time: Double) {
-        this.x += xspeed * time * BlockWidth
-        this.y += yspeed * time * BlockHeight
+        this.x = nextX(time)
+        this.y = nextY(time)
     }
 }

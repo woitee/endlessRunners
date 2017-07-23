@@ -8,7 +8,7 @@ import Game.GameState
  */
 
 class NoActionPlayerController: PlayerController() {
-    override fun onUpdate(gameState: GameState): IGameAction? {
+    override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
         return null
     }
 }

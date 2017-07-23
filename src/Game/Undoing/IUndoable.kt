@@ -10,5 +10,5 @@ interface IUndoable: IApplicable {
     /**
      * Perform on gameState and return how to undo it.
      */
-    fun applyUndoableOn(gameState: GameState): IUndo
+    fun applyUndoablyOn(gameState: GameState): IUndo
 }

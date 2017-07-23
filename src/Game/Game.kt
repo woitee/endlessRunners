@@ -3,8 +3,9 @@ package Game
 import Utils.TimedThread
 import Game.PCG.ILevelGenerator
 import Game.PlayerControllers.PlayerController
-import Game.Collisions.BaseCollisionHandler
 import Game.Collisions.GridDetectingCollisionHandler
+import Game.GameDescriptions.GameDescription
+import Game.GameActions.IHoldAction
 import java.util.*
 
 /**
@@ -13,13 +14,12 @@ import java.util.*
 
 class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
-           seed: Long = Random().nextLong()) {
+           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong()) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION
     }
 
-    val gameDescription = GameDescription()
     val collHandler = GridDetectingCollisionHandler(this)
     var gameState = GameState(this, levelGenerator)
     val random = Random(seed)
@@ -76,8 +76,14 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     private fun update(time: Double) {
         gameState.advance(time, true)
 
-        val gameAction = playerController.onUpdate(gameState)
-        if (gameAction?.isApplicableOn(gameState) == true)
-            gameAction!!.applyOn(gameState)
+        val controllerOutput = playerController.onUpdate(gameState)
+        if (controllerOutput != null) {
+            val gameAction = controllerOutput.action
+            if (controllerOutput.press && gameAction.isApplicableOn(gameState))
+                gameAction.applyOn(gameState)
+            else if (!controllerOutput.press && (gameAction as IHoldAction?)?.canBeStoppedApplyingOn(gameState) == true) {
+                gameAction.stopApplyingOn(gameState)
+            }
+        }
     }
 }

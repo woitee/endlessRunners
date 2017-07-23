@@ -22,7 +22,7 @@ class GameOver: UndoableGameEffect() {
         gameState.game.onGameOver()
     }
 
-    override fun applyUndoableOn(gameState: GameState): IUndo {
+    override fun applyUndoablyOn(gameState: GameState): IUndo {
         gameState.isGameOver = true
         return GameOverUndo()
     }

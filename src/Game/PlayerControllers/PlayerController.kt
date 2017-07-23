@@ -8,6 +8,6 @@ import Game.GameState
  */
 
 abstract class PlayerController {
-    abstract fun onUpdate(gameState: GameState): IGameAction?
+    abstract fun onUpdate(gameState: GameState): PlayerControllerOutput?
     open fun reset() {}
 }

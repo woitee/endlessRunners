@@ -41,7 +41,7 @@ class Gravity(
 //    var statApplied = 0
 //    var statTotal = 0
 //    var printStatEvery = 75
-    override fun applyUndoableOn(gameState: GameState): IUndo {
+    override fun applyUndoablyOn(gameState: GameState): IUndo {
 //        statTotal++
         val target = (findTarget(gameState) as MovingObject?) ?: return NoActionUndo
         if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {

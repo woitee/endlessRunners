@@ -23,7 +23,7 @@ class DFSPlayerController: PlayerController() {
     var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 75)
 
-    override fun onUpdate(gameState: GameState): IGameAction? {
+    override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
         if (readyToDie)
             return null
 
@@ -37,7 +37,7 @@ class DFSPlayerController: PlayerController() {
         logFile!!.println("${DFS.lastStats.searchedStates},${DFS.lastStats.timeTaken}")
         logFile!!.flush()
         statsSummer.noteStats(DFS.lastStats)
-        return action
+        return action?.press()
     }
 
     override fun reset() {

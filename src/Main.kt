@@ -9,6 +9,7 @@ import Game.Undoing.*
 import Game.PlayerControllers.*
 import Utils.Pools.DefaultUndoListPool
 import Utils.StopWatch
+import Game.GameDescriptions.*
 import kotlin.reflect.jvm.internal.impl.utils.DFS
 
 /**
@@ -53,14 +54,19 @@ fun createGame(): Game {
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
-//    val levelGenerator = SimpleLevelGenerator()
-    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
+    val levelGenerator = TestLevelGenerator()
+//    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
 
-    val playerController = DFSPlayerController()
-//    val playerController = KeyboardPlayerController()
+//    val playerController = DFSPlayerController()
+    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
-    return Game(levelGenerator, playerController, visualiser, mode = Game.Mode.INTERACTIVE)
+    val gameDescription = BitTripGameDescription()
+
+    return Game(levelGenerator, playerController, visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription
+    )
 }
 
 fun runGame() {

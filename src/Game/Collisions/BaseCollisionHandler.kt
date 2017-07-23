@@ -107,15 +107,15 @@ open class BaseCollisionHandler(val game: Game) {
     fun getCollision(movingObject: MovingObject): Collision? {
         var closest = Double.MAX_VALUE
         var res: Collision? = null
-        for (corner in movingObject.corners) {
+        for (collPoint in movingObject.collPoints) {
 //            val targetPoint = corner + Vector2Double(movingObject.xspeed * game.updateTime * BlockWidth, movingObject.yspeed * game.updateTime * BlockHeight)
             val collRes = nearestCollision(
                     movingObject.gameState,
-                    corner.x,
-                    corner.y,
-                    corner.x + movingObject.xspeed * game.updateTime * BlockWidth,
-                    corner.y + movingObject.yspeed * game.updateTime * BlockHeight) ?: continue
-            val dist = Distance2D.distance(collRes.locationX, collRes.locationY, corner.x, corner.y)
+                    collPoint.x,
+                    collPoint.y,
+                    collPoint.x + movingObject.xspeed * game.updateTime * BlockWidth,
+                    collPoint.y + movingObject.yspeed * game.updateTime * BlockHeight) ?: continue
+            val dist = Distance2D.distance(collRes.locationX, collRes.locationY, collPoint.x, collPoint.y)
             if (dist < closest) {
                 closest = dist
                 res = collRes

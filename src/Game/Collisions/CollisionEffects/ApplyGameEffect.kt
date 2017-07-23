@@ -1,10 +1,8 @@
 package Game.Collisions.CollisionEffects
 
 import Game.Collisions.Collision
-import Game.GameEffects.GameEffect
 import Game.GameEffects.UndoableGameEffect
 import Game.GameObjects.GameObject
-import Game.GameState
 import Game.Undoing.IUndo
 
 /**
@@ -17,6 +15,6 @@ class ApplyGameEffect(val gameEffect: UndoableGameEffect): IUndoableCollisionEff
     }
 
     override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
-        return gameEffect.applyUndoableOn(source.gameState)
+        return gameEffect.applyUndoablyOn(source.gameState)
     }
 }

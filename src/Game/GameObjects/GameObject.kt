@@ -18,8 +18,10 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
 
     open var isUpdated: Boolean = false
     open val isSolid: Boolean = false
-    open val widthBlocks = 1
-    open val heightBlocks: Int = 1
+    open val defaultWidthBlocks: Int = 1
+    open val defaultHeightBlocks: Int = 1
+    open var widthBlocks: Int = 1
+    open var heightBlocks: Int = 1
 
     var location: Vector2Double
         get() = Vector2Double(x, y)
@@ -38,7 +40,7 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
     val corners: ArrayList<Vector2Double>
         get() {
             if (_corners == null) {
-                _corners = arrayList(4, { -> Vector2Double() })
+                _corners = arrayList(4, { Vector2Double() })
             }
 
             _corners!![0].x = x
@@ -55,5 +57,29 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
 
             return _corners!!
         }
+
+    var _collPoints:ArrayList<Vector2Double>? = null
+    val collPoints: ArrayList<Vector2Double>
+        get() {
+            val desiredSize = (widthBlocks + 1) * (heightBlocks + 1)
+            if (_collPoints == null || _collPoints!!.count() != desiredSize) {
+                _collPoints = arrayList(desiredSize, { Vector2Double() })
+            }
+
+            var i = 0
+            for (col in 0 .. widthBlocks) {
+                for (row in 0 .. heightBlocks) {
+                    _collPoints!![i].x = x + col * BlockWidth
+                    _collPoints!![i].y = y + row * BlockHeight
+                    // Objects are slightly lower so they fit under stuff
+                    if (row == heightBlocks)
+                        _collPoints!![i].y -= 1
+                    ++i
+                }
+            }
+
+            return _collPoints!!
+        }
+
 }
 

@@ -32,7 +32,7 @@ class JumpAction(val power:Double): IUndoableAction {
         gameState.player.yspeed = power
     }
 
-    override fun applyUndoableOn(gameState: GameState): IUndo {
+    override fun applyUndoablyOn(gameState: GameState): IUndo {
         val undo = JumpActionUndo(gameState.player.yspeed)
         gameState.player.yspeed = power
         return undo

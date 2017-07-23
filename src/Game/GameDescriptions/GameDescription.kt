@@ -1,12 +1,12 @@
-package Game
+package Game.GameDescriptions
 
+import Game.BlockHeight
 import Game.GameActions.*
 import Game.GameEffects.*
 import Game.Collisions.CollisionEffects.*
 import Game.Collisions.BaseCollisionHandler.CollisionHandlerEntry
 import Game.GameObjects.GameObjectClass
 import Geom.Direction4
-import java.util.*
 
 /**
  * This class contains the "Genotype" or "Settings" of the game. It contains all the possible blocks, actions and effects,
@@ -19,14 +19,11 @@ import java.util.*
  * Created by woitee on 16/01/2017.
  */
 
-class GameDescription {
-    val playerStartingSpeed = 12.0
-
-    val allActions = listOf(JumpAction(22.0))
-
-    val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
-
-    val collisionEffects = mapOf(
+open class GameDescription {
+    open val playerStartingSpeed = 12.0
+    open val allActions = listOf<IGameAction>(JumpAction(22.0))
+    open val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
+    open val collisionEffects = mapOf(
         Pair(
             CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.DOWN or Direction4.UP),
             MoveToContact()

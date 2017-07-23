@@ -119,7 +119,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
                 undoList.add(undo)
         }
         game.gameDescription.permanentEffects.map {
-            val undo = (it as UndoableGameEffect).applyUndoableOn(this)
+            val undo = (it as UndoableGameEffect).applyUndoablyOn(this)
             if (undo != NoActionUndo)
                 undoList.add(undo)
         }

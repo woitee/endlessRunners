@@ -1,16 +1,12 @@
-import GUI.GamePanelVisualizer
-import Game.Game
-import Game.GameState
-import Game.GameObjects.GameObject
-import Game.GameObjects.SolidBlock
-import Game.Grid2D
-import Game.PCG.*
-import Game.Undoing.*
-import Game.PlayerControllers.*
-import Utils.Pools.DefaultUndoListPool
-import Utils.StopWatch
-import Game.GameDescriptions.*
-import kotlin.reflect.jvm.internal.impl.utils.DFS
+import gui.GamePanelVisualizer
+import game.Game
+import game.gameObjects.GameObject
+import game.gameObjects.SolidBlock
+import game.Grid2D
+import game.pcg.*
+import game.playerControllers.*
+import utils.StopWatch
+import game.gameDescriptions.*
 
 /**
  * Created by woitee on 09/01/2017.

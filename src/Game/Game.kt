@@ -5,7 +5,7 @@ import Game.PCG.ILevelGenerator
 import Game.PlayerControllers.PlayerController
 import Game.Collisions.GridDetectingCollisionHandler
 import Game.GameDescriptions.GameDescription
-import Game.GameActions.IHoldAction
+import Game.GameActions.HoldAction
 import java.util.*
 
 /**
@@ -81,7 +81,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
             val gameAction = controllerOutput.action
             if (controllerOutput.press && gameAction.isApplicableOn(gameState))
                 gameAction.applyOn(gameState)
-            else if (!controllerOutput.press && (gameAction as IHoldAction?)?.canBeStoppedApplyingOn(gameState) == true) {
+            else if (!controllerOutput.press && (gameAction as HoldAction?)?.canBeStoppedApplyingOn(gameState) == true) {
                 gameAction.stopApplyingOn(gameState)
             }
         }

@@ -62,6 +62,7 @@ fun createGame(): Game {
 //    val playerController = RandomPlayerController()
 
     val gameDescription = BitTripGameDescription()
+//    val gameDescription = GameDescription()
 
     return Game(levelGenerator, playerController, visualiser,
         mode = Game.Mode.INTERACTIVE,

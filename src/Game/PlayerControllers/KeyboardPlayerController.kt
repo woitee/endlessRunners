@@ -45,8 +45,8 @@ class KeyboardPlayerController: PlayerController() {
     }
     val keyboardHelper = KeyboardHelper()
     var inited = false
-    val keyMapping = HashMap<IGameAction, IntArray>()
-    val heldActions = HashMap<IHoldAction, Boolean>()
+    val keyMapping = HashMap<GameAction, IntArray>()
+    val heldActions = HashMap<HoldAction, Boolean>()
 
     fun init(game: Game) {
         if (game.visualizer == null) {
@@ -61,7 +61,7 @@ class KeyboardPlayerController: PlayerController() {
             } else {
                 keyMapping.put(action, intArrayOf(KeyEvent.VK_DOWN, KeyEvent.VK_X, KeyEvent.VK_CONTROL))
             }
-            if (action is IHoldAction) {
+            if (action is HoldAction) {
                 heldActions[action] = false
             }
         }
@@ -75,7 +75,7 @@ class KeyboardPlayerController: PlayerController() {
         }
         val pressedKeys = keyboardHelper.getKeys()
         // Process trigger actions first, as they are impulses which may not be held until next tick
-        for (action in gameState.getPerformableActions().filter{ it !is IHoldAction }) {
+        for (action in gameState.getPerformableActions().filter{ it !is HoldAction }) {
             val actionKeys = keyMapping[action] ?: continue
             for (actionKey in actionKeys) {
                 if (actionKey in pressedKeys) {
@@ -84,25 +84,26 @@ class KeyboardPlayerController: PlayerController() {
             }
         }
         // Process hold actions second, as they can be resolved one tick later
-        for (action in gameState.getPerformableActions().filter{ it is IHoldAction }) {
+        for (action in gameState.game.gameDescription.allActions.filter{ it is HoldAction }) {
             val actionKeys = keyMapping[action] ?: continue
             var actionKeyPressed = false
-            
+
             // any action key pressed -> start hold action
             for (actionKey in actionKeys) {
                 if (actionKey in pressedKeys) {
                     if (!heldActions[action]!!) {
                         println("Holding")
-                        heldActions[action as IHoldAction] = true
+                        heldActions[action as HoldAction] = true
                         return action.press()
                     }
                     actionKeyPressed = true
                 }
             }
+            println("Action key press ${actionKeyPressed}, ${heldActions[action]}")
             // no action key pressed -> stop hold action
             if (!actionKeyPressed && heldActions[action]!!) {
                 println("Releasing")
-                heldActions[action as IHoldAction] = false
+                heldActions[action as HoldAction] = false
                 return action.release()
             }
         }

@@ -1,15 +1,9 @@
 package Game.PlayerControllers
 
-import GUI.GamePanelVisualizer
 import Game.Algorithms.DFS
-import Game.Algorithms.SearchStats
 import Game.Algorithms.SearchStatsSummer
-import Game.GameActions.IGameAction
-import Game.GameActions.IUndoableAction
-import Game.GameObjects.Player
+import Game.GameActions.GameAction
 import Game.GameState
-import Game.Undoing.IUndo
-import Utils.pop
 import java.io.File
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
@@ -45,7 +39,7 @@ class DFSPlayerController: PlayerController() {
         readyToDie = false
     }
 
-    fun performDFS(gameState: GameState): IGameAction? {
+    fun performDFS(gameState: GameState): GameAction? {
         val action = DFS.searchForAction(gameState, debug=true)
         if (!DFS.lastStats.success)
             readyToDie = true

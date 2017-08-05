@@ -1,15 +1,15 @@
 package Game.PlayerControllers
 
-import Game.GameActions.IGameAction
+import Game.GameActions.GameAction
 
 /**
  * Created by woitee on 23/07/2017.
  */
 
-fun <T: IGameAction> T.press(): PlayerControllerOutput {
+fun <T: GameAction> T.press(): PlayerControllerOutput {
     return PlayerControllerOutput(this, true)
 }
 
-fun <T: IGameAction> T.release(): PlayerControllerOutput {
+fun <T: GameAction> T.release(): PlayerControllerOutput {
     return PlayerControllerOutput(this, false)
 }

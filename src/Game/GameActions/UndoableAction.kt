@@ -1,7 +1,5 @@
 package Game.GameActions
 
-import Game.GameState
-import Game.Undoing.IUndo
 import Game.Undoing.IUndoable
 
 /**
@@ -10,4 +8,4 @@ import Game.Undoing.IUndoable
  * Created by woitee on 09/04/2017.
  */
 
-interface IUndoableAction: IGameAction, IUndoable
+abstract class UndoableAction : GameAction(), IUndoable

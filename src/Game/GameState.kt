@@ -8,7 +8,8 @@ import Game.GameObjects.Player
 import Game.GameObjects.SolidBlock
 import Game.PCG.ILevelGenerator
 import Game.GameObjects.GameObject
-import Game.GameActions.IGameAction
+import Game.GameActions.GameAction
+import Game.GameActions.HoldAction
 import Game.GameObjects.UndoableUpdateGameObject
 import Game.GameEffects.UndoableGameEffect
 import Game.Undoing.NoActionUndo
@@ -30,6 +31,9 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
     var gridX = 0
     var lastAdvanceTime = 0.0
         private set
+    var gameTime = 0.0
+        private set
+    var heldActions = HashMap<HoldAction, Double>()
 
     var isGameOver = false
 
@@ -85,7 +89,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         for (gameObject in updateObjects) {
             gameObject.update(time)
         }
-
         for (gameEffect in game.gameDescription.permanentEffects) {
             gameEffect.applyOn(this)
         }
@@ -109,6 +112,13 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
                 }
             }
         }
+        gameTime += time
+
+        for (heldAction in heldActions.keys) {
+            if (!heldAction.canBeKeptApplyingOn(this)) {
+                heldAction.stopApplyingOn(this)
+            }
+        }
     }
     fun advanceUndoable(time: Double): IUndo {
         val undoList = DefaultUndoListPool.borrowObject()
@@ -123,6 +133,28 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
             if (undo != NoActionUndo)
                 undoList.add(undo)
         }
+
+        gameTime += time
+        var stoppedHolding: HashMap<HoldAction, Double>? = null
+        for (heldAction in heldActions.keys) {
+            if (!heldAction.canBeKeptApplyingOn(this)) {
+                if (stoppedHolding == null)
+                    stoppedHolding = HashMap<HoldAction, Double>()
+                stoppedHolding[heldAction] = heldActions[heldAction]!!
+                heldAction.stopApplyingOn(this)
+            }
+        }
+        // Undo default advances
+        undoList.add(object : IUndo {
+            override fun undo(gameState: GameState) {
+                gameState.gameTime -= time
+                if (stoppedHolding != null) {
+                    for (heldAction in stoppedHolding!!.keys) {
+                        gameState.heldActions[heldAction] = stoppedHolding!![heldAction]!!
+                    }
+                }
+            }
+        })
         return UndoFactory.multiUndo(undoList)
     }
 
@@ -171,7 +203,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         return grid[gridLoc]
     }
 
-    fun getPerformableActions(): List<IGameAction> {
+    fun getPerformableActions(): List<GameAction> {
         return game.gameDescription.allActions.filter { it -> it.isApplicableOn(this) }
     }
 

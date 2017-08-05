@@ -5,8 +5,8 @@ import Game.BlockWidth
 import Game.GameObjects.Player
 import Game.GameState
 import Game.Undoing.IUndo
-import Game.GameActions.IGameAction
-import Game.GameActions.IUndoableAction
+import Game.GameActions.GameAction
+import Game.GameActions.UndoableAction
 import Game.Undoing.UndoFactory
 import Utils.pop
 import java.util.*
@@ -20,7 +20,7 @@ object DFS {
     /**
      * Searches for an action that doesn't lead to death and returns it, or null if it doesn't exist.
      */
-    fun searchForAction (gameState: GameState, maxDepth: Int = 1000, updateTime: Double = -1.0, debug:Boolean = false): IGameAction? {
+    fun searchForAction (gameState: GameState, maxDepth: Int = 1000, updateTime: Double = -1.0, debug:Boolean = false): GameAction? {
         val _updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
 
         lastStats = SearchStats()
@@ -84,13 +84,13 @@ object DFS {
         }
     }
 
-    private fun advanceState(gameState: GameState, gameAction: IGameAction?, updateTime: Double): IUndo {
+    private fun advanceState(gameState: GameState, gameAction: GameAction?, updateTime: Double): IUndo {
         ++lastStats.searchedStates
         if (gameAction == null)
             return gameState.advanceUndoable(updateTime)
         else
             return UndoFactory.doubleUndo(
-                (gameAction as IUndoableAction).applyUndoablyOn(gameState),
+                (gameAction as UndoableAction).applyUndoablyOn(gameState),
                 gameState.advanceUndoable(updateTime)
             )
     }

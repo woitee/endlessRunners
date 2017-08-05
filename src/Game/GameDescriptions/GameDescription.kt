@@ -21,7 +21,7 @@ import Geom.Direction4
 
 open class GameDescription {
     open val playerStartingSpeed = 12.0
-    open val allActions = listOf<IGameAction>(JumpAction(22.0))
+    open val allActions = listOf<GameAction>(JumpAction(22.0))
     open val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
     open val collisionEffects = mapOf(
         Pair(

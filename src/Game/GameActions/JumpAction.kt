@@ -3,7 +3,6 @@ package Game.GameActions
 import Game.GameState
 import Game.BlockHeight
 import Game.BlockWidth
-import Game.GameActions.IGameAction
 import Game.GameObjects.SolidBlock
 import Game.Undoing.IUndo
 
@@ -11,7 +10,7 @@ import Game.Undoing.IUndo
  * Created by woitee on 13/01/2017.
  */
 
-class JumpAction(val power:Double): IUndoableAction {
+class JumpAction(val power:Double): UndoableAction() {
     class JumpActionUndo(val originalPlayerYSpeed: Double): IUndo {
         override fun undo(gameState: GameState) {
             gameState.player.yspeed = this.originalPlayerYSpeed

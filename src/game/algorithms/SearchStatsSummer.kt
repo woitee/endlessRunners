@@ -12,6 +12,7 @@ class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Uni
         var backtrackedStates: Double = 0.0,
         var reachedDepth: Double = 0.0,
         var success: Double = 0.0,
+        var cachedStates: Double = 0.0,
         var timeTaken: Double = 0.0
     )
 
@@ -35,11 +36,13 @@ class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Uni
             result.backtrackedStates += stats.backtrackedStates
             result.reachedDepth += stats.reachedDepth
             result.success += if (stats.success) 1 else 0
+            result.cachedStates += stats.cachedStates
             result.timeTaken += stats.timeTaken
         }
         result.searchedStates /= statsList.count()
         result.backtrackedStates /= statsList.count()
         result.reachedDepth /= statsList.count()
+        result.cachedStates /= statsList.count()
         result.success /= statsList.count()
         result.timeTaken /= statsList.count()
 

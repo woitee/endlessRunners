@@ -4,10 +4,15 @@ import gui.GamePanelVisualizer
 import game.BlockWidth
 import game.gameObjects.Player
 import game.GameState
+import game.collisions.GridDetectingCollisionHandler
+import game.gameActions.ChangeShapeAction
 import game.undoing.IUndo
-import game.gameActions.GameAction
-import game.gameActions.UndoableAction
+import game.gameActions.abstract.GameAction
+import game.gameActions.abstract.UndoableAction
+import game.gameActions.abstract.UndoableHoldAction
 import game.undoing.UndoFactory
+import geom.Vector2Double
+import javafx.scene.control.TextFormatter
 import utils.pop
 import java.util.*
 
@@ -15,13 +20,21 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-object DFS {
+class DFS {
+    /**
+     * This class contains a couple members, that hold stats from last search.
+     */
     var lastStats = SearchStats()
+    private var maxX: Int = 0
+    private var updateTime: Double = 0.0
+    private val cachedStates = HashSet<Vector2Double>()
     /**
      * Searches for an action that doesn't lead to death and returns it, or null if it doesn't exist.
      */
     fun searchForAction (gameState: GameState, maxDepth: Int = 1000, updateTime: Double = -1.0, debug:Boolean = false): GameAction? {
-        val _updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
+        this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
+        /** Cached states with 0 yspeed. */
+        cachedStates.clear()
 
         lastStats = SearchStats()
         val startTime = System.nanoTime()
@@ -32,14 +45,18 @@ object DFS {
         synchronized(gameState.gameObjects) {
             val undoList = ArrayList<IUndo>()
             val actionList = ArrayList<Int>()
+            val possibleActionsList = ArrayList<List<UndoableAction?>>()
 
-            val maxX = (gameState.gridX + gameState.grid.width - 1) * BlockWidth
-            while (undoList.count() < maxDepth && gameState.player.nextX(_updateTime) < maxX) {
-                undoList.add(advanceState(gameState, null, _updateTime))
+            maxX = (gameState.gridX + gameState.grid.width) * BlockWidth
+            while (undoList.count() < maxDepth && gameState.player.nextX(this.updateTime) + gameState.player.widthPx < maxX) {
+                val currentActions: List<UndoableAction?> = orderedPerformableActions(gameState)
+                undoList.add(advanceState(gameState, currentActions[0], this.updateTime))
+
                 if (undoList.count() > lastStats.reachedDepth)
                     lastStats.reachedDepth = undoList.count()
-                actionList.add(-1)
-                if (gameState.isGameOver) {
+                actionList.add(0)
+                possibleActionsList.add(currentActions)
+                if (gameState.isGameOver || isInCache(gameState)) {
                     //backtrack
                     var finishedBacktrack = false
                     while (!finishedBacktrack) {
@@ -51,47 +68,108 @@ object DFS {
                         undoList.pop().undo(gameState)
                         ++lastStats.backtrackedStates
                         var action = actionList.pop() + 1
-                        val actions = gameState.getPerformableActions()
+                        val actions = possibleActionsList.pop()
                         while (action < actions.count()) {
-                            val undo = advanceState(gameState, actions[action], _updateTime)
-                            if (gameState.isGameOver) {
+                            val undo = advanceState(gameState, actions[action], this.updateTime)
+                            if (gameState.isGameOver || isInCache(gameState)) {
                                 undo.undo(gameState)
                                 ++lastStats.backtrackedStates
                                 ++action
                             } else {
                                 undoList.add(undo)
                                 actionList.add(action)
+                                possibleActionsList.add(actions)
                                 finishedBacktrack = true
                                 break
                             }
                         }
+                        if (action >= actions.count())
+                            if (shouldCache(gameState)) cache(gameState)
                     }
                 }
             }
 
             var count = 0
             for (undo in undoList.asReversed()) {
-                if (debug && count++ % 15 == 0)
-                    visualizer?.debugObjects?.add(Player(gameState.player.x, gameState.player.y))
                 undo.undo(gameState)
             }
 
             val actionIx = actionList[0]
-            val action = if (actionIx == -1) null else gameState.getPerformableActions()[actionIx]
+            val action = possibleActionsList[0][actionIx]
             lastStats.success = true
+            lastStats.cachedStates = cachedStates.count()
+            for (cachedState in cachedStates) {
+                if (debug && count++ % 15 == 0)
+                    visualizer?.debugObjects?.add(Player(cachedState.x, cachedState.y))
+            }
             lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000
             return action
         }
     }
 
-    private fun advanceState(gameState: GameState, gameAction: GameAction?, updateTime: Double): IUndo {
+    /**
+     * Returns actions that should be tried ordered by priority, which is:
+     * a) stop holding an action
+     * b) do nothing (null)
+     * c) do a non-holding action
+     * d) start holding an action
+     *
+     * Note that there is always some action in this list, as it also contains null.
+     */
+    private fun orderedPerformableActions(gameState: GameState): ArrayList<UndoableAction?> {
+        val list = ArrayList<UndoableAction?>()
+        // stop holding action
+        for (heldAction in gameState.heldActions.keys) {
+            if (heldAction.canBeStoppedApplyingOn(gameState))
+                list.add((heldAction as UndoableHoldAction).asStopAction)
+        }
+        // do nothing
+        list.add(null)
+        // do a non-holding action
+        for (action in gameState.allActions) {
+            if (action !is UndoableHoldAction && action.isApplicableOn(gameState))
+                list.add(action as UndoableAction)
+
+        }
+        // start holding an action
+        for (action in gameState.allActions) {
+            if (action is UndoableHoldAction && action.isApplicableOn(gameState))
+                list.add(action.asStartAction)
+        }
+        return list
+    }
+
+    /**
+     * Decides whether the current gameState should be cached to not be searched multiple times from.
+     */
+    private fun shouldCache(gameState: GameState): Boolean {
+        return gameState.grid[
+            gameState.gridLocation(
+                gameState.player.x - gameState.gridX * BlockWidth,
+                gameState.player.y - 0.1
+            )
+        ]?.isSolid == true
+    }
+    private fun cache(gameState: GameState) {
+        if (cachedStates.count() > 1000) {
+            val a = 5
+        }
+        cachedStates.add(gameState.player.location)
+    }
+    private fun isInCache(gameState: GameState): Boolean {
+        return cachedStates.contains(gameState.player.location)
+    }
+
+    private fun advanceState(gameState: GameState, gameAction: UndoableAction?, updateTime: Double): IUndo {
         ++lastStats.searchedStates
         if (gameAction == null)
             return gameState.advanceUndoable(updateTime)
-        else
-            return UndoFactory.doubleUndo(
-                (gameAction as UndoableAction).applyUndoablyOn(gameState),
-                gameState.advanceUndoable(updateTime)
-            )
+        else {
+            val firstUndo = gameAction.applyUndoablyOn(gameState)
+            if (gameState.player.nextX(updateTime) + gameState.player.widthPx >= maxX)
+                return firstUndo
+            val secondUndo = gameState.advanceUndoable(updateTime)
+            return UndoFactory.doubleUndo(firstUndo, secondUndo)
+        }
     }
 }

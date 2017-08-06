@@ -1,4 +1,4 @@
-package game.gameActions
+package game.gameActions.abstract
 
 import game.GameState
 import game.undoing.IUndo
@@ -8,12 +8,38 @@ import game.undoing.IUndoable
  * Created by woitee on 23/07/2017.
  */
 abstract class UndoableHoldAction : HoldAction(), IUndoable {
+    class AsStartUndoableAction(val undoableHoldAction: UndoableHoldAction): UndoableAction() {
+        override fun applyOn(gameState: GameState) {
+            return undoableHoldAction.applyOn(gameState)
+        }
+        override fun isApplicableOn(gameState: GameState): Boolean {
+            return undoableHoldAction.isApplicableOn(gameState)
+        }
+        override fun applyUndoablyOn(gameState: GameState): IUndo {
+            return undoableHoldAction.applyUndoablyOn(gameState)
+        }
+    }
+    class AsStopUndoableAction(val undoableHoldAction: UndoableHoldAction): UndoableAction() {
+        override fun applyOn(gameState: GameState) {
+            return undoableHoldAction.stopApplyingOn(gameState)
+        }
+        override fun isApplicableOn(gameState: GameState): Boolean {
+            return undoableHoldAction.canBeStoppedApplyingOn(gameState)
+        }
+        override fun applyUndoablyOn(gameState: GameState): IUndo {
+            return undoableHoldAction.stopApplyingUndoablyOn(gameState)
+        }
+    }
+    override val asStartAction: UndoableAction = AsStartUndoableAction(this)
+    override val asStopAction: UndoableAction = AsStopUndoableAction(this)
+
     /**
      * Class that does the inner workings when undoing a HoldAction, that is,
      * like removing it from GameState's heldActions.
      */
     abstract class HoldActionUndo(val holdAction: UndoableHoldAction): IUndo {
-        override fun undo(gameState: GameState) {
+        override final fun undo(gameState: GameState) {
+            innerUndo(gameState)
             gameState.heldActions.remove(holdAction)
         }
         abstract fun innerUndo(gameState: GameState)
@@ -24,7 +50,8 @@ abstract class UndoableHoldAction : HoldAction(), IUndoable {
      * like adding it back to GameState's heldActions.
      */
     abstract class HoldActionStopUndo(val holdAction: UndoableHoldAction, val startTime: Double): IUndo {
-        override fun undo(gameState: GameState) {
+        override final fun undo(gameState: GameState) {
+            innerUndo(gameState)
             gameState.heldActions[holdAction] = startTime
         }
         abstract fun innerUndo(gameState: GameState)

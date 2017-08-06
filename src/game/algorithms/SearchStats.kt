@@ -9,5 +9,6 @@ data class SearchStats(
     var backtrackedStates:Int = 0,
     var reachedDepth:Int = 0,
     var success:Boolean = false,
+    var cachedStates:Int = 0,
     var timeTaken:Double = 0.0) {
 }

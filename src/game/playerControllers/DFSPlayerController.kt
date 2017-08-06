@@ -2,7 +2,7 @@ package game.playerControllers
 
 import game.algorithms.DFS
 import game.algorithms.SearchStatsSummer
-import game.gameActions.GameAction
+import game.gameActions.abstract.GameAction
 import game.GameState
 import java.io.File
 import java.io.PrintWriter
@@ -16,6 +16,7 @@ class DFSPlayerController: PlayerController() {
     var readyToDie = false
     var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 75)
+    val dfs = DFS()
 
     override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
         if (readyToDie)
@@ -28,9 +29,9 @@ class DFSPlayerController: PlayerController() {
             logFile = File(logFileName).printWriter()
             logFile!!.println("SearchedStates,Time")
         }
-        logFile!!.println("${DFS.lastStats.searchedStates},${DFS.lastStats.timeTaken}")
+        logFile!!.println("${dfs.lastStats.searchedStates},${dfs.lastStats.timeTaken}")
         logFile!!.flush()
-        statsSummer.noteStats(DFS.lastStats)
+        statsSummer.noteStats(dfs.lastStats)
         return action?.press()
     }
 
@@ -40,8 +41,8 @@ class DFSPlayerController: PlayerController() {
     }
 
     fun performDFS(gameState: GameState): GameAction? {
-        val action = DFS.searchForAction(gameState, debug=true)
-        if (!DFS.lastStats.success)
+        val action = dfs.searchForAction(gameState, debug=true)
+        if (!dfs.lastStats.success)
             readyToDie = true
         return action
     }

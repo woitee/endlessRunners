@@ -1,7 +1,7 @@
 package game.gameDescriptions
 
 import game.gameActions.ChangeShapeAction
-import game.gameActions.GameAction
+import game.gameActions.abstract.GameAction
 import game.gameActions.JumpAction
 
 /**

@@ -27,6 +27,14 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         val gridsBetween = gameState.gridLocationsBetween(ax, ay, bx, by)
         val velocityX = ax - bx
         val velocityY = ay - by
+        if (gridsBetween.count() == 1) {
+            val gameObject = gameState.grid[gridsBetween[0]]
+            return if (gameObject?.isSolid ?: false) {
+                Collision(gameObject!!, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
+            } else {
+                null
+            }
+        }
         for (i in 1 .. gridsBetween.lastIndex) {
             val gridLoc = gridsBetween[i]
             if (gameState.grid[gridLoc]?.isSolid == true) {
@@ -69,6 +77,14 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         val aGridY = ay.toInt() / BlockWidth
         val bGridX = bx.toInt() / BlockWidth
         val bGridY = by.toInt() / BlockWidth
+        if (aGridX == bGridX && aGridY == bGridY) {
+            val gameObject = gameState.grid[aGridX - gameState.gridX, aGridY]
+            return if (gameObject?.isSolid ?: false) {
+                Collision(gameObject!!, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
+            } else {
+                null
+            }
+        }
 //        val res = ArrayList<Vector2Int>(bGrid.x - aGrid.x + Math.abs(bGrid.y - aGrid.y))
         val dirY = (by - ay) / (bx - ax)
 

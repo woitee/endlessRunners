@@ -8,8 +8,8 @@ import game.gameObjects.Player
 import game.gameObjects.SolidBlock
 import game.pcg.ILevelGenerator
 import game.gameObjects.GameObject
-import game.gameActions.GameAction
-import game.gameActions.HoldAction
+import game.gameActions.abstract.GameAction
+import game.gameActions.abstract.HoldAction
 import game.gameObjects.UndoableUpdateGameObject
 import game.gameEffects.UndoableGameEffect
 import game.undoing.NoActionUndo
@@ -41,6 +41,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         get() = gridX + WidthBlocks
     val lastColumnXpx: Double
         get() = (lastColumnX * BlockWidth).toDouble()
+    val allActions: List<GameAction>
+        get() = game.gameDescription.allActions
 
     init {
         player.x = PlayerScreenX
@@ -203,8 +205,20 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         return grid[gridLoc]
     }
 
-    fun getPerformableActions(): List<GameAction> {
-        return game.gameDescription.allActions.filter { it -> it.isApplicableOn(this) }
+    fun getPerformableActions(): ArrayList<GameAction> {
+        val performableActions = ArrayList<GameAction>()
+        for (action in game.gameDescription.allActions) {
+            if (action is HoldAction) {
+                if (action.isApplicableOn(this))
+                    performableActions.add(action.asStartAction)
+                else if (action.canBeStoppedApplyingOn(this))
+                    performableActions.add(action.asStopAction)
+            } else if (action.isApplicableOn(this)) {
+                performableActions.add(action)
+            }
+        }
+
+        return performableActions
     }
 
     public override fun clone(): Any {

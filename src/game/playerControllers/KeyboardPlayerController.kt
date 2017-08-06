@@ -1,17 +1,17 @@
 package game.playerControllers
 
-/**
- * Created by woitee on 04/03/2017.
- */
-
 import game.gameActions.*
 import game.GameState
 import game.Game
+import game.gameActions.abstract.GameAction
+import game.gameActions.abstract.HoldAction
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.*
 
 /**
+ * Class that controls the player via keyboard.
+ *
  * Created by woitee on 14/01/2017.
  */
 

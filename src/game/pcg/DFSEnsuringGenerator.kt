@@ -11,6 +11,7 @@ import java.util.*
  */
 
 class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator {
+    val dfs = DFS()
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
         val column = innerGenerator.generateNextColumn(gameState)
 
@@ -29,8 +30,8 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
         }
 
         // Search it by DFS
-        DFS.searchForAction(gameState)
-        val searchSucess = DFS.lastStats.success
+        dfs.searchForAction(gameState)
+        val searchSucess = dfs.lastStats.success
 
         // Replace gameState back into original position
         for (y in 0 .. column.lastIndex) {

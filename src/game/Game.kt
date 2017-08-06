@@ -5,7 +5,7 @@ import game.pcg.ILevelGenerator
 import game.playerControllers.PlayerController
 import game.collisions.GridDetectingCollisionHandler
 import game.gameDescriptions.GameDescription
-import game.gameActions.HoldAction
+import game.gameActions.abstract.HoldAction
 import java.util.*
 
 /**

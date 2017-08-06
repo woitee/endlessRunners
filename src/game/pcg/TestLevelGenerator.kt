@@ -17,11 +17,15 @@ class TestLevelGenerator: ILevelGenerator {
         col[0] = SolidBlock()
         val gridX = gameState.gridX
 
-        if (gridX in 5..9) {
+        if (gridX in 50..54) {
             col[3] = SolidBlock()
-        } else if (gridX in 15..19) {
+            if (gridX == 52) {
+                col[2] = SolidBlock()
+                col[1] = SolidBlock()
+            }
+        } else if (gridX in 65..69) {
             col[2] = SolidBlock()
-        } else if (gridX > 50) {
+        } else if (gridX > 120) {
             col[2] = SolidBlock()
             col[3] = SolidBlock()
             col[4] = SolidBlock()

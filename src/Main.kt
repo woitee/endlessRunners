@@ -53,8 +53,8 @@ fun createGame(): Game {
     val levelGenerator = TestLevelGenerator()
 //    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
 
-//    val playerController = DFSPlayerController()
-    val playerController = KeyboardPlayerController()
+    val playerController = DFSPlayerController()
+//    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
     val gameDescription = BitTripGameDescription()

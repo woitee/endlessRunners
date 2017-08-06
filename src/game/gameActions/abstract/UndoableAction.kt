@@ -1,4 +1,4 @@
-package game.gameActions
+package game.gameActions.abstract
 
 import game.undoing.IUndoable
 

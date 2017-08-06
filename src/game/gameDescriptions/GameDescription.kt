@@ -5,6 +5,7 @@ import game.gameActions.*
 import game.gameEffects.*
 import game.collisions.collisionEffects.*
 import game.collisions.BaseCollisionHandler.CollisionHandlerEntry
+import game.gameActions.abstract.GameAction
 import game.gameObjects.GameObjectClass
 import geom.Direction4
 

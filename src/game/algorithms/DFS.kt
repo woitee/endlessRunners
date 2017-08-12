@@ -20,21 +20,28 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-class DFS {
+class DFS (val persistentCache:Boolean = true) {
+    data class CachedState(val playerX: Double, val playerY: Double, val playerYSpeed: Double) {
+        constructor (gameState: GameState): this(gameState.player.x, gameState.player.y, gameState.player.yspeed)
+    }
     /**
      * This class contains a couple members, that hold stats from last search.
      */
     var lastStats = SearchStats()
     private var maxX: Int = 0
     private var updateTime: Double = 0.0
-    private val cachedStates = HashSet<Vector2Double>()
+    private val cachedStates = HashSet<CachedState>()
     /**
      * Searches for an action that doesn't lead to death and returns it, or null if it doesn't exist.
      */
     fun searchForAction (gameState: GameState, maxDepth: Int = 1000, updateTime: Double = -1.0, debug:Boolean = false): GameAction? {
         this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
         /** Cached states with 0 yspeed. */
-        cachedStates.clear()
+        if (persistentCache) {
+            pruneUnusableCache(gameState)
+        } else {
+            cachedStates.clear()
+        }
 
         lastStats = SearchStats()
         val startTime = System.nanoTime()
@@ -61,7 +68,7 @@ class DFS {
                     var finishedBacktrack = false
                     while (!finishedBacktrack) {
                         if (undoList.isEmpty()) {
-                            lastStats.timeTaken = ((System.nanoTime() - startTime)/1000).toDouble() / 1000
+                            lastStats.timeTaken = ((System.nanoTime() - startTime)/1000).toDouble() / 1000000
                             // No option but to lose the game
                             return null
                         }
@@ -98,13 +105,17 @@ class DFS {
             val action = possibleActionsList[0][actionIx]
             lastStats.success = true
             lastStats.cachedStates = cachedStates.count()
-            for (cachedState in cachedStates) {
-                if (debug && count++ % 15 == 0)
-                    visualizer?.debugObjects?.add(Player(cachedState.x, cachedState.y))
-            }
-            lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000
+//            for (cachedState in cachedStates) {
+//                if (debug && count++ % 15 == 0)
+//                    visualizer?.debugObjects?.add(Player(cachedState.x, cachedState.y))
+//            }
+            lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000000
             return action
         }
+    }
+
+    fun reset() {
+        cachedStates.clear()
     }
 
     /**
@@ -143,21 +154,28 @@ class DFS {
      * Decides whether the current gameState should be cached to not be searched multiple times from.
      */
     private fun shouldCache(gameState: GameState): Boolean {
-        return gameState.grid[
-            gameState.gridLocation(
-                gameState.player.x - gameState.gridX * BlockWidth,
-                gameState.player.y - 0.1
-            )
-        ]?.isSolid == true
+//        return gameState.grid[
+//            gameState.gridLocation(
+//                gameState.player.x - gameState.gridX * BlockWidth,
+//                gameState.player.y - 0.1
+//            )
+//        ]?.isSolid == true
+        return true
     }
     private fun cache(gameState: GameState) {
         if (cachedStates.count() > 1000) {
             val a = 5
         }
-        cachedStates.add(gameState.player.location)
+        cachedStates.add(CachedState(gameState))
     }
     private fun isInCache(gameState: GameState): Boolean {
-        return cachedStates.contains(gameState.player.location)
+        return cachedStates.contains(CachedState(gameState))
+    }
+    private fun pruneUnusableCache(gameState: GameState) {
+        for (cachedState in cachedStates.toList()) {
+            if (cachedState.playerX < gameState.player.x)
+                cachedStates.remove(cachedState)
+        }
     }
 
     private fun advanceState(gameState: GameState, gameAction: UndoableAction?, updateTime: Double): IUndo {

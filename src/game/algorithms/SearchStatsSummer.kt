@@ -1,5 +1,6 @@
 package game.algorithms
 
+import kotlin.repeat
 import java.util.*
 
 /**
@@ -8,19 +9,37 @@ import java.util.*
 
 class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Unit = { average -> println(average) }) {
     data class SearchStatsAverage(
+        var count: Int = 0,
         var searchedStates: Double = 0.0,
         var backtrackedStates: Double = 0.0,
         var reachedDepth: Double = 0.0,
         var success: Double = 0.0,
         var cachedStates: Double = 0.0,
-        var timeTaken: Double = 0.0
-    )
+        var timeTaken: Double = 0.0) {
+
+        override fun toString(): String {
+            fun roundDouble(x: Double, precision: Int = 2): Double {
+                var dec = 1
+                repeat(precision, { dec *= 10 })
+                return Math.round(x * dec).toDouble() / dec
+            }
+            return "SearchStatsAverage(" +
+                "count=$count, " +
+                "searched=${roundDouble(searchedStates)}, " +
+                "backtracked=${roundDouble(searchedStates)}, " +
+                "reachedDepth=${roundDouble(reachedDepth)}, " +
+                "success=${roundDouble(success)}, " +
+                "cachedStates=${roundDouble(cachedStates)}, " +
+                "timeTaken=${roundDouble(timeTaken * 1000)}ms" +
+            ")"
+        }
+    }
 
     val myStatsList = ArrayList<SearchStats>()
 
     fun noteStats(stats: SearchStats) {
         myStatsList.add(stats)
-        if (myStatsList.count() > sumEvery) {
+        if (myStatsList.count() >= sumEvery) {
             callback(average(myStatsList))
             myStatsList.clear()
         }
@@ -45,6 +64,7 @@ class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Uni
         result.cachedStates /= statsList.count()
         result.success /= statsList.count()
         result.timeTaken /= statsList.count()
+        result.count = statsList.count()
 
         return result
     }

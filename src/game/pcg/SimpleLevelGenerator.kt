@@ -27,12 +27,17 @@ class SimpleLevelGenerator: ILevelGenerator {
         for (i in 0 .. currentHeight - 1) {
             col[i] = SolidBlock()
         }
-        var rnd = gameState.game.random.nextDouble()
-        for ((key, value) in probableTransfers) {
-            rnd -= value
-            if (rnd < 0) {
-                currentHeight += key
-                break
+        val random = gameState.game.random
+        if (random.nextDouble() < 0.1) {
+            col[currentHeight + 1] = SolidBlock()
+        } else {
+            var rnd = random.nextDouble()
+            for ((key, value) in probableTransfers) {
+                rnd -= value
+                if (rnd < 0) {
+                    currentHeight += key
+                    break
+                }
             }
         }
         currentHeight = currentHeight.coerceIn(1, 8)

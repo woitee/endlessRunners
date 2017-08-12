@@ -49,11 +49,14 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
                     column[y] = null
                 }
             }
+            // Reset caches in DFS, because we have changed the column
+            dfs.reset()
         }
         return column
     }
 
     override fun reset() {
         innerGenerator.reset()
+        dfs.reset()
     }
 }

@@ -94,7 +94,11 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         for (gameEffect in game.gameDescription.permanentEffects) {
             gameEffect.applyOn(this)
         }
-
+        for (heldAction in heldActions.keys) {
+            if (!heldAction.canBeKeptApplyingOn(this)) {
+                heldAction.stopApplyingOn(this)
+            }
+        }
         if (scrolling) {
             if (levelGenerator == null) {
                 println("Level Generator should be set when scrolling!")
@@ -115,12 +119,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
             }
         }
         gameTime += time
-
-        for (heldAction in heldActions.keys) {
-            if (!heldAction.canBeKeptApplyingOn(this)) {
-                heldAction.stopApplyingOn(this)
-            }
-        }
     }
     fun advanceUndoable(time: Double): IUndo {
         val undoList = DefaultUndoListPool.borrowObject()

@@ -13,7 +13,7 @@ import java.util.*
  * A class to generate level from pre-saved 2D blocks.
  * Created by woitee on 13/08/2017.
  */
-class BlockGenerator (val gameDescription: GameDescription, val mode: Mode = BlockGenerator.Mode.REPEAT): ILevelGenerator {
+class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode = BlockLevelGenerator.Mode.REPEAT): ILevelGenerator {
     enum class Mode {
         REPEAT,
         RANDOM

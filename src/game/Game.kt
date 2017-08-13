@@ -74,8 +74,6 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     }
 
     private fun update(time: Double) {
-        gameState.advance(time, true)
-
         val controllerOutput = playerController.onUpdate(gameState)
         if (controllerOutput != null) {
             val gameAction = controllerOutput.action
@@ -85,5 +83,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
                 gameAction.stopApplyingOn(gameState)
             }
         }
+        
+        gameState.advance(time, true)
     }
 }

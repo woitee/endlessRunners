@@ -23,7 +23,7 @@ import utils.reverse
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable {
+class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
     var updateObjects = arrayListOf<GameObject>(player)
@@ -159,7 +159,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {
-        return Vector2Int((x / BlockWidth).toInt(), (y / BlockHeight).toInt())
+        return Vector2Int((x / BlockWidth - gridX).toInt(), (y / BlockHeight).toInt())
     }
     fun gridLocationsBetween(a: Vector2Double, b: Vector2Double): ArrayList<Vector2Int> {
         return gridLocationsBetween(a.x, a.y, b.x, b.y);
@@ -187,20 +187,47 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()
             for (gridY in autoRange(lastGridY, curGridY)) {
-                res.add(Vector2Int(gridX - this.gridX, gridY))
+                res.add(Vector2Int(gridX, gridY))
             }
             lastGridY = curGridY
         }
         for (gridY in autoRange(lastGridY, bGrid.y)) {
-            res.add(Vector2Int(bGrid.x - this.gridX, gridY))
+            res.add(Vector2Int(bGrid.x, gridY))
         }
         return res
     }
 
     fun atLocation(x: Double, y:Double): GameObject? {
-        val gridLoc = gridLocation(x, y)
-        gridLoc.x -= gridX
-        return grid[gridLoc]
+        return grid[gridLocation(x, y)]
+    }
+
+    fun textDump(): ArrayList<String> {
+        // Convert objects to char grid
+        val charGrid = Grid2D(grid.width, grid.height, {' '})
+        for (gameObject in gameObjects) {
+            val gridLoc = gridLocation(gameObject.x, gameObject.y)
+            for (x in gridLoc.x .. gridLoc.x + gameObject.widthBlocks - 1) {
+                for (y in gridLoc.y .. gridLoc.y + gameObject.heightBlocks - 1) {
+                    charGrid[x, y] = gameObject.dumpChar
+                }
+            }
+        }
+
+        // Convert char grid to strings
+        val strings = ArrayList<String>()
+        for (y in (grid.height - 1).downTo(0)) {
+            val sb = StringBuilder(grid.width)
+            for (x in 0.. grid.width - 1) {
+                sb.append(charGrid[x, y])
+            }
+            strings.add(sb.toString())
+        }
+        return strings
+    }
+    fun print() {
+        for (line in textDump()) {
+            println(line)
+        }
     }
 
     fun getPerformableActions(): ArrayList<GameAction> {
@@ -217,9 +244,5 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?): Cloneable
         }
 
         return performableActions
-    }
-
-    public override fun clone(): Any {
-        return super.clone()
     }
 }

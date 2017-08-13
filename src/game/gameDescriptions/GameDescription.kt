@@ -1,13 +1,18 @@
 package game.gameDescriptions
 
 import game.BlockHeight
+import game.Game
 import game.gameActions.*
 import game.gameEffects.*
 import game.collisions.collisionEffects.*
 import game.collisions.BaseCollisionHandler.CollisionHandlerEntry
 import game.gameActions.abstract.GameAction
+import game.gameObjects.GameObject
 import game.gameObjects.GameObjectClass
+import game.gameObjects.Player
+import game.gameObjects.SolidBlock
 import geom.Direction4
+import java.util.*
 
 /**
  * This class contains the "Genotype" or "Settings" of the game. It contains all the possible blocks, actions and effects,
@@ -21,6 +26,10 @@ import geom.Direction4
  */
 
 open class GameDescription {
+    /**
+     * Every game implicitly uses Player and SolidBlock.
+     */
+    open val customObjects: List<GameObject> = ArrayList<GameObject>()
     open val playerStartingSpeed = 12.0
     open val allActions = listOf<GameAction>(JumpAction(22.0))
     open val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
@@ -34,4 +43,27 @@ open class GameDescription {
             ApplyGameEffect(GameOver())
         )
     )
+
+    /**
+     * Returns all gameObjects used in this game.
+     */
+    val allObjects: List<GameObject>
+        get() {
+            val res = ArrayList(this.customObjects)
+            res.add(Player())
+            res.add(SolidBlock())
+            return res
+        }
+
+    protected val _charToObject = HashMap<Char, GameObject?>()
+    val charToObject: Map<Char, GameObject?>
+        get() {
+            if (_charToObject.size == 0) {
+                _charToObject[' '] = null
+                for (gameObject in allObjects) {
+                    _charToObject[gameObject.dumpChar] = gameObject
+                }
+            }
+            return _charToObject
+        }
 }

@@ -36,7 +36,6 @@ class DFS (val persistentCache:Boolean = true) {
      */
     fun searchForAction (gameState: GameState, maxDepth: Int = 1000, updateTime: Double = -1.0, debug:Boolean = false): GameAction? {
         this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
-        /** Cached states with 0 yspeed. */
         if (persistentCache) {
             pruneUnusableCache(gameState)
         } else {

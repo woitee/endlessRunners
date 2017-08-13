@@ -1,5 +1,7 @@
 package game.gameActions
 
+import game.BlockHeight
+import game.BlockWidth
 import game.GameState
 import game.gameActions.abstract.UndoableHoldAction
 
@@ -27,6 +29,18 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int): UndoableHo
     private val _changeShapeUndo = ChangeShapeUndo(this)
 
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
+        for (x in 0 .. targetWidth) {
+            for (y in 0 .. targetHeight) {
+                val gridX = (gameState.player.x / BlockWidth).toInt() - gameState.gridX + x
+                val gridY = ((gameState.player.y - 1) / BlockHeight).toInt() + y
+                if (gridX >= gameState.grid.width || gridY >= gameState.grid.height) {
+                    return true
+                }
+                if (gameState.grid[gridX, gridY]?.isSolid == true) {
+                    return false
+                }
+            }
+        }
         return true
     }
     override fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean {

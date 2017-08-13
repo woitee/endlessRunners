@@ -64,7 +64,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
      */
     fun nearestByGridLocations(gameState: GameState, ax: Double, ay: Double, bx: Double, by: Double): Collision? {
         // Assume a is lefter than b (has less Y)
-        // Player usually runs left to right, exceptional situations now run through the unoptimized version
+        // Player usually runs left to right, exceptional situations run through the unoptimized version
         if (bx < ax) {
             return unoptimizedVersion(gameState, ax, ay, bx, by)
         }
@@ -73,19 +73,19 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
             return if (a <= b) a..b else a downTo b
         }
 
-        val aGridX = ax.toInt() / BlockWidth
+        val aGridX = ax.toInt() / BlockWidth - gameState.gridX
         val aGridY = ay.toInt() / BlockWidth
-        val bGridX = bx.toInt() / BlockWidth
+        val bGridX = bx.toInt() / BlockWidth - gameState.gridX
         val bGridY = by.toInt() / BlockWidth
         if (aGridX == bGridX && aGridY == bGridY) {
-            val gameObject = gameState.grid[aGridX - gameState.gridX, aGridY]
+            // no change of grid location -> check if collision at this one spot
+            val gameObject = gameState.grid[aGridX, aGridY]
             return if (gameObject?.isSolid ?: false) {
                 Collision(gameObject!!, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
             } else {
                 null
             }
         }
-//        val res = ArrayList<Vector2Int>(bGrid.x - aGrid.x + Math.abs(bGrid.y - aGrid.y))
         val dirY = (by - ay) / (bx - ax)
 
         // We proceed by strips of vertical blocks - lastGrid means list stripe, prevGrid means really previous
@@ -95,14 +95,14 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         var skippedFirst = false
         // we'll go by vertical
         for (gridX in aGridX .. bGridX - 1) {
-            val borderX = (gridX + 1) * BlockWidth
+            val borderX = (gameState.gridX + gridX + 1) * BlockWidth
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()
             for (gridY in autoRange(lastGridY, curGridY)) {
                 if (!skippedFirst) {
                     skippedFirst = true
-                } else if (gameState.grid[gridX - gameState.gridX, gridY]?.isSolid == true) {
-                    return collisionFromGridLoc(gameState, ax, ay, bx, by,gridX - gameState.gridX, gridY, gridX - prevGridX, gridY - prevGridY)
+                } else if (gameState.grid[gridX, gridY]?.isSolid == true) {
+                    return collisionFromGridLoc(gameState, ax, ay, bx, by, gridX, gridY, gridX - prevGridX, gridY - prevGridY)
                 }
                 prevGridX = gridX
                 prevGridY = gridY
@@ -112,8 +112,8 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         for (gridY in autoRange(lastGridY, bGridY)) {
             if (!skippedFirst) {
                 skippedFirst = true
-            } else if (gameState.grid[bGridX - gameState.gridX, gridY]?.isSolid == true) {
-                return collisionFromGridLoc(gameState, ax, ay, bx, by, bGridX - gameState.gridX, gridY, bGridX - prevGridX, gridY - prevGridY)
+            } else if (gameState.grid[bGridX, gridY]?.isSolid == true) {
+                return collisionFromGridLoc(gameState, ax, ay, bx, by, bGridX, gridY, bGridX - prevGridX, gridY - prevGridY)
             }
             prevGridX = bGridX
             prevGridY = gridY

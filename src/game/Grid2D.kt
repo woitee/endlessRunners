@@ -6,7 +6,7 @@ import utils.arrayList
 import utils.shift
 
 /**
- * A helper grid that describes the objects as the
+ * A helper grid that describes the objects as a 2D Grid.
  *
  * Created by woitee on 13/01/2017.
  */

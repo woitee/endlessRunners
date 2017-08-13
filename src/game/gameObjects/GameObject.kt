@@ -21,6 +21,8 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
     open var widthBlocks: Int = 1
     open var heightBlocks: Int = 1
 
+    open val dumpChar = '?'
+
     var location: Vector2Double
         get() = Vector2Double(x, y)
         set(value) {x = value.x; y = value.y}
@@ -79,5 +81,6 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
             return _collPoints!!
         }
 
+    abstract fun shallowCopy(): GameObject
 }
 

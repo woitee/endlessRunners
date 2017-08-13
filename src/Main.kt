@@ -47,18 +47,19 @@ fun test() {
 }
 
 fun createGame(): Game {
+    val gameDescription = BitTripGameDescription()
+//    val gameDescription = GameDescription()
+
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
+//    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
+    val levelGenerator = BlockGenerator(gameDescription)
 
     val playerController = DFSPlayerController()
 //    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
-
-    val gameDescription = BitTripGameDescription()
-//    val gameDescription = GameDescription()
 
     return Game(levelGenerator, playerController, visualiser,
         mode = Game.Mode.INTERACTIVE,

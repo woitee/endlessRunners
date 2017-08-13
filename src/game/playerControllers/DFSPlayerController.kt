@@ -43,8 +43,10 @@ class DFSPlayerController: PlayerController() {
 
     fun performDFS(gameState: GameState): GameAction? {
         val action = dfs.searchForAction(gameState, debug=true)
-        if (!dfs.lastStats.success)
+        if (!dfs.lastStats.success) {
+            gameState.print()
             readyToDie = true
+        }
         return action
     }
 }

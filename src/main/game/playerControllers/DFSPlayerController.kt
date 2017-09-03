@@ -4,7 +4,9 @@ import game.algorithms.DFS
 import game.algorithms.SearchStatsSummer
 import game.gameActions.abstract.GameAction
 import game.GameState
+import game.pcg.DFSEnsuringGenerator
 import java.io.File
+import java.io.ObjectOutputStream
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,7 +27,11 @@ class DFSPlayerController: PlayerController() {
         val action = performDFS(gameState)
 
         if (logFile == null) {
-            val logFileName = "log/DFSlog_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".csv"
+            val datestring = SimpleDateFormat("yyyy_MM_dd").format(Date())
+            val datetimestring = SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date())
+            val logFolderName = "out/log/$datestring"
+            val logFileName = "$logFolderName/DFSlog_$datetimestring.csv"
+            File(logFolderName).mkdirs()
             logFile = File(logFileName).printWriter()
             logFile!!.println("SearchedStates,Time")
         }
@@ -45,8 +51,23 @@ class DFSPlayerController: PlayerController() {
         val action = dfs.searchForAction(gameState, debug=true)
         if (!dfs.lastStats.success) {
             gameState.print()
+            dumpState(gameState)
             readyToDie = true
         }
         return action
+    }
+
+    fun dumpState(gameState: GameState) {
+        val dfsLevelGenerator = gameState.game.levelGenerator as? DFSEnsuringGenerator
+
+        val logFileName = "out/states/GameState_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
+        val file = File(logFileName)
+        val oos = ObjectOutputStream(file.outputStream())
+        gameState.writeObject(oos)
+        if (dfsLevelGenerator != null) {
+            dfsLevelGenerator.lastGameState?.writeObject(oos)
+        }
+        oos.flush()
+        oos.close()
     }
 }

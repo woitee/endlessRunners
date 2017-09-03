@@ -14,14 +14,13 @@ import java.util.*
 
 class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
-           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong()) {
+           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION
     }
 
     val collHandler = GridDetectingCollisionHandler(this)
-    var gameState = GameState(this, levelGenerator)
     val random = Random(seed)
     // This shows time since last update, and can be used in methods
     var updateTime = 1.0 / updateRate
@@ -29,7 +28,9 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate, useRealTime = true) else null
 
-    var onGameOver = { this.reset(); }
+    var onGameOver = { if (restartOnGameOver) this.reset() else this.stop(); }
+    // keep on bottom, it should be the last variable initialized
+    var gameState = GameState(this, levelGenerator)
 
     /**
      * Runs the game synchronously - this function will not exit until the game finishes.

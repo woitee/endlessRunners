@@ -30,7 +30,6 @@ class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val use
                 val cycleTime = if (fullCycleStopwatch.isStarted) fullCycleStopwatch.stop() else cycleTimeMillis
                 fullCycleStopwatch.start()
                 timeTakenStopwatch.start()
-//                task(cycleTime.toDouble() / 1000)
                 task(cycleTimeSeconds)
                 val timeTaken = timeTakenStopwatch.stop()
                 if (cycleTimeMillis > timeTaken) {

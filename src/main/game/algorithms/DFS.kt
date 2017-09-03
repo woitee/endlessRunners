@@ -48,7 +48,7 @@ class DFS (val persistentCache:Boolean = true) {
         if (debug)
             visualizer?.debugObjects?.clear()
 
-        synchronized(gameState.gameObjects) {
+//        synchronized(gameState.gameObjects) {
             val undoList = ArrayList<IUndo>()
             val actionList = ArrayList<Int>()
             val possibleActionsList = ArrayList<List<UndoableAction?>>()
@@ -110,7 +110,7 @@ class DFS (val persistentCache:Boolean = true) {
 //            }
             lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000000
             return action
-        }
+//        }
     }
 
     fun reset() {

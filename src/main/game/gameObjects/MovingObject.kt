@@ -59,14 +59,16 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
         this.y = nextY(time)
     }
 
-    override fun readObject(ois: ObjectInputStream) {
+    override fun readObject(ois: ObjectInputStream): MovingObject {
         super.readObject(ois)
         xspeed = ois.readDouble()
         yspeed = ois.readDouble()
+        return this
     }
-    override fun writeObject(oos: ObjectOutputStream) {
+    override fun writeObject(oos: ObjectOutputStream): MovingObject {
         super.writeObject(oos)
         oos.writeDouble(xspeed)
         oos.writeDouble(yspeed)
+        return this
     }
 }

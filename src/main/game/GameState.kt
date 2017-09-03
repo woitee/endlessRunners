@@ -37,7 +37,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
     var updateObjects = arrayListOf<GameObject>(player)
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
     var gridX = 0
-    var lastAdvanceTime = 0.0
+    var lastAdvanceTime = game.updateTime
         private set
     var gameTime = 0.0
         private set
@@ -284,7 +284,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
         return stateCopy
     }
 
-    override fun writeObject(oos: ObjectOutputStream) {
+    override fun writeObject(oos: ObjectOutputStream): GameState {
         oos.writeInt(gridX)
         oos.writeInt(heldActions.count())
         for ((holdAction, time) in heldActions) {
@@ -297,9 +297,10 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
             gameObject.writeObject(oos)
         }
         oos.writeBoolean(isGameOver)
+        return this
     }
 
-    override fun readObject(ois: ObjectInputStream) {
+    override fun readObject(ois: ObjectInputStream):GameState {
         gridX = ois.readInt()
 
         heldActions.clear()
@@ -337,5 +338,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
         }
 
         isGameOver = ois.readBoolean()
+        return this
     }
 }

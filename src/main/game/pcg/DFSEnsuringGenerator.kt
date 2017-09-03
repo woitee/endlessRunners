@@ -3,6 +3,7 @@ package game.pcg
 import game.gameObjects.GameObject
 import game.gameObjects.*
 import game.algorithms.DFS
+import game.*
 import java.util.*
 
 /**
@@ -11,7 +12,10 @@ import java.util.*
 
 class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator {
     val dfs = DFS()
+    var lastGameState: GameState? = null
+
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
+        lastGameState = gameState.makeCopy()
         val column = innerGenerator.generateNextColumn(gameState)
 
         // Create a new grid with added column

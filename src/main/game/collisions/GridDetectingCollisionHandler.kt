@@ -130,7 +130,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         val velocityX = ax - bx
         val velocityY = ay - by
         if (relY == 0) {
-            colX = ((if (relX > 0) gridX else gridX + 1) * BlockWidth).toDouble()
+            colX = (((if (relX > 0) gridX else gridX + 1) + gameState.gridX) * BlockWidth).toDouble()
             val ratio = (colX - ax) / velocityX
             colY = ratio * velocityY + ay
         } else {

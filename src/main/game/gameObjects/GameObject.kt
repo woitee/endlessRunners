@@ -85,19 +85,19 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializa
         }
 
     abstract fun makeCopy(): GameObject
-    override fun readObject(ois: ObjectInputStream) {
-        println("Reading object " + dumpChar)
+    override fun readObject(ois: ObjectInputStream): GameObject {
         x = ois.readDouble()
         y = ois.readDouble()
         heightBlocks = ois.readInt()
         widthBlocks = ois.readInt()
+        return this
     }
-    override fun writeObject(oos: ObjectOutputStream) {
-        println("Writing object " + dumpChar)
+    override fun writeObject(oos: ObjectOutputStream): GameObject {
         oos.writeDouble(x)
         oos.writeDouble(y)
         oos.writeInt(heightBlocks)
         oos.writeInt(widthBlocks)
+        return this
     }
 }
 

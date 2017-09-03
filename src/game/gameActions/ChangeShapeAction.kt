@@ -29,18 +29,16 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int): UndoableHo
     private val _changeShapeUndo = ChangeShapeUndo(this)
 
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
-        for (x in 0 .. targetWidth) {
-            for (y in 0 .. targetHeight) {
-                val gridX = (gameState.player.x / BlockWidth).toInt() - gameState.gridX + x
-                val gridY = ((gameState.player.y - 1) / BlockHeight).toInt() + y
-                if (gridX >= gameState.grid.width || gridY >= gameState.grid.height) {
-                    return true
-                }
-                if (gameState.grid[gridX, gridY]?.isSolid == true) {
-                    return false
-                }
+        innerApplyOn(gameState)
+        for (collPoint in gameState.player.collPoints) {
+            val gridLoc = gameState.gridLocation(collPoint)
+
+            if (gameState.grid.contains(gridLoc) && gameState.grid[gridLoc]?.isSolid == true) {
+                innerStopApplyingOn(gameState, 0.0)
+                return false
             }
         }
+        innerStopApplyingOn(gameState, 0.0)
         return true
     }
     override fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean {

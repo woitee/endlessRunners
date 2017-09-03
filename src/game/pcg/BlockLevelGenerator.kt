@@ -35,46 +35,32 @@ class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode =
 
     var blocks = arrayListOf(
         Block(gameDescription, arrayListOf(
-  "                             ##    ",
-            "                            ###    ",
-            "      #    #  #   #       #####    ",
-            "##                  ##   ######    ",
-            "###################################"
+            "    ####################",
+            "########################",
+            "########################"
         )),
         Block(gameDescription, arrayListOf(
-  "                                 ",
-            "                            #    ",
-            "      #    #  #   #       ###    ",
-            "##                  ##   ####    ",
-            "#################################"
+            "          # #                  ",
+            "                               ",
+            "## #   #######   #  #      ## #",
+            "#### #############        #####",
+            "###############################"
         )),
         Block(gameDescription, arrayListOf(
-            "###########################"
-        )),
-        Block(gameDescription, arrayListOf(
-            "            #                       ",
-            "                                    ",
-            "           #####                    ",
-            "       #########     #              ",
-            "     ############   ##            ##",
-            "     ##################             ",
-            "#######################           ##",
-            "########################## #########",
-            "####################################"
-        )),
-        Block(gameDescription, arrayListOf(
+                "         ################  ",
+                "         ################  ",
+                "         ################  ",
                 "###########################"
         )),
         Block(gameDescription, arrayListOf(
-            "            #                       ",
-            "                                    ",
-            "           #####                    ",
-            "       #########     #              ",
-            "     ############   ##            ##",
-            "     ##################     # #     ",
-            "#######################           ##",
-            "########################## #########",
-            "####################################"
+            "                               ",
+            "                         ## ## ",
+            "        ##             ########",
+            "                 ##############",
+            "       ####    ################",
+            "     ##########################",
+            " ##############################",
+            "###############################"
         ))
     )
     var currentBlockIx = -1
@@ -99,7 +85,7 @@ class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode =
         val col = arrayList<GameObject?>(HeightBlocks, { null })
         for (y in 0 .. HeightBlocks - 1) {
             if (y < block.height)
-                col[y] = block.definition[currentBlockOffset, y]?.shallowCopy()
+                col[y] = block.definition[currentBlockOffset, y]?.makeCopy()
             else
                 col[y] = null
         }

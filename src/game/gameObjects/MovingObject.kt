@@ -5,6 +5,8 @@ import game.BlockWidth
 import game.GameState
 import game.undoing.IUndo
 import geom.Vector2Double
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 /**
  * Created by woitee on 15/01/2017.
@@ -55,5 +57,16 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
     private fun updateMovement(time: Double) {
         this.x = nextX(time)
         this.y = nextY(time)
+    }
+
+    override fun readObject(ois: ObjectInputStream) {
+        super.readObject(ois)
+        xspeed = ois.readDouble()
+        yspeed = ois.readDouble()
+    }
+    override fun writeObject(oos: ObjectOutputStream) {
+        super.writeObject(oos)
+        oos.writeDouble(xspeed)
+        oos.writeDouble(yspeed)
     }
 }

@@ -1,6 +1,5 @@
 package game.pcg
 
-import game.*
 import game.gameObjects.GameObject
 import game.gameObjects.*
 import game.algorithms.DFS

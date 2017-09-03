@@ -4,14 +4,17 @@ import game.BlockHeight
 import game.BlockWidth
 import game.GameState
 import geom.Vector2Double
+import utils.MySerializable
 import utils.arrayList
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.util.*
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
-abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
+abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializable {
     abstract val gameObjectClass: GameObjectClass
 
     open var isUpdated: Boolean = false
@@ -81,6 +84,20 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) {
             return _collPoints!!
         }
 
-    abstract fun shallowCopy(): GameObject
+    abstract fun makeCopy(): GameObject
+    override fun readObject(ois: ObjectInputStream) {
+        println("Reading object " + dumpChar)
+        x = ois.readDouble()
+        y = ois.readDouble()
+        heightBlocks = ois.readInt()
+        widthBlocks = ois.readInt()
+    }
+    override fun writeObject(oos: ObjectOutputStream) {
+        println("Writing object " + dumpChar)
+        oos.writeDouble(x)
+        oos.writeDouble(y)
+        oos.writeInt(heightBlocks)
+        oos.writeInt(widthBlocks)
+    }
 }
 

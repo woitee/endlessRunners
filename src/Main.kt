@@ -55,7 +55,7 @@ fun createGame(): Game {
 
 //    val levelGenerator = TestLevelGenerator()
 //    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator())
-    val levelGenerator = BlockLevelGenerator(gameDescription)
+    val levelGenerator = DFSEnsuringGenerator(BlockLevelGenerator(gameDescription))
 
     val playerController = DFSPlayerController()
 //    val playerController = KeyboardPlayerController()

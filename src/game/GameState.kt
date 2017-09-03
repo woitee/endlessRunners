@@ -12,18 +12,26 @@ import game.gameActions.abstract.GameAction
 import game.gameActions.abstract.HoldAction
 import game.gameObjects.UndoableUpdateGameObject
 import game.gameEffects.UndoableGameEffect
+import game.gameObjects.GameObjectClass
 import game.undoing.NoActionUndo
 import game.undoing.UndoFactory
 import geom.Vector2Double
 import geom.Vector2Int
+import utils.MySerializable
 import utils.pools.DefaultUndoListPool
 import utils.reverse
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
+class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerializable {
+    // parameterless constructor for serialization purposes
+    constructor(): this(DummyObjects.createDummyGame(), null)
+
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
     var updateObjects = arrayListOf<GameObject>(player)
@@ -99,6 +107,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
                 heldAction.stopApplyingOn(this)
             }
         }
+        gameTime += time
+
         if (scrolling) {
             if (levelGenerator == null) {
                 println("Level Generator should be set when scrolling!")
@@ -118,7 +128,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
                 }
             }
         }
-        gameTime += time
     }
     fun advanceUndoable(time: Double): IUndo {
         val undoList = DefaultUndoListPool.borrowObject()
@@ -160,6 +169,9 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
 
     fun gridLocation(x: Double, y: Double): Vector2Int {
         return Vector2Int((x / BlockWidth - gridX).toInt(), (y / BlockHeight).toInt())
+    }
+    fun gridLocation(point: Vector2Double): Vector2Int {
+        return gridLocation(point.x, point.y)
     }
     fun gridLocationsBetween(a: Vector2Double, b: Vector2Double): ArrayList<Vector2Int> {
         return gridLocationsBetween(a.x, a.y, b.x, b.y);
@@ -244,5 +256,86 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) {
         }
 
         return performableActions
+    }
+
+    /**
+     * This copy is not exactly deep or shallow, it copies what it needs to have a state that does not depend on it.
+     */
+    fun makeCopy(): GameState {
+        val stateCopy = GameState(game, levelGenerator)
+        stateCopy.player = player.makeCopy()
+        stateCopy.gridX = gridX
+        stateCopy.heldActions = HashMap(heldActions)
+
+        // Handle gameObjects
+        stateCopy.gameObjects.clear()
+        stateCopy.updateObjects.clear()
+        stateCopy.grid.clear()
+        for (gameObject in gameObjects) {
+            val objectCopy = gameObject.makeCopy()
+            objectCopy.gameState = this
+            stateCopy.gameObjects.add(objectCopy)
+            if (objectCopy.isUpdated)
+                stateCopy.updateObjects.add(objectCopy)
+            stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
+        }
+
+        stateCopy.isGameOver = isGameOver
+        return stateCopy
+    }
+
+    override fun writeObject(oos: ObjectOutputStream) {
+        oos.writeInt(gridX)
+        oos.writeInt(heldActions.count())
+        for ((holdAction, time) in heldActions) {
+            oos.writeBytes(holdAction.javaClass.simpleName)
+            oos.writeDouble(time)
+        }
+        oos.writeInt(gameObjects.count())
+        for (gameObject in gameObjects) {
+            oos.writeChar(gameObject.dumpChar.toInt())
+            gameObject.writeObject(oos)
+        }
+        oos.writeBoolean(isGameOver)
+    }
+
+    override fun readObject(ois: ObjectInputStream) {
+        gridX = ois.readInt()
+
+        heldActions.clear()
+        val heldActionsCount = ois.readInt()
+        for (i in 1 .. heldActionsCount) {
+            val holdActionName = ois.readBytes().toString()
+            for (holdAction in allActions) {
+                if (holdAction.javaClass.simpleName == holdActionName) {
+                    heldActions[holdAction as HoldAction] = ois.readDouble()
+                    break
+                }
+            }
+        }
+
+        gameObjects.clear()
+        updateObjects.clear()
+        grid.clear()
+        val gameObjectCount = ois.readInt()
+        var foundPlayer = false
+        for (i in 1 .. gameObjectCount) {
+            val char: Char = ois.readChar()
+            val gameObject = game.gameDescription.charToObject[char]!!.makeCopy()
+            gameObject.readObject(ois)
+            gameObject.gameState = this
+            gameObjects.add(gameObject)
+            if (gameObject.isUpdated)
+                updateObjects.add(gameObject)
+            grid[gridLocation(gameObject.location)] = gameObject
+            if (gameObject.gameObjectClass == GameObjectClass.PLAYER) {
+                if (foundPlayer)
+                    throw Exception("Multiple players found while reading GameState")
+                foundPlayer = true
+                player = gameObject as Player
+            }
+        }
+
+        isGameOver = ois.readBoolean()
     }
 }

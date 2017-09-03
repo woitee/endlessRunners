@@ -15,7 +15,7 @@ import java.util.*
 class DFSPlayerController: PlayerController() {
     var readyToDie = false
     var logFile: PrintWriter? = null
-    val statsSummer = SearchStatsSummer(sumEvery = 1000)
+    val statsSummer = SearchStatsSummer(sumEvery = 10000)
     val dfs = DFS()
 
     override fun onUpdate(gameState: GameState): PlayerControllerOutput? {

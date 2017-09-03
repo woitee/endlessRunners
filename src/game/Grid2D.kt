@@ -31,6 +31,10 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
         return this
     }
 
+    operator fun set(p: Vector2Int, obj: T): Grid2D<T> {
+        return set(p.x, p.y, obj)
+    }
+
     fun setColumn(x: Int, column: ArrayList<T>): Grid2D<T>  {
         grid[x] = column
         return this
@@ -44,6 +48,20 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
         for (col in grid) {
             col.shift(amount, factory)
         }
+    }
+
+    fun clear() {
+        for (col in grid) {
+            for (i in 0 until height)
+                col[i] = factory()
+        }
+    }
+
+    fun contains(x: Int, y: Int): Boolean {
+        return x in 0 until width && y in 0 until height
+    }
+    fun contains(point: Vector2Int): Boolean {
+        return contains(point.x, point.y)
     }
 
     fun forEach(action: (T) -> Unit, afterRow: (Int) -> Unit = {}) {

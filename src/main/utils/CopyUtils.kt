@@ -29,7 +29,6 @@ object CopyUtils {
         for (constructor in T::class.constructors) {
             val count = constructor.parameters.count { !it.isOptional }
             if (count == 0) {
-                val defaultParams = constructor.parameters.map { it.kind.ordinal }
                 return constructor.call()
             }
         }

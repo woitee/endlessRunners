@@ -19,6 +19,9 @@ class Player(x: Double, y:Double): MovingObject(x, y) {
 
     override val dumpChar = 'P'
 
+    val defaultColor = GameObjectColor.BLUE
+    override var color = GameObjectColor.BLUE
+
     fun positionOnScreen(): Double {
         return this.x - (gameState.gridX * game.BlockWidth)
     }

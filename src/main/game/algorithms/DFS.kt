@@ -95,7 +95,6 @@ class DFS (val persistentCache:Boolean = true) {
                 }
             }
 
-            var count = 0
             for (undo in undoList.asReversed()) {
                 undo.undo(gameState)
             }
@@ -162,9 +161,6 @@ class DFS (val persistentCache:Boolean = true) {
         return true
     }
     private fun cache(gameState: GameState) {
-        if (cachedStates.count() > 1000) {
-            val a = 5
-        }
         cachedStates.add(CachedState(gameState))
     }
     private fun isInCache(gameState: GameState): Boolean {

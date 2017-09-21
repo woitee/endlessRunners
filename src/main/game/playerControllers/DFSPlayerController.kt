@@ -4,7 +4,7 @@ import game.algorithms.DFS
 import game.algorithms.SearchStatsSummer
 import game.gameActions.abstract.GameAction
 import game.GameState
-import game.pcg.DFSEnsuringGenerator
+import game.levelGenerators.DFSEnsuringGenerator
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter

@@ -12,13 +12,6 @@ import game.undoing.IUndo
  */
 
 class JumpAction(val power:Double): UndoableAction() {
-    class JumpActionUndo(val originalPlayerYSpeed: Double): IUndo {
-        override fun undo(gameState: GameState) {
-            gameState.player.yspeed = this.originalPlayerYSpeed
-        }
-    }
-    var oldSpeed = 0.0
-
     override fun isApplicableOn(gameState: GameState): Boolean {
         val x = gameState.player.x
         val y = gameState.player.y - 1
@@ -33,8 +26,13 @@ class JumpAction(val power:Double): UndoableAction() {
     }
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {
-        val undo = JumpActionUndo(gameState.player.yspeed)
-        gameState.player.yspeed = power
-        return undo
+        val originalYSpeed = gameState.player.yspeed
+        applyOn(gameState)
+
+        return object : IUndo {
+            override fun undo(gameState: GameState) {
+                gameState.player.yspeed = originalYSpeed
+            }
+        }
     }
 }

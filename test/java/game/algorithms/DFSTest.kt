@@ -1,13 +1,10 @@
 package game.algorithms
 
-import game.DummyObjects
 import game.Game
 import game.gameDescriptions.BitTripGameDescription
-import game.pcg.DFSEnsuringGenerator
-import game.pcg.SimpleLevelGenerator
+import game.levelGenerators.DFSEnsuringGenerator
+import game.levelGenerators.SimpleLevelGenerator
 import game.playerControllers.DFSPlayerController
-import gui.GamePanelVisualizer
-import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream
 

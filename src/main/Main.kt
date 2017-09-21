@@ -3,7 +3,7 @@ import game.Game
 import game.gameObjects.GameObject
 import game.gameObjects.SolidBlock
 import game.Grid2D
-import game.pcg.*
+import game.levelGenerators.*
 import game.playerControllers.*
 import utils.StopWatch
 import game.gameDescriptions.*

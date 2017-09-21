@@ -25,6 +25,7 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializa
     open var heightBlocks: Int = 1
 
     open val dumpChar = '?'
+    open var color = GameObjectColor.UNSPECIFIED
 
     var location: Vector2Double
         get() = Vector2Double(x, y)

@@ -1,7 +1,7 @@
 package game
 
 import utils.TimedThread
-import game.pcg.ILevelGenerator
+import game.levelGenerators.ILevelGenerator
 import game.playerControllers.PlayerController
 import game.collisions.GridDetectingCollisionHandler
 import game.gameDescriptions.GameDescription

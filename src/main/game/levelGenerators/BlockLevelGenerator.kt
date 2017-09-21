@@ -1,4 +1,4 @@
-package game.pcg
+package game.levelGenerators
 
 import game.GameState
 import game.Grid2D

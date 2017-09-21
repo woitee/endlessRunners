@@ -1,6 +1,6 @@
 package game
 
-import game.pcg.FlatLevelGenerator
+import game.levelGenerators.FlatLevelGenerator
 import game.playerControllers.RandomPlayerController
 
 object DummyObjects {

@@ -1,4 +1,4 @@
-package game.pcg
+package game.levelGenerators
 
 import game.gameObjects.GameObject
 import game.gameObjects.SolidBlock

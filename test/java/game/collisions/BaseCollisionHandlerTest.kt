@@ -2,11 +2,9 @@ package game.collisions
 
 import game.gameObjects.SolidBlock
 import geom.Direction4
-import createGame
 import game.DummyObjects
 import org.junit.jupiter.api.Assertions.*
-import game.pcg.BlockLevelGenerator.Block
-import geom.Vector2Double
+import game.levelGenerators.BlockLevelGenerator.Block
 
 /**
  * Created by woitee on 22/07/2017.

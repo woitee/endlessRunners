@@ -6,7 +6,7 @@ import game.undoing.IUndo
 
 import game.gameObjects.Player
 import game.gameObjects.SolidBlock
-import game.pcg.ILevelGenerator
+import game.levelGenerators.ILevelGenerator
 import game.gameObjects.GameObject
 import game.gameActions.abstract.GameAction
 import game.gameActions.abstract.HoldAction
@@ -22,7 +22,6 @@ import utils.pools.DefaultUndoListPool
 import utils.reverse
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.io.Serializable
 
 /**
  * Created by woitee on 13/01/2017.

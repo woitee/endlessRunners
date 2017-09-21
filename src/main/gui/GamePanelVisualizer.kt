@@ -23,15 +23,6 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
 
     private var running = false
 
-    private var objectColors = mapOf(
-        Pair(GameObjectClass.PLAYER, Color.BLUE),
-        Pair(GameObjectClass.SOLIDBLOCK, Color.LIGHT_GRAY),
-        Pair(GameObjectClass.CUSTOM0, Color.GREEN),
-        Pair(GameObjectClass.CUSTOM1, Color.RED),
-        Pair(GameObjectClass.CUSTOM2, Color.YELLOW),
-        Pair(GameObjectClass.CUSTOM3, Color.ORANGE)
-    )
-
     // Not a part of the game, can be used to add debug information
     val debugObjects = ArrayList<GameObject>()
 
@@ -129,8 +120,8 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
             g.fillPolygon(intArrayOf(x, x2, x), intArrayOf(y, y, y2), 3)
             g.color = Color.LIGHT_GRAY
             g.fillPolygon(intArrayOf(x, x2, x2), intArrayOf(y2, y, y2), 3)
-        } else if (objectColors.containsKey(gameObject.gameObjectClass)) {
-            g.color = objectColors[gameObject.gameObjectClass]
+        } else {
+            g.color = gameObject.color.awtColor
             g.fillRect(x, y, gameObject.widthPx, gameObject.heightPx)
         }
     }

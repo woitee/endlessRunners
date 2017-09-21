@@ -5,6 +5,9 @@ import game.undoing.IUndo
 import game.undoing.IUndoable
 
 /**
+ * An abstract class to facilitate different representations of a hold action. A hold action can be represented
+ * also as two regular actions, one handling the "press" and the other the "release" of the action.
+ *
  * Created by woitee on 23/07/2017.
  */
 abstract class UndoableHoldAction : HoldAction(), IUndoable {

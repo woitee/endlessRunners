@@ -10,6 +10,12 @@ enum class Direction4(val value: Int) {
     infix fun or(other: Direction4): Int {
         return value or other.value
     }
+
+    companion object {
+        fun any(): Int {
+            return 15
+        }
+    }
 }
 
 fun Vector2Int.direction4(): Direction4 {
@@ -71,4 +77,7 @@ fun twoNumbers2Direction4(x: Double, y: Double): Direction4 {
 
 fun Int.flagsToDirections(): List<Direction4> {
     return arrayListOf(Direction4.UP, Direction4.LEFT, Direction4.DOWN, Direction4.RIGHT).filter { it -> (it.value and this) != 0 }
+}
+infix fun Int.or(dir: Direction4): Int {
+    return this.or(dir)
 }

@@ -62,22 +62,33 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
     }
 
     internal fun addToGrid(gameObject: GameObject?, x: Int, y:Int) {
-        if (gameObject != null) {
-            gameObjects.add(gameObject)
-            if (gameObject.isUpdated)
-                updateObjects.add(gameObject)
-            gameObject.x = ((gridX + x) * BlockWidth).toDouble()
-            gameObject.y = (y * BlockHeight).toDouble()
-            gameObject.gameState = this
-        }
-        grid[x, y] = gameObject
+        gameObject ?: return
+
+        gameObject.x = ((gridX + x) * BlockWidth).toDouble()
+        gameObject.y = (y * BlockHeight).toDouble()
+        add(gameObject)
     }
-    internal fun removeFromGrid(gameObject: GameObject?, x: Int, y:Int) {
+    internal fun add(gameObject: GameObject) {
+        gameObjects.add(gameObject)
+        if (gameObject.isUpdated)
+            updateObjects.add(gameObject)
+
+        gameObject.gameState = this
+        grid[
+            (gameObject.x / BlockWidth - gridX).toInt(),
+            (gameObject.y / BlockHeight).toInt()
+        ] = gameObject
+    }
+    internal fun remove(gameObject: GameObject?) {
         gameObject ?: return
         gameObjects.remove(gameObject)
         if (gameObject.isUpdated)
             updateObjects.remove(gameObject)
-        grid[x, y] = null
+
+        grid[
+            (gameObject.x / BlockWidth - gridX).toInt(),
+            (gameObject.y / BlockHeight).toInt()
+        ] = null
     }
     private fun shiftGrid() {
         gridX += 1
@@ -95,27 +106,27 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
     fun advance(time: Double, scrolling:Boolean = false) {
         lastAdvanceTime = time
 
-        for (gameObject in updateObjects) {
-            gameObject.update(time)
-        }
-        for (gameEffect in game.gameDescription.permanentEffects) {
-            gameEffect.applyOn(this)
-        }
-        for (heldAction in heldActions.keys) {
-            if (!heldAction.canBeKeptApplyingOn(this)) {
-                heldAction.stopApplyingOn(this)
+        synchronized(gameObjects) {
+            for (gameObject in updateObjects) {
+                gameObject.update(time)
             }
-        }
-        gameTime += time
+            for (gameEffect in game.gameDescription.permanentEffects) {
+                gameEffect.applyOn(this)
+            }
+            for (heldAction in heldActions.keys) {
+                if (!heldAction.canBeKeptApplyingOn(this)) {
+                    heldAction.stopApplyingOn(this)
+                }
+            }
+            gameTime += time
 
-        if (scrolling) {
-            if (levelGenerator == null) {
-                println("Level Generator should be set when scrolling!")
-            } else {
-                val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
-                val blockOffset = (offset / BlockWidth).toInt()
+            if (scrolling) {
+                if (levelGenerator == null) {
+                    println("Level Generator should be set when scrolling!")
+                } else {
+                    val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
+                    val blockOffset = (offset / BlockWidth).toInt()
 
-                synchronized(gameObjects) {
                     for (i in 1..blockOffset) {
                         shiftGrid()
 //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")

@@ -11,7 +11,7 @@ class ConditionalAction(val condition: GameCondition, val action:UndoableAction)
     }
 
     override fun isApplicableOn(gameState: GameState): Boolean {
-        return condition.holds(gameState)
+        return condition.isTrue(gameState)
     }
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {

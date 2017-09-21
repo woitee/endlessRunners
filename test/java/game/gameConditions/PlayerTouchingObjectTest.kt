@@ -19,11 +19,11 @@ internal class PlayerTouchingObjectTest {
 
         val downCondition = PlayerTouchingObject(Direction4.DOWN, GameObjectClass.SOLIDBLOCK)
 
-        assertTrue(downCondition.holds(gameState))
+        assertTrue(downCondition.isTrue(gameState))
         gameState.player.x = (BlockWidth * 2 + 10).toDouble()
-        assertTrue(downCondition.holds(gameState))
+        assertTrue(downCondition.isTrue(gameState))
 
         gameState.player.y += 1
-        assertFalse(downCondition.holds(gameState))
+        assertFalse(downCondition.isTrue(gameState))
     }
 }

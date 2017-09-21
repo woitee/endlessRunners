@@ -38,7 +38,7 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
 
         // Replace gameState back into original position
         for (y in 0 .. column.lastIndex) {
-            gameState.removeFromGrid(column[y], oldGrid.width, y)
+            gameState.remove(column[y])
         }
         gameState.grid = oldGrid
 

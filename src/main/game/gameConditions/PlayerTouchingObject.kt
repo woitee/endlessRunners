@@ -5,7 +5,7 @@ import game.gameObjects.GameObjectClass
 import geom.Direction4
 
 class PlayerTouchingObject(val dir: Direction4, val gameObjectClass: GameObjectClass?): GameCondition() {
-    override fun holds(gameState: GameState): Boolean {
+    override fun isTrue(gameState: GameState): Boolean {
         val player = gameState.player
         if (dir == Direction4.DOWN || dir == Direction4.UP) {
             val gridLoc = gameState.gridLocation(

@@ -42,9 +42,9 @@ abstract class HoldAction : GameAction() {
         return gameState.heldActions.containsKey(this) && this.innerCanBeKeptApplyingOn(gameState)
     }
 
-    abstract protected fun innerApplyOn(gameState: GameState)
     abstract protected fun innerIsApplicableOn(gameState: GameState): Boolean
-    abstract protected fun innerStopApplyingOn(gameState: GameState, timeStart: Double)
-    abstract protected fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean
     abstract protected fun innerCanBeKeptApplyingOn(gameState: GameState): Boolean
+    abstract protected fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean
+    abstract protected fun innerApplyOn(gameState: GameState)
+    abstract protected fun innerStopApplyingOn(gameState: GameState, timeStart: Double)
 }

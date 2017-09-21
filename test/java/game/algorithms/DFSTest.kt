@@ -17,7 +17,7 @@ internal class DFSTest {
         val game = Game(
             DFSEnsuringGenerator(SimpleLevelGenerator()),
             DFSPlayerController(),
-            GamePanelVisualizer(),
+            null,
             mode = Game.Mode.INTERACTIVE,
             gameDescription = BitTripGameDescription(),
             restartOnGameOver = false

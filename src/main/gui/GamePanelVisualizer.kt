@@ -23,6 +23,15 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
 
     private var running = false
 
+    private var objectColors = mapOf(
+        Pair(GameObjectClass.PLAYER, Color.BLUE),
+        Pair(GameObjectClass.SOLIDBLOCK, Color.LIGHT_GRAY),
+        Pair(GameObjectClass.CUSTOM0, Color.GREEN),
+        Pair(GameObjectClass.CUSTOM1, Color.RED),
+        Pair(GameObjectClass.CUSTOM2, Color.YELLOW),
+        Pair(GameObjectClass.CUSTOM3, Color.ORANGE)
+    )
+
     // Not a part of the game, can be used to add debug information
     val debugObjects = ArrayList<GameObject>()
 
@@ -115,13 +124,13 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
     fun drawGameObjectAt(gameObject: GameObject, g: Graphics, x: Int, y: Int) {
         val x2 = x + gameObject.widthPx
         val y2 = y + gameObject.heightPx
-        if (gameObject.javaClass == SolidBlock::class.java) {
+        if (gameObject.gameObjectClass == GameObjectClass.SOLIDBLOCK) {
             g.color = Color.BLACK
             g.fillPolygon(intArrayOf(x, x2, x), intArrayOf(y, y, y2), 3)
             g.color = Color.LIGHT_GRAY
             g.fillPolygon(intArrayOf(x, x2, x2), intArrayOf(y2, y, y2), 3)
-        } else if (gameObject.javaClass == Player::class.java) {
-            g.color = Color.BLUE
+        } else if (objectColors.containsKey(gameObject.gameObjectClass)) {
+            g.color = objectColors[gameObject.gameObjectClass]
             g.fillRect(x, y, gameObject.widthPx, gameObject.heightPx)
         }
     }

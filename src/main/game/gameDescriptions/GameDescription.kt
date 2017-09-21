@@ -33,15 +33,16 @@ open class GameDescription {
     open val playerStartingSpeed = 12.0
     open val allActions = listOf<GameAction>(JumpAction(22.0))
     open val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
-    open val collisionEffects = mapOf(
-        Pair(
-            CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.DOWN or Direction4.UP),
-            MoveToContact()
-        ),
-        Pair(
-            CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.RIGHT),
-            ApplyGameEffect(GameOver())
-        )
+    open val collisionEffects = mapOf<CollisionHandlerEntry, ICollisionEffect>(
+//  This setting is now default for any collision with SolidBlock. It can however be overriden to be set differently.
+//        Pair(
+//            CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.DOWN or Direction4.UP),
+//            MoveToContact()
+//        ),
+//        Pair(
+//            CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.RIGHT),
+//            ApplyGameEffect(GameOver())
+//        )
     )
 
     /**

@@ -7,7 +7,10 @@ import game.Game
 import game.GameState
 import game.collisions.collisionEffects.ICollisionEffect
 import game.collisions.collisionEffects.IUndoableCollisionEffect
+import game.collisions.collisionEffects.MoveToContact
+import game.collisions.collisionEffects.ApplyGameEffect
 import game.undoing.IUndo
+import game.gameEffects.GameOver
 
 import game.BlockHeight
 import game.BlockWidth
@@ -136,12 +139,12 @@ open class BaseCollisionHandler(val game: Game) {
         for (i in 1 .. MAX_COLLISIONS) {
             val collision = getCollision(movingObject) ?: return
 
-            val collEffect: ICollisionEffect? =
+            var collEffect: ICollisionEffect? =
                     collisionHandlerMapping.get(BaseCollisionHandler.CollisionHandlerEntry(
                             movingObject.gameObjectClass,
                             collision.other.gameObjectClass,
                             collision.direction
-                    ))
+                    )) ?: getDefaultCollisionEffect(collision.other, collision.direction)
             collEffect ?: continue
 
             if (!undoable) {
@@ -155,6 +158,18 @@ open class BaseCollisionHandler(val game: Game) {
             if (movingObject.gameState.isGameOver) return
         }
         println("Collision limit ($MAX_COLLISIONS}) reached with object ${movingObject}! Maybe collision handling is done improperly?")
+    }
+
+    protected fun getDefaultCollisionEffect(other: GameObject, direction: Direction4): ICollisionEffect? {
+        return if (other.isSolid) {
+            if (direction == Direction4.UP || direction == Direction4.DOWN) {
+                MoveToContact()
+            } else {
+                ApplyGameEffect(GameOver())
+            }
+        } else {
+            null
+        }
     }
 
 }

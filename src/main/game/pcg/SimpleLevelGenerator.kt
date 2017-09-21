@@ -4,6 +4,7 @@ import game.gameObjects.GameObject
 import game.gameObjects.SolidBlock
 import game.GameState
 import game.HeightBlocks
+import game.gameObjects.CustomBlock
 import java.util.*
 import utils.arrayList
 
@@ -31,6 +32,9 @@ class SimpleLevelGenerator: ILevelGenerator {
         if (random.nextDouble() < 0.1) {
             col[currentHeight + 1] = SolidBlock()
         } else {
+            if (random.nextDouble() < 0.02) {
+                col[currentHeight - 1] = CustomBlock(0)
+            }
             var rnd = random.nextDouble()
             for ((key, value) in probableTransfers) {
                 rnd -= value

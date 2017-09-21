@@ -48,6 +48,13 @@ class KeyboardPlayerController: PlayerController() {
     val keyMapping = HashMap<GameAction, IntArray>()
     val heldActions = HashMap<HoldAction, Boolean>()
 
+    val keyDefaults = arrayOf(
+        intArrayOf(KeyEvent.VK_UP, KeyEvent.VK_Z, KeyEvent.VK_Y, KeyEvent.VK_SPACE),
+        intArrayOf(KeyEvent.VK_DOWN, KeyEvent.VK_X, KeyEvent.VK_CONTROL),
+        intArrayOf(KeyEvent.VK_RIGHT, KeyEvent.VK_C, KeyEvent.VK_SHIFT),
+        intArrayOf(KeyEvent.VK_LEFT, KeyEvent.VK_V, KeyEvent.VK_ALT)
+    )
+
     fun init(game: Game) {
         if (game.visualizer == null) {
             throw InstantiationException("Keyboard Controller can't be set up on games without visualization")
@@ -55,18 +62,18 @@ class KeyboardPlayerController: PlayerController() {
         game.visualizer.addKeyListener(keyboardHelper)
 
         val allActions = game.gameDescription.allActions
-        for (action in allActions) {
-            if (action is JumpAction) {
-                keyMapping.put(action, intArrayOf(KeyEvent.VK_UP, KeyEvent.VK_Z, KeyEvent.VK_Y, KeyEvent.VK_SPACE))
-            } else {
-                keyMapping.put(action, intArrayOf(KeyEvent.VK_DOWN, KeyEvent.VK_X, KeyEvent.VK_CONTROL))
-            }
+        if (allActions.count() > keyDefaults.count()) {
+            println("Warning! KeyboardController will only be able to control first ${keyDefaults.count()} of the ${allActions.count()} of game actions.")
+        }
+        for (i in 0 .. allActions.lastIndex) {
+            val action = allActions[i]
+
+            keyMapping.put(action, keyDefaults[i])
             if (action is HoldAction) {
                 heldActions[action] = false
             }
         }
         inited = true
-
     }
 
     override fun onUpdate(gameState: GameState): PlayerControllerOutput? {

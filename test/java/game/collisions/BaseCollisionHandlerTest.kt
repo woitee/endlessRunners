@@ -3,6 +3,7 @@ package game.collisions
 import game.gameObjects.SolidBlock
 import geom.Direction4
 import createGame
+import game.DummyObjects
 import org.junit.jupiter.api.Assertions.*
 import game.pcg.BlockLevelGenerator.Block
 import geom.Vector2Double
@@ -13,7 +14,7 @@ import geom.Vector2Double
 class BaseCollisionHandlerTest {
     @org.junit.jupiter.api.Test
     fun theoreticalCollisions() {
-        val game = createGame()
+        val game = DummyObjects.createDummyGame()
         game.gameState.gameObjects.clear()
         game.gameState.addToGrid(SolidBlock(), 1, 1)
         game.gameState.addToGrid(SolidBlock(), 2, 1)
@@ -73,7 +74,7 @@ class BaseCollisionHandlerTest {
 
     @org.junit.jupiter.api.Test
     fun movingOnSurface() {
-        val game = createGame()
+        val game = DummyObjects.createDummyGame()
         game.gameState.gameObjects.clear()
         game.gameState.addToGrid(SolidBlock(), 1, 1)
         game.gameState.addToGrid(SolidBlock(), 2, 1)
@@ -85,7 +86,7 @@ class BaseCollisionHandlerTest {
 
     @org.junit.jupiter.api.Test
     fun hittingAWall() {
-        val game = createGame()
+        val game = DummyObjects.createDummyGame()
         game.gameState.gameObjects.clear()
         game.gameState.addToGrid(SolidBlock(), 1, 1)
         game.gameState.addToGrid(SolidBlock(), 1, 2)
@@ -97,7 +98,7 @@ class BaseCollisionHandlerTest {
 
     @org.junit.jupiter.api.Test
     fun collisionOnShiftedGrid() {
-        val game = createGame()
+        val game = DummyObjects.createDummyGame()
         game.gameState.gameObjects.clear()
         game.gameState.gridX = 100
         game.gameState.addToGrid(SolidBlock(), 1, 1)
@@ -115,7 +116,7 @@ class BaseCollisionHandlerTest {
 
     @org.junit.jupiter.api.Test
     fun weirdlyAllignedCollision() {
-        val game = createGame()
+        val game = DummyObjects.createDummyGame()
         game.gameState.gridX = 134207
         val block = Block(game.gameDescription, arrayListOf(
             "                    #         ",

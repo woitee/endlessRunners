@@ -1,7 +1,7 @@
 package game.levelGenerators
 
-import game.gameObjects.GameObject
-import game.gameObjects.SolidBlock
+import game.objects.GameObject
+import game.objects.SolidBlock
 import game.GameState
 import game.HeightBlocks
 import java.util.*

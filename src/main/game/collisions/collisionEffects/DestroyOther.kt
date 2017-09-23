@@ -2,7 +2,7 @@ package game.collisions.collisionEffects
 
 import game.GameState
 import game.collisions.Collision
-import game.gameObjects.GameObject
+import game.objects.GameObject
 import game.undoing.IUndo
 
 class DestroyOther: IUndoableCollisionEffect {

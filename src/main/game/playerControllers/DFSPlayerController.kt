@@ -2,7 +2,7 @@ package game.playerControllers
 
 import game.algorithms.DFS
 import game.algorithms.SearchStatsSummer
-import game.gameActions.abstract.GameAction
+import game.actions.abstract.GameAction
 import game.GameState
 import game.levelGenerators.DFSEnsuringGenerator
 import java.io.File

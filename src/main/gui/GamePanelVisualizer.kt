@@ -1,7 +1,7 @@
 package gui
 
 import game.*
-import game.gameObjects.*
+import game.objects.*
 import java.awt.*
 import java.awt.event.KeyListener
 import java.util.*

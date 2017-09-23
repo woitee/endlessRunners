@@ -3,8 +3,8 @@ package game.levelGenerators
 import game.GameState
 import game.Grid2D
 import game.HeightBlocks
-import game.gameDescriptions.GameDescription
-import game.gameObjects.GameObject
+import game.descriptions.GameDescription
+import game.objects.GameObject
 import utils.arrayList
 import java.security.InvalidParameterException
 import java.util.*

@@ -1,6 +1,6 @@
 package game.levelGenerators
 
-import game.gameObjects.GameObject
+import game.objects.GameObject
 import game.GameState
 import java.util.*
 

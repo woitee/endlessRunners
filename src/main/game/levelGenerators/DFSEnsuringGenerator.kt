@@ -1,7 +1,7 @@
 package game.levelGenerators
 
-import game.gameObjects.GameObject
-import game.gameObjects.*
+import game.objects.GameObject
+import game.objects.*
 import game.algorithms.DFS
 import game.*
 import java.util.*

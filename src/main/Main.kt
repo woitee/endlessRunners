@@ -1,12 +1,12 @@
 import gui.GamePanelVisualizer
 import game.Game
-import game.gameObjects.GameObject
-import game.gameObjects.SolidBlock
+import game.objects.GameObject
+import game.objects.SolidBlock
 import game.Grid2D
 import game.levelGenerators.*
 import game.playerControllers.*
 import utils.StopWatch
-import game.gameDescriptions.*
+import game.descriptions.*
 
 /**
  * Created by woitee on 09/01/2017.

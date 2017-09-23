@@ -4,8 +4,8 @@ import utils.TimedThread
 import game.levelGenerators.ILevelGenerator
 import game.playerControllers.PlayerController
 import game.collisions.GridDetectingCollisionHandler
-import game.gameDescriptions.GameDescription
-import game.gameActions.abstract.HoldAction
+import game.descriptions.GameDescription
+import game.actions.abstract.HoldAction
 import java.util.*
 
 /**

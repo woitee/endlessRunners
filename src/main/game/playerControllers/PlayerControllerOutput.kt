@@ -1,6 +1,6 @@
 package game.playerControllers
 
-import game.gameActions.abstract.GameAction
+import game.actions.abstract.GameAction
 
 /**
  * Created by woitee on 23/07/2017.

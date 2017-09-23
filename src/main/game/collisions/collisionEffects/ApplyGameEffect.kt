@@ -1,8 +1,8 @@
 package game.collisions.collisionEffects
 
 import game.collisions.Collision
-import game.gameEffects.UndoableGameEffect
-import game.gameObjects.GameObject
+import game.effects.UndoableGameEffect
+import game.objects.GameObject
 import game.undoing.IUndo
 
 /**

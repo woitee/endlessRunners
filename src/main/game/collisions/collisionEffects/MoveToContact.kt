@@ -3,8 +3,8 @@ package game.collisions.collisionEffects
 import game.BlockHeight
 import game.BlockWidth
 import game.collisions.Collision
-import game.gameObjects.GameObject
-import game.gameObjects.MovingObject
+import game.objects.GameObject
+import game.objects.MovingObject
 import game.GameState
 import game.undoing.IUndo
 import game.undoing.NoActionUndo

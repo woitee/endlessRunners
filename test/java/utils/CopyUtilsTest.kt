@@ -1,9 +1,9 @@
 package utils
 
 import game.*
-import game.gameObjects.GameObjectClass
-import game.gameObjects.Player
-import game.gameObjects.SolidBlock
+import game.objects.GameObjectClass
+import game.objects.Player
+import game.objects.SolidBlock
 import org.junit.jupiter.api.Assertions.*
 
 internal class CopyUtilsTest {

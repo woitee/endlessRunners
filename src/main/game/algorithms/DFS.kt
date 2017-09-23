@@ -2,17 +2,12 @@ package game.algorithms
 
 import gui.GamePanelVisualizer
 import game.BlockWidth
-import game.gameObjects.Player
 import game.GameState
-import game.collisions.GridDetectingCollisionHandler
-import game.gameActions.ChangeShapeAction
 import game.undoing.IUndo
-import game.gameActions.abstract.GameAction
-import game.gameActions.abstract.UndoableAction
-import game.gameActions.abstract.UndoableHoldAction
+import game.actions.abstract.GameAction
+import game.actions.abstract.UndoableAction
+import game.actions.abstract.UndoableHoldAction
 import game.undoing.UndoFactory
-import geom.Vector2Double
-import javafx.scene.control.TextFormatter
 import utils.pop
 import java.util.*
 

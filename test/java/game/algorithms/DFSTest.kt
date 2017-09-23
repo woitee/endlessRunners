@@ -1,11 +1,10 @@
 package game.algorithms
 
 import game.Game
-import game.gameDescriptions.BitTripGameDescription
+import game.descriptions.BitTripGameDescription
 import game.levelGenerators.DFSEnsuringGenerator
 import game.levelGenerators.SimpleLevelGenerator
 import game.playerControllers.DFSPlayerController
-import gui.GamePanelVisualizer
 import java.io.File
 import java.io.ObjectInputStream
 

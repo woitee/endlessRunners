@@ -1,10 +1,9 @@
 package game.playerControllers
 
-import game.gameActions.*
 import game.GameState
 import game.Game
-import game.gameActions.abstract.GameAction
-import game.gameActions.abstract.HoldAction
+import game.actions.abstract.GameAction
+import game.actions.abstract.HoldAction
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.*

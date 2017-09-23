@@ -4,15 +4,15 @@ import java.util.*
 
 import game.undoing.IUndo
 
-import game.gameObjects.Player
-import game.gameObjects.SolidBlock
+import game.objects.Player
+import game.objects.SolidBlock
 import game.levelGenerators.ILevelGenerator
-import game.gameObjects.GameObject
-import game.gameActions.abstract.GameAction
-import game.gameActions.abstract.HoldAction
-import game.gameObjects.UndoableUpdateGameObject
-import game.gameEffects.UndoableGameEffect
-import game.gameObjects.GameObjectClass
+import game.objects.GameObject
+import game.actions.abstract.GameAction
+import game.actions.abstract.HoldAction
+import game.objects.UndoableUpdateGameObject
+import game.effects.UndoableGameEffect
+import game.objects.GameObjectClass
 import game.undoing.NoActionUndo
 import game.undoing.UndoFactory
 import geom.Vector2Double

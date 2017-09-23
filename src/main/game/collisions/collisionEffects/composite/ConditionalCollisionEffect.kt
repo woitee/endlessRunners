@@ -1,11 +1,10 @@
 package game.collisions.collisionEffects.composite
 
 import game.collisions.Collision
-import game.collisions.collisionEffects.ICollisionEffect
 import game.collisions.collisionEffects.IUndoableCollisionEffect
 import game.collisions.collisionEffects.IgnoreCollision
-import game.gameConditions.GameCondition
-import game.gameObjects.GameObject
+import game.conditions.GameCondition
+import game.objects.GameObject
 import game.undoing.IUndo
 
 class ConditionalCollisionEffect(

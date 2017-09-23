@@ -1,6 +1,6 @@
 package game.collisions
 
-import game.gameObjects.SolidBlock
+import game.objects.SolidBlock
 import geom.Direction4
 import game.DummyObjects
 import org.junit.jupiter.api.Assertions.*

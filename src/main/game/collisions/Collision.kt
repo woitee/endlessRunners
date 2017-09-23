@@ -1,6 +1,6 @@
 package game.collisions
 
-import game.gameObjects.GameObject
+import game.objects.GameObject
 import geom.Direction4
 import geom.Distance2D
 

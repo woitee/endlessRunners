@@ -2,7 +2,7 @@ package game.collisions
 
 import java.util.*
 
-import game.gameObjects.*
+import game.objects.*
 import game.Game
 import game.GameState
 import game.collisions.collisionEffects.ICollisionEffect
@@ -10,7 +10,7 @@ import game.collisions.collisionEffects.IUndoableCollisionEffect
 import game.collisions.collisionEffects.MoveToContact
 import game.collisions.collisionEffects.ApplyGameEffect
 import game.undoing.IUndo
-import game.gameEffects.GameOver
+import game.effects.GameOver
 
 import game.BlockHeight
 import game.BlockWidth

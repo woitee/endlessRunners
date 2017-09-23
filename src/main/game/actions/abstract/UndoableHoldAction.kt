@@ -10,7 +10,7 @@ import game.undoing.IUndoable
  *
  * Created by woitee on 23/07/2017.
  */
-abstract class UndoableHoldAction : HoldAction(), IUndoable {
+abstract class UndoableHoldAction(minimumHoldTime: Double) : HoldAction(minimumHoldTime), IUndoable {
     class AsStartUndoableAction(val undoableHoldAction: UndoableHoldAction): UndoableAction() {
         override fun applyOn(gameState: GameState) {
             return undoableHoldAction.applyOn(gameState)

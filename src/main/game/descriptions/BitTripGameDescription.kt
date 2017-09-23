@@ -30,7 +30,7 @@ class BitTripGameDescription: GameDescription() {
         JumpAction(22.0),
         ChangeShapeAction(2, 1),
         trampolineAction,
-        ChangeColorAction(GameObjectColor.YELLOW)
+        ChangeColorAction(GameObjectColor.YELLOW, 1.0)
     )
     override val customObjects = arrayListOf(CustomBlock(0), CustomBlock(1))
 

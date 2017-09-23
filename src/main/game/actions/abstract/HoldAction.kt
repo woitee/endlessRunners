@@ -11,7 +11,7 @@ import game.GameState
  *
  * Created by woitee on 23/07/2017.
  */
-abstract class HoldAction : GameAction() {
+abstract class HoldAction(val minimumHoldTime: Double) : GameAction() {
     class AsStopAction(val holdAction: HoldAction): GameAction() {
         override fun applyOn(gameState: GameState) {
             holdAction.stopApplyingOn(gameState)
@@ -36,15 +36,19 @@ abstract class HoldAction : GameAction() {
         gameState.heldActions.remove(this)
     }
     fun canBeStoppedApplyingOn(gameState: GameState): Boolean {
-        return gameState.heldActions.containsKey(this) && this.innerCanBeStoppedApplyingOn(gameState)
+        if (!gameState.heldActions.containsKey(this))
+            return false
+
+        val heldTime = gameState.gameTime - gameState.heldActions[this]!!
+        return heldTime >= minimumHoldTime && this.innerCanBeStoppedApplyingOn(gameState)
     }
     fun canBeKeptApplyingOn(gameState: GameState): Boolean {
         return gameState.heldActions.containsKey(this) && this.innerCanBeKeptApplyingOn(gameState)
     }
 
-    abstract protected fun innerIsApplicableOn(gameState: GameState): Boolean
-    abstract protected fun innerCanBeKeptApplyingOn(gameState: GameState): Boolean
-    abstract protected fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean
-    abstract protected fun innerApplyOn(gameState: GameState)
-    abstract protected fun innerStopApplyingOn(gameState: GameState, timeStart: Double)
+    abstract internal fun innerIsApplicableOn(gameState: GameState): Boolean
+    abstract internal fun innerCanBeKeptApplyingOn(gameState: GameState): Boolean
+    abstract internal fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean
+    abstract internal fun innerApplyOn(gameState: GameState)
+    abstract internal fun innerStopApplyingOn(gameState: GameState, timeStart: Double)
 }

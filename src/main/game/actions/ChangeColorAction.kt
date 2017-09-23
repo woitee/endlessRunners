@@ -4,7 +4,7 @@ import game.GameState
 import game.actions.abstract.UndoableHoldAction
 import game.objects.GameObjectColor
 
-class ChangeColorAction(val targetColor: GameObjectColor): UndoableHoldAction() {
+class ChangeColorAction(val targetColor: GameObjectColor, minimumHoldTime: Double = 0.0): UndoableHoldAction(minimumHoldTime) {
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
         return true
     }

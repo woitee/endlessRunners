@@ -9,7 +9,7 @@ import game.actions.abstract.UndoableHoldAction
  * Created by woitee on 13/01/2017.
  */
 
-class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int): UndoableHoldAction() {
+class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHoldTime: Double = 0.0): UndoableHoldAction(minimumHoldTime) {
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
         innerApplyOn(gameState)
         for (collPoint in gameState.player.collPoints) {

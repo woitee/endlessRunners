@@ -105,8 +105,8 @@ class KeyboardPlayerController: PlayerController() {
                 }
             }
             // no action key pressed -> stop hold action
-            if (!actionKeyPressed && heldActions[action]!!) {
-                heldActions[action as HoldAction] = false
+            if (!actionKeyPressed && heldActions[action]!! && (action as HoldAction).canBeStoppedApplyingOn(gameState)) {
+                heldActions[action] = false
                 return action.release()
             }
         }

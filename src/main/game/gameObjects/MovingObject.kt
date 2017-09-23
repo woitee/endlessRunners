@@ -47,11 +47,19 @@ abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameO
         return undo
     }
 
-    fun nextX(time: Double): Double {
-        return this.x + xspeed * time * BlockWidth
+    /**
+     * Shows X position of this object after time passes, defaultly next frame.
+     * Additionaly, x location somewhere on the object can be entered, to see next x location of this location.
+     */
+    fun nextX(time: Double = gameState.game.updateTime, x: Double = this.x): Double {
+        return x + xspeed * time * BlockWidth
     }
-    fun nextY(time: Double): Double {
-        return this.y + yspeed * time * BlockHeight
+    /**
+     * Shows Y position of this object after time passes, defaultly next frame.
+     * Additionaly, y location somewhere on the object can be entered, to see next y location of this location.
+     */
+    fun nextY(time: Double, y: Double = this.y): Double {
+        return y + yspeed * time * BlockHeight
     }
 
     private fun updateMovement(time: Double) {

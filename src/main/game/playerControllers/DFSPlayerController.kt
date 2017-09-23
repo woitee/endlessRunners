@@ -25,7 +25,12 @@ class DFSPlayerController: PlayerController() {
             return null
 
         val action = performDFS(gameState)
+        logStats()
 
+        return action?.press()
+    }
+
+    fun logStats() {
         if (logFile == null) {
             val datestring = SimpleDateFormat("yyyy_MM_dd").format(Date())
             val datetimestring = SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date())
@@ -38,7 +43,6 @@ class DFSPlayerController: PlayerController() {
         logFile!!.println("${dfs.lastStats.searchedStates},${dfs.lastStats.timeTaken}")
         logFile!!.flush()
         statsSummer.noteStats(dfs.lastStats)
-        return action?.press()
     }
 
     override fun reset() {

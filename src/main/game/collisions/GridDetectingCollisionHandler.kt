@@ -104,8 +104,8 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
                 } else if (gameState.grid[gridX, gridY]?.isSolid == true) {
                     return collisionFromGridLoc(gameState, ax, ay, bx, by, gridX, gridY, gridX - prevGridX, gridY - prevGridY)
                 }
-                prevGridX = gridX
                 prevGridY = gridY
+                prevGridX = gridX
             }
             lastGridY = curGridY
         }

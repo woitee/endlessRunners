@@ -5,22 +5,31 @@ import game.gameDescriptions.BitTripGameDescription
 import game.levelGenerators.DFSEnsuringGenerator
 import game.levelGenerators.SimpleLevelGenerator
 import game.playerControllers.DFSPlayerController
+import gui.GamePanelVisualizer
 import java.io.File
 import java.io.ObjectInputStream
 
 internal class DFSTest {
     @org.junit.jupiter.api.Test
-    fun loadSaved() {
+    fun bugWrongCollisionWhenFarIntoTheGame() {
+        runTestFromFile("test/data/GameState_2017_09_03-14_52_43.dmp")
+    }
+
+    @org.junit.jupiter.api.Test
+    fun bugAfterAddingCustomBlocks() {
+        runTestFromFile("test/data/GameState_2017_09_21-22_11_14.dmp")
+    }
+
+    private fun runTestFromFile(filePath: String) {
         val game = Game(
-            DFSEnsuringGenerator(SimpleLevelGenerator()),
-            DFSPlayerController(),
-            null,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = BitTripGameDescription(),
-            restartOnGameOver = false
+                DFSEnsuringGenerator(SimpleLevelGenerator()),
+                DFSPlayerController(),
+                null,
+                mode = Game.Mode.INTERACTIVE,
+                gameDescription = BitTripGameDescription(),
+                restartOnGameOver = false
         )
 
-        val filePath = "out/states/GameState_2017_09_03-14_52_43.dmp"
         val file = File(filePath)
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)

@@ -45,7 +45,7 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
         // return column if it is feasible, otherwise, copy SolidBlocks from last column
         if (!searchSucess){
             for (y in 0 .. column.lastIndex) {
-                if (gameState.grid[gameState.grid.width - 2, y]?.isSolid == true) {
+                if (gameState.grid[gameState.grid.width - 2, y]?.gameObjectClass == GameObjectClass.SOLIDBLOCK) {
                     column[y] = SolidBlock()
                 } else {
                     column[y] = null

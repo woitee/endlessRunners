@@ -338,12 +338,13 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
             gameObjects.add(gameObject)
             if (gameObject.isUpdated)
                 updateObjects.add(gameObject)
-            grid[gridLocation(gameObject.location)] = gameObject
             if (gameObject.gameObjectClass == GameObjectClass.PLAYER) {
                 if (foundPlayer)
                     throw Exception("Multiple players found while reading GameState")
                 foundPlayer = true
                 player = gameObject as Player
+            } else {
+                grid[gridLocation(gameObject.location)] = gameObject
             }
         }
 

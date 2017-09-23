@@ -38,6 +38,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     fun run() {
         init()
         updateThread.run()
+        println("Game finished")
         stop()
     }
 

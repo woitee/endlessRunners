@@ -1,8 +1,7 @@
 package utils
 
-import game.DummyObjects
-import game.Game
-import game.GameState
+import game.*
+import game.gameObjects.GameObjectClass
 import game.gameObjects.Player
 import game.gameObjects.SolidBlock
 import org.junit.jupiter.api.Assertions.*
@@ -45,5 +44,10 @@ internal class CopyUtilsTest {
         assertEquals(solidBlock.gameObjectClass, copiedBlock.gameObjectClass)
         assertEquals(solidBlock.x, copiedBlock.x)
         assertEquals(solidBlock.y, copiedBlock.y)
+        for (x in 0 until WidthBlocks) {
+            for (y in 0 until HeightBlocks) {
+                assertNotEquals(GameObjectClass.PLAYER, gameState.grid[x, y]?.gameObjectClass)
+            }
+        }
     }
 }

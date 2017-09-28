@@ -41,9 +41,6 @@ fun test() {
 //    val game = createGame()
 //    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
 //    println(locs)
-
-
-
 }
 
 fun createGame(): Game {
@@ -58,7 +55,7 @@ fun createGame(): Game {
 //    val levelGenerator = DFSEnsuringGenerator(BlockLevelGenerator(gameDescription))
 
     val playerController = DFSPlayerController()
-//    val playerController = KeyboardPlayerController()
+//    val playerController = KeyboardPlayerController()x
 //    val playerController = RandomPlayerController()
 
     return Game(levelGenerator, playerController, visualiser,

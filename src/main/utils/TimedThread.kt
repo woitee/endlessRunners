@@ -47,4 +47,8 @@ class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val use
     fun join() {
         thread.join()
     }
+
+    fun join(millis: Long) {
+        thread.join(millis)
+    }
 }

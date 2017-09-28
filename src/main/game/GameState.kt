@@ -351,4 +351,23 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
         isGameOver = ois.readBoolean()
         return this
     }
+
+    /**
+     * Returns currently held actions as bit array (in an Int).
+     * The bits are 1 - when action is held and 0 when action is not held, ordered from lowest to highest by the order
+     * that the actions are returned in the allActions() method on GameState (also GameDescription).
+     */
+    fun currentHeldActionsAsFlags(): Int {
+        var flags = 0
+        var curFlag = 1
+        for (action in allActions) {
+            if (action is HoldAction) {
+                if (heldActions.containsKey(action)) {
+                    flags += curFlag
+                }
+                curFlag *= 2
+            }
+        }
+        return flags
+    }
 }

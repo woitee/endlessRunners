@@ -28,7 +28,7 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate, useRealTime = true) else null
 
-    var onGameOver = { if (restartOnGameOver) this.reset() else this.stop(); }
+    var onGameOver = { if (restartOnGameOver) this.reset() else this.stop(false) }
     // keep on bottom, it should be the last variable initialized
     var gameState = GameState(this, levelGenerator)
 
@@ -53,11 +53,13 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     /**
      * Requests to stop the game peacefully and waits until it finished.
      */
-    fun stop() {
+    fun stop(awaitJoin: Boolean = true) {
         updateThread.stop()
         animatorThread?.stop()
-        updateThread.join()
-        animatorThread?.join()
+        if (awaitJoin) {
+            updateThread.join()
+            animatorThread?.join()
+        }
     }
 
     fun reset() {

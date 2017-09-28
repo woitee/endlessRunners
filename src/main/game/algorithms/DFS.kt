@@ -5,8 +5,11 @@ import game.BlockWidth
 import game.GameState
 import game.undoing.IUndo
 import game.actions.abstract.GameAction
+import game.actions.abstract.HoldAction
 import game.actions.abstract.UndoableAction
 import game.actions.abstract.UndoableHoldAction
+import game.conditions.PlayerHasColor
+import game.objects.GameObjectColor
 import game.undoing.UndoFactory
 import utils.pop
 import java.util.*
@@ -16,8 +19,13 @@ import java.util.*
  */
 
 class DFS (val persistentCache:Boolean = true) {
-    data class CachedState(val playerX: Double, val playerY: Double, val playerYSpeed: Double) {
-        constructor (gameState: GameState): this(gameState.player.x, gameState.player.y, gameState.player.yspeed)
+    data class CachedState(val playerX: Double, val playerY: Double, val playerYSpeed: Double, val heldActionFlags: Int) {
+        constructor (gameState: GameState): this(
+                gameState.player.x,
+                gameState.player.y,
+                gameState.player.yspeed,
+                gameState.currentHeldActionsAsFlags()
+        )
     }
     /**
      * This class contains a couple members, that hold stats from last search.
@@ -91,6 +99,8 @@ class DFS (val persistentCache:Boolean = true) {
             }
 
             for (undo in undoList.asReversed()) {
+                // uncomment to print plan as a road of player
+//                println("Plan ${game State.player.x} ${gameState.player.y} ${gameState.player.yspeed}")
                 undo.undo(gameState)
             }
 

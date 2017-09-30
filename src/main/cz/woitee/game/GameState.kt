@@ -17,7 +17,6 @@ import cz.woitee.game.undoing.NoActionUndo
 import cz.woitee.game.undoing.UndoFactory
 import cz.woitee.geom.Vector2Double
 import cz.woitee.geom.Vector2Int
-import cz.woitee.utils.MyCopiable
 import cz.woitee.utils.MySerializable
 import cz.woitee.utils.pools.DefaultUndoListPool
 import cz.woitee.utils.reverse
@@ -28,7 +27,7 @@ import java.io.ObjectOutputStream
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerializable, MyCopiable<GameState> {
+class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerializable {
     // parameterless constructor for serialization purposes
     constructor(): this(DummyObjects.createDummyGame(), null)
 
@@ -272,7 +271,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
     /**
      * This copy is not exactly deep or shallow, it copies what it needs to have a state that does not depend on it.
      */
-    override fun makeCopy(): GameState {
+    fun makeCopy(): GameState {
         val stateCopy = GameState(game, levelGenerator)
         stateCopy.player = player.makeCopy()
         stateCopy.gridX = gridX

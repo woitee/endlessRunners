@@ -21,7 +21,7 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
     var lastGameState: GameState? = null
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
-        val originalDFS = dfs.makeCopy()
+        val originalDFS = DFS(dfs)
         lastGameState = gameState.makeCopy()
         val column = innerGenerator.generateNextColumn(gameState)
 

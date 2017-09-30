@@ -1,10 +1,10 @@
 package game.collisions
 
-import game.objects.SolidBlock
-import geom.Direction4
-import game.DummyObjects
+import cz.woitee.game.objects.SolidBlock
+import cz.woitee.geom.Direction4
+import cz.woitee.game.DummyObjects
 import org.junit.jupiter.api.Assertions.*
-import game.levelGenerators.BlockLevelGenerator.Block
+import cz.woitee.game.levelGenerators.BlockLevelGenerator.Block
 
 /**
  * Created by woitee on 22/07/2017.

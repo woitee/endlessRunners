@@ -1,11 +1,12 @@
 package game.conditions
 
-import game.BlockHeight
-import game.BlockWidth
-import game.DummyObjects
-import game.objects.GameObjectClass
-import game.objects.SolidBlock
-import geom.Direction4
+import cz.woitee.game.BlockHeight
+import cz.woitee.game.BlockWidth
+import cz.woitee.game.DummyObjects
+import cz.woitee.game.conditions.PlayerTouchingObject
+import cz.woitee.game.objects.GameObjectClass
+import cz.woitee.game.objects.SolidBlock
+import cz.woitee.geom.Direction4
 import org.junit.jupiter.api.Assertions.*
 
 internal class PlayerTouchingObjectTest {

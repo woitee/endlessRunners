@@ -1,9 +1,12 @@
 package utils
 
-import game.*
-import game.objects.GameObjectClass
-import game.objects.Player
-import game.objects.SolidBlock
+import cz.woitee.game.DummyObjects
+import cz.woitee.game.HeightBlocks
+import cz.woitee.game.WidthBlocks
+import cz.woitee.game.objects.GameObjectClass
+import cz.woitee.game.objects.Player
+import cz.woitee.game.objects.SolidBlock
+import cz.woitee.utils.CopyUtils
 import org.junit.jupiter.api.Assertions.*
 
 internal class CopyUtilsTest {

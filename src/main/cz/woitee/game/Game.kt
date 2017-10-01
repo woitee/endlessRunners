@@ -65,7 +65,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     fun reset() {
         levelGenerator.reset()
         playerController.reset()
-        gameState = GameState(this, levelGenerator)
+        gameState = GameState(this, levelGenerator, gameState.tag)
     }
 
     private fun init() {
@@ -86,7 +86,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
                 gameAction.stopApplyingOn(gameState)
             }
         }
-        
+
         gameState.advance(time, true)
     }
 }

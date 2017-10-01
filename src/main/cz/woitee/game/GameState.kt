@@ -30,7 +30,7 @@ import java.io.ObjectOutputStream
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: LevelGenerator?) : MySerializable {
+class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: String = "") : MySerializable {
     // parameterless constructor for serialization purposes
     constructor(): this(DummyObjects.createDummyGame(), null)
 

@@ -202,7 +202,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         // rollback last action if a state advance didn't happen (the action performed might not be performable next turn)
         // we'll do some action next search
         if (dfsStack.peekLast().statesUndo.currentUndo is DFSBase.NoStateAdvanceUndo) {
-            dfsStack.pop()
+            applyBothUndo(dfsStack.pop().statesUndo)
         }
 
         return SearchResult(true, dfsStack.peekLast().action)

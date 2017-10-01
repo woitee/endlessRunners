@@ -45,5 +45,7 @@ fun visualizeDelayedTwinDFS() {
     )
     currentStateThread.start()
     delayedStateThread.start()
+
+    game.gameState.tag = "Main"
     game.run()
 }

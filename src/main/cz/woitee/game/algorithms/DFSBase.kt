@@ -45,11 +45,12 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
         if (debug)
             visualizer?.debugObjects?.clear()
 
+        maxX = (gameState.gridX + gameState.grid.width) * BlockWidth
         val result = if (debug) {
-            searchInternal(gameState, updateTime)
+            searchInternal(gameState, this.updateTime)
         } else {
             synchronized(gameState.gameObjects) {
-                searchInternal(gameState, updateTime)
+                searchInternal(gameState, this.updateTime)
             }
         }
         lastStats.success = result.success

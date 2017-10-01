@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
  * Created by woitee on 15/01/2017.
  */
 
-class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
+class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val debugging:Boolean = false): IGameVisualizer {
     lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
@@ -26,6 +26,10 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
     // Not a part of the game, can be used to add debug information
     val debugObjects = ArrayList<GameObject>()
 
+    init {
+        start()
+    }
+
     override fun start() {
         SwingUtilities.invokeAndWait {
             frame = createFrame()
@@ -34,7 +38,7 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
     }
 
     private fun createFrame(): JFrame {
-        val frame = JFrame("Endless Runners GUI")
+        val frame = JFrame(panelName)
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         val pane = frame.contentPane
 
@@ -83,7 +87,7 @@ class GamePanelVisualizer(val debugging:Boolean = false): IGameVisualizer {
             _dbg.fillRect(0, 0, GameWidth, GameHeight)
 
             drawEverything(gameState, _dbg)
-            frame.title = "Endless Runners GUI Score:${gameState.gridX / 10}"
+            frame.title = "$panelName Score:${gameState.gridX / 10}"
 
             repaint()
         }

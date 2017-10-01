@@ -69,7 +69,6 @@ class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerCont
     }
 
     private fun init() {
-        visualizer?.start()
         animatorThread?.start()
     }
 

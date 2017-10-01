@@ -29,17 +29,36 @@ internal class CopyUtilsTest {
     }
 
     @org.junit.jupiter.api.Test
-    fun copyGameState() {
+    fun copyGameStateBySerialization() {
+        innerCopyGameStateTest(true)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun copyGameStateDirectly() {
+        innerCopyGameStateTest(false)
+    }
+
+    fun innerCopyGameStateTest(bySerialization: Boolean) {
         val gameState = DummyObjects.createDummyGameState()
         val solidBlock = SolidBlock()
         gameState.addToGrid(solidBlock, 1, 2)
         gameState.player.x = 1.5
 
-        val copy = CopyUtils.copyBySerialization(gameState)
+        val copy = if (bySerialization) {CopyUtils.copyBySerialization(gameState)} else {gameState.makeCopy()}
         assertEquals(gameState.gameObjects.count(), copy.gameObjects.count())
 
         assertNotEquals(gameState.player, copy.player)
         assertEquals(gameState.player.x, copy.player.x)
+        for (gameObject in copy.gameObjects) {
+            if (gameObject.gameObjectClass == GameObjectClass.PLAYER) {
+                assertEquals(copy.player, gameObject)
+            }
+        }
+        for (gameObject in copy.updateObjects) {
+            if (gameObject.gameObjectClass == GameObjectClass.PLAYER) {
+                assertEquals(copy.player, gameObject)
+            }
+        }
         assertNotNull(gameState.grid[1, 2])
 
         val copiedBlock = copy.grid[1, 2]!!

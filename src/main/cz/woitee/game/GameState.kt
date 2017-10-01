@@ -90,6 +90,12 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
                 (gameObject.y / BlockHeight).toInt()
                 ] = null
     }
+    internal fun addColumn(column: List<GameObject?>) {
+        shiftGrid()
+        for (y in 0..column.lastIndex) {
+            addToGrid(column[y], WidthBlocks - 1, y)
+        }
+    }
     private fun shiftGrid() {
         gridX += 1
         for (y in 0 .. grid.height - 1) {
@@ -128,12 +134,8 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
                     val blockOffset = (offset / BlockWidth).toInt()
 
                     for (i in 1..blockOffset) {
-                        shiftGrid()
 //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                        val column = levelGenerator.generateNextColumn(this)
-                        for (y in 0..column.lastIndex) {
-                            addToGrid(column[y], WidthBlocks - 1, y)
-                        }
+                        this.addColumn(levelGenerator.generateNextColumn(this))
                     }
                 }
             }
@@ -273,7 +275,6 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
      */
     fun makeCopy(): GameState {
         val stateCopy = GameState(game, levelGenerator)
-        stateCopy.player = player.makeCopy()
         stateCopy.gridX = gridX
         stateCopy.heldActions = HashMap(heldActions)
 
@@ -283,11 +284,13 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
         stateCopy.grid.clear()
         for (gameObject in gameObjects) {
             val objectCopy = gameObject.makeCopy()
-            objectCopy.gameState = this
+            objectCopy.gameState = stateCopy
             stateCopy.gameObjects.add(objectCopy)
             if (objectCopy.isUpdated)
                 stateCopy.updateObjects.add(objectCopy)
             stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
+            if (gameObject.gameObjectClass == GameObjectClass.PLAYER)
+                stateCopy.player = objectCopy as Player
         }
 
         stateCopy.isGameOver = isGameOver

@@ -35,6 +35,10 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
         return set(p.x, p.y, obj)
     }
 
+    fun getColumn(x: Int): ArrayList<T> {
+        return grid[x]
+    }
+
     fun setColumn(x: Int, column: ArrayList<T>): Grid2D<T> {
         grid[x] = column
         return this

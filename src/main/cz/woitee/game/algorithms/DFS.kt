@@ -29,7 +29,6 @@ open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boo
         val actionList = ArrayList<Int>()
         val possibleActionsList = ArrayList<List<UndoableAction?>>()
 
-        maxX = (gameState.gridX + gameState.grid.width) * BlockWidth
         while (undoList.count() < maxDepth && gameState.player.nextX(this.updateTime) + gameState.player.widthPx < maxX) {
             val currentActions: List<UndoableAction?> = orderedPerformableActions(gameState)
             undoList.add(advanceState(gameState, currentActions[0]))

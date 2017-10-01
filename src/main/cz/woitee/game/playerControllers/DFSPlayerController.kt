@@ -4,6 +4,7 @@ import cz.woitee.game.algorithms.DFS
 import cz.woitee.game.algorithms.SearchStatsSummer
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.GameState
+import cz.woitee.game.algorithms.DFSBase
 import cz.woitee.game.levelGenerators.DFSEnsuringGenerator
 import java.io.File
 import java.io.ObjectOutputStream
@@ -14,11 +15,10 @@ import java.util.*
 /**
  * Created by woitee on 09/04/2017.
  */
-class DFSPlayerController: PlayerController() {
+class DFSPlayerController(val dfs: DFSBase = DFS()): PlayerController() {
     var readyToDie = false
     var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 10000)
-    val dfs = DFS()
 
     override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
         if (readyToDie)

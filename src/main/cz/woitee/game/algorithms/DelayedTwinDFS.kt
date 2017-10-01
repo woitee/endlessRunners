@@ -4,7 +4,9 @@ import cz.woitee.game.GameState
 import cz.woitee.game.actions.abstract.UndoableAction
 import cz.woitee.game.levelGenerators.ColumnCopyingLevelGenerator
 import cz.woitee.game.undoing.IUndo
+import cz.woitee.game.undoing.NoActionUndo
 import cz.woitee.game.undoing.UndoFactory
+import cz.woitee.utils.findFromEnd
 import java.security.InvalidParameterException
 import java.util.*
 
@@ -15,7 +17,8 @@ import java.util.*
  */
 class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean = true): DFSBase(true, maxDepth, debug) {
     data class TwoStatesUndo(val currentUndo: IUndo, val delayedUndo: IUndo)
-    data class StackData(val statesUndo: TwoStatesUndo, val actionIx: Int, val possibleActions:List<UndoableAction?>, val playerX: Double) {
+    //TODO: Change var to val
+    data class StackData(var statesUndo: TwoStatesUndo, var actionIx: Int, val possibleActions:List<UndoableAction?>, val playerX: Double, val playerY: Double, val playerYSpeed: Double) {
         val action: UndoableAction?
             get() = possibleActions[actionIx]
     }
@@ -70,6 +73,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                 throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed! " +
                         "Expected: ${dfsStack.peekLast().playerX} Actual: ${gameState.player.x}")
             }
+
             // Synchronize end - new additions to grid
             val currentState = this.currentState!!
             val delayedState = this.delayedState!!
@@ -102,8 +106,12 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
     }
 
     protected fun applyBothUndo(bothUndo: TwoStatesUndo) {
-        bothUndo.delayedUndo.undo(delayedState!!)
         bothUndo.currentUndo.undo(currentState!!)
+        bothUndo.delayedUndo.undo(delayedState!!)
+    }
+
+    override fun orderedPerformableActions(gameState: GameState): List<UndoableAction?> {
+        return super.orderedPerformableActions(gameState).filter{ it?.isApplicableOn(delayedState!!) ?: true }
     }
 
     /**
@@ -116,6 +124,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         val delayedState = delayedState!!
 
         if (actionsForDelayedState.isNotEmpty()) {
+            println("Not empty actions for delayed state")
             val nextAction = if (actionsForDelayedState.peekFirst().isApplicableOn(delayedState)) {
                 actionsForDelayedState.pollFirst()
             } else {
@@ -154,14 +163,19 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         val currentState = this.currentState!!
         val delayedState = this.delayedState!!
 
+        val placeholderUndo = TwoStatesUndo(NoActionUndo, NoActionUndo)
         while (dfsStack.count() < maxDepth && currentState.player.nextX(this.updateTime) + currentState.player.widthPx < maxX) {
             val currentActions: List<UndoableAction?> = orderedPerformableActions(currentState)
-            dfsStack.push(StackData(
-                advanceBothStates(currentActions[0]),
-                0,
-                currentActions,
-                delayedState.player.x
-            ))
+            var stackData = StackData(
+                    placeholderUndo,
+                    0,
+                    currentActions,
+                    delayedState.player.x,
+                    delayedState.player.y,
+                    delayedState.player.yspeed
+            )
+            stackData.statesUndo = advanceBothStates(currentActions[0])
+            dfsStack.push(stackData)
             if (dfsStack.count() > lastStats.reachedDepth)
                 lastStats.reachedDepth = dfsStack.count()
             if (isGameOverInEitherState() || isInCache(currentState)) {
@@ -172,29 +186,24 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                         // No option but to lose the game
                         return SearchResult(false)
                     }
-                    val stackData = dfsStack.pop()
+                    stackData = dfsStack.pop()
                     applyBothUndo(stackData.statesUndo)
                     ++lastStats.backtrackedStates
-                    var actionIx = stackData.actionIx + 1
-                    val actions = stackData.possibleActions
-                    while (actionIx < actions.count()) {
-                        val undo = advanceBothStates(actions[actionIx])
+                    ++stackData.actionIx
+                    while (stackData.actionIx < stackData.possibleActions.count()) {
+                        val undo = advanceBothStates(stackData.action)
                         if (isGameOverInEitherState() || isInCache(currentState)) {
                             applyBothUndo(undo)
                             ++lastStats.backtrackedStates
-                            ++actionIx
+                            ++stackData.actionIx
                         } else {
-                            dfsStack.push(StackData(
-                                undo,
-                                actionIx,
-                                actions,
-                                delayedState.player.x
-                            ))
+                            stackData.statesUndo = undo
+                            dfsStack.push(stackData)
                             finishedBacktrack = true
                             break
                         }
                     }
-                    if (actionIx >= actions.count())
+                    if (stackData.actionIx >= stackData.possibleActions.count())
                         if (shouldCache(currentState)) cache(currentState)
                 }
             }

@@ -6,7 +6,7 @@ import cz.woitee.game.undoing.IUndo
 
 import cz.woitee.game.objects.Player
 import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.levelGenerators.ILevelGenerator
+import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.actions.abstract.HoldAction
@@ -24,10 +24,13 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
 /**
+ * A state of the game, contains objects in the game, other statuses and provides methods to advance the game
+ * and manipulate it's inner workings.
+ *
  * Created by woitee on 13/01/2017.
  */
 
-class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerializable {
+class GameState(val game: Game, val levelGenerator: LevelGenerator?) : MySerializable {
     // parameterless constructor for serialization purposes
     constructor(): this(DummyObjects.createDummyGame(), null)
 
@@ -90,8 +93,9 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
                 (gameObject.y / BlockHeight).toInt()
                 ] = null
     }
-    internal fun addColumn(column: List<GameObject?>) {
+    internal fun addColumn(levelGenerator: LevelGenerator) {
         shiftGrid()
+        val column = levelGenerator.generateNextColumn(this)
         for (y in 0..column.lastIndex) {
             addToGrid(column[y], WidthBlocks - 1, y)
         }
@@ -135,7 +139,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
 
                     for (i in 1..blockOffset) {
 //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                        this.addColumn(levelGenerator.generateNextColumn(this))
+                        this.addColumn(levelGenerator)
                     }
                 }
             }
@@ -271,7 +275,7 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
     }
 
     /**
-     * This copy is not exactly deep or shallow, it copies what it needs to have a state that does not depend on it.
+     * This makes a deep copy of the state, effectively creating a new state that does not depend on the original.
      */
     fun makeCopy(): GameState {
         val stateCopy = GameState(game, levelGenerator)
@@ -288,9 +292,10 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
             stateCopy.gameObjects.add(objectCopy)
             if (objectCopy.isUpdated)
                 stateCopy.updateObjects.add(objectCopy)
-            stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
             if (gameObject.gameObjectClass == GameObjectClass.PLAYER)
                 stateCopy.player = objectCopy as Player
+            else
+                stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
         }
 
         stateCopy.isGameOver = isGameOver
@@ -357,8 +362,10 @@ class GameState(val game: Game, val levelGenerator: ILevelGenerator?) : MySerial
 
     /**
      * Returns currently held actions as bit array (in an Int).
-     * The bits are 1 - when action is held and 0 when action is not held, ordered from lowest to highest by the order
+     * The bits are 1 - when actionIx is held and 0 when actionIx is not held, ordered from lowest to highest by the order
      * that the actions are returned in the allActions() method on GameState (also GameDescription).
+     *
+     * Useful for hashing.
      */
     fun currentHeldActionsAsFlags(): Int {
         var flags = 0

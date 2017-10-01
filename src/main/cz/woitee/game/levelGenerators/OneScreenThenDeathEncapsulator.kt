@@ -8,7 +8,7 @@ import cz.woitee.game.objects.SolidBlock
 import cz.woitee.utils.arrayList
 import java.util.*
 
-class OneScreenThenDeathEncapsulator(val innerGenerator: ILevelGenerator): ILevelGenerator {
+class OneScreenThenDeathEncapsulator(val innerGenerator: LevelGenerator): LevelGenerator() {
     var numCalled = 0
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {

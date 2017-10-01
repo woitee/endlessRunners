@@ -12,7 +12,7 @@ import cz.woitee.utils.arrayList
  * Created by woitee on 04/03/2017.
  */
 
-class SimpleLevelGenerator: ILevelGenerator {
+class SimpleLevelGenerator: LevelGenerator() {
     var currentHeight = 1
 
     var probableTransfers = mapOf(

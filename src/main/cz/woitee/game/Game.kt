@@ -1,7 +1,7 @@
 package cz.woitee.game
 
 import cz.woitee.utils.TimedThread
-import cz.woitee.game.levelGenerators.ILevelGenerator
+import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.playerControllers.PlayerController
 import cz.woitee.game.collisions.GridDetectingCollisionHandler
 import cz.woitee.game.descriptions.GameDescription
@@ -12,7 +12,7 @@ import java.util.*
  * Created by woitee on 13/01/2017.
  */
 
-class Game(val levelGenerator: ILevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
+class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
            val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true) {
 

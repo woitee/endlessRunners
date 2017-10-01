@@ -68,7 +68,7 @@ internal class CopyUtilsTest {
         assertEquals(solidBlock.y, copiedBlock.y)
         for (x in 0 until WidthBlocks) {
             for (y in 0 until HeightBlocks) {
-                assertNotEquals(GameObjectClass.PLAYER, gameState.grid[x, y]?.gameObjectClass)
+                assertNotEquals(GameObjectClass.PLAYER, copy.grid[x, y]?.gameObjectClass)
             }
         }
     }

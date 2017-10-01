@@ -11,7 +11,7 @@ import cz.woitee.utils.arrayList
  * Created by woitee on 15/01/2017.
  */
 
-class FlatLevelGenerator: ILevelGenerator {
+class FlatLevelGenerator: LevelGenerator() {
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
         val col = arrayList<GameObject?>(HeightBlocks, { null })
         col[0] = SolidBlock()

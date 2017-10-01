@@ -62,6 +62,7 @@ class DFSPlayerController(val dfs: DFSBase = DFS()): PlayerController() {
     }
 
     fun dumpState(gameState: GameState) {
+        return
         val dfsLevelGenerator = gameState.game.levelGenerator as? DFSEnsuringGenerator
 
         val logFileName = "out/states/GameState_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"

@@ -20,6 +20,14 @@ import java.util.*
 
 abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
     data class SearchResult(val success: Boolean, val action: GameAction? = null)
+    /**
+     * Assistant class for notifying that the last state advance managed to only perform the action, and not a state update.
+     */
+    class NoStateAdvanceUndo(val undo: IUndo): IUndo {
+        override fun undo(gameState: GameState) {
+            undo.undo(gameState)
+        }
+    }
 
     /**
      * Holding statistics from the last search.
@@ -72,9 +80,9 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
      * c) do a non-holding action
      * d) start holding an action
      *
-     * Note that there is always some action in this list, as it also contains null.
+     * Note that there is always some actionIx in this list, as it also contains null.
      */
-    open protected fun orderedPerformableActions(gameState: GameState): ArrayList<UndoableAction?> {
+    open protected fun orderedPerformableActions(gameState: GameState): List<UndoableAction?> {
         val list = ArrayList<UndoableAction?>()
         // stop holding action
         for (heldAction in gameState.heldActions.keys) {
@@ -128,8 +136,11 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
             return gameState.advanceUndoable(updateTime)
         else {
             val firstUndo = gameAction.applyUndoablyOn(gameState)
-            if (gameState.player.nextX(updateTime) + gameState.player.widthPx >= maxX)
-                return firstUndo
+            if (gameState.player.nextX(updateTime) + gameState.player.widthPx >= maxX) {
+                // This only happens as the last update at the end of the screen, and generally is successful,
+                // so really happens at MOST once per search. The extra class encapsulation overhead is negligible
+                return NoStateAdvanceUndo(firstUndo)
+            }
             val secondUndo = gameState.advanceUndoable(updateTime)
             return UndoFactory.doubleUndo(firstUndo, secondUndo)
         }

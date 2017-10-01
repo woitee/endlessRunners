@@ -24,7 +24,7 @@ fun visualizeDelayedTwinDFS() {
             mode = Game.Mode.INTERACTIVE,
             gameDescription = gameDescription
     )
-    game.gameState.addToGrid(SolidBlock(), 20, 1)
+//    game.gameState.addToGrid(SolidBlock(), 20, 1)
 
     val currentStateVisualizer = GamePanelVisualizer("TwinDFS: Current State")
     val delayedStateVisualizer = GamePanelVisualizer("TwinDFS: Delayed State")

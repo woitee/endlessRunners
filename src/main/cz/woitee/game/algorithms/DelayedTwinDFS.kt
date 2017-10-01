@@ -1,11 +1,10 @@
 package cz.woitee.game.algorithms
 
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.actions.abstract.UndoableAction
+import cz.woitee.game.levelGenerators.ColumnCopyingLevelGenerator
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.undoing.UndoFactory
-import cz.woitee.utils.pop
 import java.security.InvalidParameterException
 import java.util.*
 
@@ -16,29 +15,29 @@ import java.util.*
  */
 class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean = true): DFSBase(true, maxDepth, debug) {
     data class TwoStatesUndo(val currentUndo: IUndo, val delayedUndo: IUndo)
+    data class StackData(val statesUndo: TwoStatesUndo, val actionIx: Int, val possibleActions:List<UndoableAction?>, val playerX: Double) {
+        val action: UndoableAction?
+            get() = possibleActions[actionIx]
+    }
     // The two states used as variables, inited late by gameState copies
     var delayedState: GameState? = null
     var currentState: GameState? = null
     var framesDelayed: Int = (delayTime / updateTime).toInt()
 
     // DFS stacks to explore - persistent
-    val undoStack = ArrayDeque<TwoStatesUndo>()
-    val actionStack = ArrayDeque<Int>()
-    val possibleActionsStack = ArrayDeque<List<UndoableAction?>>()
-    val playerXStack = ArrayDeque<Double>()
+    val dfsStack = ArrayDeque<StackData>()
 
     // A list of actions to perform in the delayedState ASAP
     val actionsForDelayedState = ArrayDeque<UndoableAction>()
     var timesCalled: Long = 0
 
+    val columnCopier = ColumnCopyingLevelGenerator()
+
     override fun reset() {
         super.reset()
         delayedState = null
         currentState = null
-        undoStack.clear()
-        actionStack.clear()
-        possibleActionsStack.clear()
-        playerXStack.clear()
+        dfsStack.clear()
         timesCalled = 0
     }
 
@@ -62,38 +61,33 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                 return SearchResult(false)
             }
         } else {
-            // Try catch-up, otherwise throw exception
             // Synchronize beginning - stack beginnings
-            while (gameState.player.x > playerXStack.peekLast()) {
-                undoStack.pollLast()
-                playerXStack.pollLast()
-                possibleActionsStack.pollLast()
-                actionStack.pollLast()
+            // Try catch-up, otherwise throw exception
+            while (gameState.player.x > dfsStack.peekLast().playerX) {
+                dfsStack.pollLast()
             }
-            if (gameState.player.x != playerXStack.peekLast()) {
-                throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed!")
+            if (gameState.player.x != dfsStack.peekLast().playerX) {
+                throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed! " +
+                        "Expected: ${dfsStack.peekLast().playerX} Actual: ${gameState.player.x}")
             }
             // Synchronize end - new additions to grid
             val currentState = this.currentState!!
             val delayedState = this.delayedState!!
             if (gameState.gridX > currentState.gridX) {
-                val column = gameState.grid.getColumn(gameState.grid.width - 1)
-                for (i in column.indices) {
-                    column[i] = column[i]?.makeCopy()
-                }
+                columnCopier.savedColumn = gameState.grid.getColumn(gameState.grid.width - 1)
                 synchronized(currentState.gameObjects) {
-                    currentState.addColumn(column)
-                }
-                for (i in column.indices) {
-                    column[i] = column[i]?.makeCopy()
+                    currentState.addColumn(columnCopier)
                 }
                 synchronized(delayedState.gameObjects) {
-                    delayedState.addColumn(column)
+                    delayedState.addColumn(columnCopier)
                 }
             }
         }
-
-        return searchFromTwoStates(updateTime)
+        synchronized(currentState!!.gameObjects) {
+            synchronized(delayedState!!.gameObjects) {
+                return searchFromTwoStates()
+            }
+        }
     }
 
     protected fun advanceBothStates(action: UndoableAction?): TwoStatesUndo {
@@ -156,55 +150,61 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
     /**
      * Both states are prepared (the real and the delayed one), just do the search.
      */
-    protected fun searchFromTwoStates(updateTime: Double): SearchResult {
+    protected fun searchFromTwoStates(): SearchResult {
         val currentState = this.currentState!!
         val delayedState = this.delayedState!!
 
-        while (undoStack.count() < maxDepth && currentState.player.nextX(this.updateTime) + currentState.player.widthPx < maxX) {
+        while (dfsStack.count() < maxDepth && currentState.player.nextX(this.updateTime) + currentState.player.widthPx < maxX) {
             val currentActions: List<UndoableAction?> = orderedPerformableActions(currentState)
-            playerXStack.push(delayedState.player.x)
-            undoStack.push(advanceBothStates(currentActions[0]))
-
-            if (undoStack.count() > lastStats.reachedDepth)
-                lastStats.reachedDepth = undoStack.count()
-            actionStack.add(0)
-            possibleActionsStack.add(currentActions)
+            dfsStack.push(StackData(
+                advanceBothStates(currentActions[0]),
+                0,
+                currentActions,
+                delayedState.player.x
+            ))
+            if (dfsStack.count() > lastStats.reachedDepth)
+                lastStats.reachedDepth = dfsStack.count()
             if (isGameOverInEitherState() || isInCache(currentState)) {
                 //backtrack
                 var finishedBacktrack = false
                 while (!finishedBacktrack) {
-                    if (undoStack.isEmpty()) {
+                    if (dfsStack.isEmpty()) {
                         // No option but to lose the game
                         return SearchResult(false)
                     }
-                    playerXStack.pop()
-                    applyBothUndo(undoStack.pop())
+                    val stackData = dfsStack.pop()
+                    applyBothUndo(stackData.statesUndo)
                     ++lastStats.backtrackedStates
-                    var action = actionStack.pop() + 1
-                    val actions = possibleActionsStack.pop()
-                    while (action < actions.count()) {
-                        val undo = advanceBothStates(actions[action])
+                    var actionIx = stackData.actionIx + 1
+                    val actions = stackData.possibleActions
+                    while (actionIx < actions.count()) {
+                        val undo = advanceBothStates(actions[actionIx])
                         if (isGameOverInEitherState() || isInCache(currentState)) {
                             applyBothUndo(undo)
                             ++lastStats.backtrackedStates
-                            ++action
+                            ++actionIx
                         } else {
-                            undoStack.push(undo)
-                            actionStack.push(action)
-                            possibleActionsStack.push(actions)
-                            playerXStack.push(delayedState.player.x)
+                            dfsStack.push(StackData(
+                                undo,
+                                actionIx,
+                                actions,
+                                delayedState.player.x
+                            ))
                             finishedBacktrack = true
                             break
                         }
                     }
-                    if (action >= actions.count())
+                    if (actionIx >= actions.count())
                         if (shouldCache(currentState)) cache(currentState)
                 }
             }
         }
+        // rollback last action if a state advance didn't happen (the action performed might not be performable next turn)
+        // we'll do some action next search
+        if (dfsStack.peekLast().statesUndo.currentUndo is DFSBase.NoStateAdvanceUndo) {
+            dfsStack.pop()
+        }
 
-        val actionIx = actionStack.peekLast()
-        val action = possibleActionsStack.peekLast()[actionIx]
-        return SearchResult(true, action)
+        return SearchResult(true, dfsStack.peekLast().action)
     }
 }

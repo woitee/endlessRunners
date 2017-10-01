@@ -12,7 +12,7 @@ import java.util.*
  * Created by woitee on 23/07/2017.
  */
 
-class TestLevelGenerator: ILevelGenerator {
+class TestLevelGenerator: LevelGenerator() {
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
         val col = arrayList<GameObject?>(HeightBlocks, { null })
         col[0] = SolidBlock()
@@ -30,7 +30,5 @@ class TestLevelGenerator: ILevelGenerator {
     }
 
     override fun reset() {
-
     }
-
 }

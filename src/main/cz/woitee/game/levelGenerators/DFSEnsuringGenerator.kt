@@ -5,23 +5,19 @@ import cz.woitee.game.Grid2D
 import cz.woitee.game.HeightBlocks
 import cz.woitee.game.WidthBlocks
 import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.*
-import cz.woitee.game.algorithms.DFS
 import cz.woitee.game.objects.GameObjectClass
 import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.*
+import cz.woitee.game.algorithms.DFSBase
 import java.util.*
 
 /**
  * Created by woitee on 22/07/2017.
  */
 
-class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator {
-    var dfs = DFS()
+class DFSEnsuringGenerator(val innerGenerator: LevelGenerator, val dfsProvider: DFSBase): LevelGenerator() {
     var lastGameState: GameState? = null
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
-        val originalDFS = DFS(dfs)
         lastGameState = gameState.makeCopy()
         val column = innerGenerator.generateNextColumn(gameState)
 
@@ -40,8 +36,8 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
         }
 
         // Search it by DFS
-        dfs.searchForAction(gameState)
-        val searchSucess = dfs.lastStats.success
+        dfsProvider.searchForAction(gameState)
+        val searchSucess = dfsProvider.lastStats.success
 
         // Replace gameState back into original position
         for (y in 0 .. column.lastIndex) {
@@ -59,13 +55,13 @@ class DFSEnsuringGenerator(val innerGenerator: ILevelGenerator): ILevelGenerator
                 }
             }
             // Reset back caches in DFS, because we have changed the column
-            dfs = originalDFS
+            dfsProvider.reset()
         }
         return column
     }
 
     override fun reset() {
         innerGenerator.reset()
-        dfs.reset()
+        dfsProvider.reset()
     }
 }

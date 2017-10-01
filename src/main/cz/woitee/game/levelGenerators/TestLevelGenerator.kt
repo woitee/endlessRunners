@@ -18,14 +18,11 @@ class TestLevelGenerator: LevelGenerator() {
         col[0] = SolidBlock()
         val gridX = gameState.gridX
 
-        if (gridX % 20 == 0) {
-            col[0] = CustomBlock(0)
+        if (gridX % 20 == 0 || gridX % 20 == 1) {
+        } else {
+            col[1] = SolidBlock()
         }
 
-        if (gridX % 20 == 10) {
-            col[1] = CustomBlock(1)
-            col[2] = CustomBlock(1)
-        }
         return col
     }
 

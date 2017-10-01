@@ -20,7 +20,7 @@ import cz.woitee.geom.Direction4
 /**
  * Created by woitee on 23/07/2017.
  */
-class BitTripGameDescription: GameDescription() {
+open class BitTripGameDescription: GameDescription() {
     val trampolineAction = ConditionalAction(
             PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
             JumpAction(30.0)
@@ -28,8 +28,8 @@ class BitTripGameDescription: GameDescription() {
 
     override val allActions: List<GameAction> = listOf(
             JumpAction(22.0),
-            ChangeShapeAction(2, 1),
-        trampolineAction,
+            ChangeShapeAction(2, 1, 0.25),
+            trampolineAction,
             ChangeColorAction(GameObjectColor.YELLOW, 1.0)
     )
     override val customObjects = arrayListOf(CustomBlock(0), CustomBlock(1))

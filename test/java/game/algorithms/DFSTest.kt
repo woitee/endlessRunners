@@ -35,7 +35,7 @@ internal class DFSTest {
     private fun runTestFromFile(filePath: String, expectGameOver: Boolean = false, time: Double = 2.0) {
         val game = Game(
                 DFSEnsuringGenerator(SimpleLevelGenerator(), DFS()),
-                DFSPlayerController(),
+                DFSPlayerController(DFS()),
 
 //                null,
                 GamePanelVisualizer(),

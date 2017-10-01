@@ -38,6 +38,9 @@ open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boo
             actionList.add(0)
             possibleActionsList.add(currentActions)
             if (gameState.isGameOver || isInCache(gameState)) {
+                if (gameState.player.x > 1195) {
+                    val a = 5
+                }
                 //backtrack
                 var finishedBacktrack = false
                 while (!finishedBacktrack) {

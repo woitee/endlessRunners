@@ -15,7 +15,7 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHold
         for (collPoint in gameState.player.collPoints) {
             val gridLoc = gameState.gridLocation(collPoint)
 
-            if (!gameState.grid.contains(gridLoc) || gameState.grid[gridLoc]?.isSolid == true) {
+            if (gameState.grid.contains(gridLoc) && gameState.grid[gridLoc]?.isSolid == true) {
                 innerStopApplyingOn(gameState, 0.0)
                 return false
             }

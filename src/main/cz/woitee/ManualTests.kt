@@ -1,9 +1,11 @@
 package cz.woitee
 
 import cz.woitee.game.Game
+import cz.woitee.game.algorithms.DFS
 import cz.woitee.game.algorithms.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
+import cz.woitee.game.levelGenerators.TestLevelGenerator
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.gui.GamePanelVisualizer
@@ -13,11 +15,11 @@ fun main(args: Array<String>) {
     visualizeDelayedTwinDFS()
 }
 
-fun visualizeDelayedTwinDFS() {
+fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
     // Recommended breakpoint in DelayedTwinDFS::searchInternal
     val gameDescription = BitTripGameDescription()
     val levelGenerator = SimpleLevelGenerator()
-    val delayedTwinDFS = DelayedTwinDFS(0.25)
+    val delayedTwinDFS = DelayedTwinDFS(delayTime)
     val playerController = DFSPlayerController(delayedTwinDFS)
     val visualizer = GamePanelVisualizer()
     val game = Game(levelGenerator, playerController, visualizer,

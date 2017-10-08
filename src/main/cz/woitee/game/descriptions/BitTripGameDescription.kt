@@ -28,7 +28,7 @@ open class BitTripGameDescription: GameDescription() {
 
     override val allActions: List<GameAction> = listOf(
             JumpAction(22.0),
-            ChangeShapeAction(2, 1, 0.25),
+            ChangeShapeAction(2, 1),
             trampolineAction,
             ChangeColorAction(GameObjectColor.YELLOW, 1.0)
     )

@@ -62,14 +62,13 @@ abstract class UndoableHoldAction(minimumHoldTime: Double) : HoldAction(minimumH
 
     override final fun applyUndoablyOn(gameState: GameState): HoldActionUndo {
         val res = innerApplyUndoablyOn(gameState)
-        // TODO: rewrite this so it isn't a copy of code from HoldAction
         gameState.heldActions[this] = gameState.gameTime
         return res
     }
     fun stopApplyingUndoablyOn(gameState: GameState): HoldActionStopUndo {
-        val res = innerStopApplyingUndoablyOn(gameState, gameState.heldActions[this]!!)
-        // TODO: rewrite this so it isn't a copy of code from HoldAction
+        val heldActionTime = gameState.heldActions[this]!!
         gameState.heldActions.remove(this)
+        val res = innerStopApplyingUndoablyOn(gameState, heldActionTime)
         return res
     }
 

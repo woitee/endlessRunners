@@ -39,7 +39,7 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHold
         gameState.player.heightBlocks = gameState.player.defaultHeightBlocks
     }
     override fun innerApplyUndoablyOn(gameState: GameState): HoldActionUndo {
-        applyOn(gameState)
+        innerApplyOn(gameState)
         return object: HoldActionUndo(this) {
             override fun innerUndo(gameState: GameState) {
                 gameState.player.widthBlocks = gameState.player.defaultWidthBlocks
@@ -48,7 +48,7 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHold
         }
     }
     override fun innerStopApplyingUndoablyOn(gameState: GameState, timeStart: Double): HoldActionStopUndo {
-        stopApplyingOn(gameState)
+        innerStopApplyingOn(gameState, timeStart)
         return object : HoldActionStopUndo(this, timeStart) {
             override fun innerUndo(gameState: GameState) {
                 gameState.player.widthBlocks = targetWidth

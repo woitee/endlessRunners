@@ -1,4 +1,4 @@
-package cz.woitee.gui
+package cz.woitee.game.gui
 
 import cz.woitee.game.*
 import cz.woitee.game.objects.*

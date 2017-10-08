@@ -32,8 +32,9 @@ abstract class HoldAction(val minimumHoldTime: Double) : GameAction() {
         gameState.heldActions[this] = gameState.gameTime
     }
     fun stopApplyingOn(gameState: GameState) {
-        innerStopApplyingOn(gameState, gameState.heldActions[this]!!)
+        val heldActionTime = gameState.heldActions[this]!!
         gameState.heldActions.remove(this)
+        innerStopApplyingOn(gameState, heldActionTime)
     }
     fun canBeStoppedApplyingOn(gameState: GameState): Boolean {
         if (!gameState.heldActions.containsKey(this))

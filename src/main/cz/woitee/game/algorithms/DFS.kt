@@ -1,13 +1,8 @@
 package cz.woitee.game.algorithms
 
-import cz.woitee.gui.GamePanelVisualizer
-import cz.woitee.game.BlockWidth
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.actions.abstract.UndoableAction
-import cz.woitee.game.actions.abstract.UndoableHoldAction
-import cz.woitee.game.undoing.UndoFactory
 import cz.woitee.utils.pop
 import java.util.*
 
@@ -38,9 +33,6 @@ open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boo
             actionList.add(0)
             possibleActionsList.add(currentActions)
             if (gameState.isGameOver || isInCache(gameState)) {
-                if (gameState.player.x > 1195) {
-                    val a = 5
-                }
                 //backtrack
                 var finishedBacktrack = false
                 while (!finishedBacktrack) {

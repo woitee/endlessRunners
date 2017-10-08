@@ -1,4 +1,4 @@
-package cz.woitee.game.levelGenerators
+package cz.woitee.game.levelGenerators.encapsulators
 
 import cz.woitee.game.GameState
 import cz.woitee.game.Grid2D
@@ -8,13 +8,14 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.GameObjectClass
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.algorithms.DFSBase
+import cz.woitee.game.levelGenerators.LevelGenerator
 import java.util.*
 
 /**
  * Created by woitee on 22/07/2017.
  */
 
-class DFSEnsuringGenerator(val innerGenerator: LevelGenerator, val dfsProvider: DFSBase): LevelGenerator() {
+class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFSBase): LevelGenerator() {
     var lastGameState: GameState? = null
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {

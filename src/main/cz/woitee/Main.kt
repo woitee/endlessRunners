@@ -1,6 +1,6 @@
 package cz.woitee
 
-import cz.woitee.gui.GamePanelVisualizer
+import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.Game
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
@@ -8,13 +8,10 @@ import cz.woitee.game.Grid2D
 import cz.woitee.game.algorithms.DFS
 import cz.woitee.game.algorithms.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
-import cz.woitee.game.levelGenerators.DFSEnsuringGenerator
+import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.playerControllers.DFSPlayerController
-import cz.woitee.game.levelGenerators.*
-import cz.woitee.game.playerControllers.*
 import cz.woitee.utils.StopWatch
-import cz.woitee.game.descriptions.*
 
 /**
  * Created by woitee on 09/01/2017.
@@ -59,8 +56,8 @@ fun createGame(): Game {
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = DFSEnsuringGenerator(SimpleLevelGenerator(), DFS())
-//    val levelGenerator = DFSEnsuringGenerator(BlockLevelGenerator(gameDescription))
+    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), DFS())
+//    val levelGenerator = DFSEnsuring(BlockLevelGenerator(gameDescription))
 
     val playerController = DFSPlayerController(DelayedTwinDFS(0.1))
 //    val playerController = KeyboardPlayerController()

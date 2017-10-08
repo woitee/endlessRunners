@@ -1,6 +1,6 @@
 package cz.woitee.game.algorithms
 
-import cz.woitee.gui.GamePanelVisualizer
+import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.BlockWidth
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
@@ -8,7 +8,6 @@ import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.actions.abstract.UndoableAction
 import cz.woitee.game.actions.abstract.UndoableHoldAction
 import cz.woitee.game.undoing.UndoFactory
-import cz.woitee.utils.pop
 import java.util.*
 
 /**

@@ -2,11 +2,12 @@ package game.algorithms
 
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.DFS
+import cz.woitee.game.algorithms.DFSBase
 import cz.woitee.game.descriptions.BitTripGameDescription
-import cz.woitee.game.levelGenerators.DFSEnsuringGenerator
+import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.playerControllers.DFSPlayerController
-import cz.woitee.gui.GamePanelVisualizer
+import cz.woitee.game.gui.GamePanelVisualizer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream
@@ -32,16 +33,17 @@ internal class DFSTest {
         runTestFromFile("test/data/GameState_2017_09_28-16_07_19.dmp")
     }
 
-    private fun runTestFromFile(filePath: String, expectGameOver: Boolean = false, time: Double = 2.0) {
+    internal fun runTestFromFile(filePath: String, expectGameOver: Boolean = false, time: Double = 2.0,
+                                 dfsProvider: DFSBase = DFS(debug = true), gameDescription: GameDescription = BitTripGameDescription()) {
         val game = Game(
-                DFSEnsuringGenerator(SimpleLevelGenerator(), DFS()),
-                DFSPlayerController(DFS()),
+                SimpleLevelGenerator(),
+                DFSPlayerController(dfsProvider),
 
 //                null,
                 GamePanelVisualizer(),
 
                 mode = Game.Mode.INTERACTIVE,
-                gameDescription = BitTripGameDescription(),
+                gameDescription = gameDescription,
                 restartOnGameOver = false
         )
 
@@ -49,9 +51,17 @@ internal class DFSTest {
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)
 
+        var exception: Throwable? = null
+            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e -> exception = e }
+
         game.start()
+        // Warning! The time on which this joins will kill live debugging
         game.updateThread.join((time * 1000).toLong())
+//        game.updateThread.join()
         game.stop()
         assertEquals(expectGameOver, game.gameState.isGameOver)
+        if (exception != null) {
+            throw exception!!
+        }
     }
 }

@@ -5,7 +5,7 @@ import cz.woitee.game.algorithms.SearchStatsSummer
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.GameState
 import cz.woitee.game.algorithms.DFSBase
-import cz.woitee.game.levelGenerators.DFSEnsuringGenerator
+import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter
@@ -63,7 +63,7 @@ class DFSPlayerController(val dfs: DFSBase = DFS()): PlayerController() {
 
     fun dumpState(gameState: GameState) {
         return
-        val dfsLevelGenerator = gameState.game.levelGenerator as? DFSEnsuringGenerator
+        val dfsLevelGenerator = gameState.game.levelGenerator as? DFSEnsuring
 
         val logFileName = "out/states/GameState_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
         val file = File(logFileName)

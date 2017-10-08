@@ -7,11 +7,13 @@ import cz.woitee.game.actions.ChangeShapeAction
 import cz.woitee.game.actions.JumpAction
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.descriptions.BitTripGameDescription
+import cz.woitee.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
+import cz.woitee.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.utils.arrayList
 import game.algorithms.DFSTest
 import org.junit.jupiter.api.Assertions.*
@@ -79,19 +81,17 @@ internal class DelayedTwinDFSTest {
     }
 
     @org.junit.jupiter.api.Test
-    fun lastingBugInDelayedTwinDFS() {
+    fun multipleActionsOnStackForDelayedState() {
         val dfsTest = DFSTest()
 
-//        for (i in 0 .. 31) {
-
-        val i = 17
-        println("Running $i")
+        val delayedTwinDFS = DelayedTwinDFS(0.1)
+//        val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
+//        delayedTwinDFSVisualizer.start()
         dfsTest.runTestFromFile(
-                "out/states/GameStates_2017_10_02-00_45_44/GameStates_2017_10_02-00_45_44$i.dmp",
-                dfsProvider = DelayedTwinDFS(0.1),
+                "test/data/GameStates_2017_10_02-00_45_4417.dmp",
+                dfsProvider = delayedTwinDFS,
                 time = 5.0,
                 gameDescription = TimedChangeShapeGameDescription(0.25)
         )
-//        }
     }
 }

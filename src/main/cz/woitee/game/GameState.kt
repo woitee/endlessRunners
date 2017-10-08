@@ -306,7 +306,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         oos.writeInt(gridX)
         oos.writeInt(heldActions.count())
         for ((holdAction, time) in heldActions) {
-            oos.writeBytes(holdAction.javaClass.simpleName)
+            oos.writeObject(holdAction.javaClass.simpleName)
             oos.writeDouble(time)
         }
         oos.writeInt(gameObjects.count())
@@ -324,7 +324,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         heldActions.clear()
         val heldActionsCount = ois.readInt()
         for (i in 1 .. heldActionsCount) {
-            val holdActionName = ois.readBytes().toString()
+            val holdActionName = ois.readObject() as String
             for (holdAction in allActions) {
                 if (holdAction.javaClass.simpleName == holdActionName) {
                     heldActions[holdAction as HoldAction] = ois.readDouble()

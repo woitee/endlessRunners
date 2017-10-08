@@ -3,6 +3,7 @@ package cz.woitee
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
+import cz.woitee.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import cz.woitee.game.playerControllers.DFSPlayerController
@@ -26,26 +27,10 @@ fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
     )
 //    game.gameState.addToGrid(SolidBlock(), 20, 1)
 
-    val currentStateVisualizer = GamePanelVisualizer("TwinDFS: Current State")
-    val delayedStateVisualizer = GamePanelVisualizer("TwinDFS: Delayed State")
-    currentStateVisualizer.frame.setLocation(700, 0)
-    delayedStateVisualizer.frame.setLocation(700, 450)
-
-    val currentStateThread = TimedThread({
-        if (delayedTwinDFS.currentState != null) {
-            currentStateVisualizer.update(delayedTwinDFS.currentState!!)
-        }},
-        75.0
-    )
-    val delayedStateThread = TimedThread({
-        if (delayedTwinDFS.delayedState != null) {
-            delayedStateVisualizer.update(delayedTwinDFS.delayedState!!)
-        }},
-        75.0
-    )
-    currentStateThread.start()
-    delayedStateThread.start()
+    val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
+    delayedTwinDFSVisualizer.start()
 
     game.gameState.tag = "Main"
     game.run()
+    delayedTwinDFSVisualizer.stop()
 }

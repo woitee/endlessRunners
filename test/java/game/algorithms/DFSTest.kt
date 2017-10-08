@@ -8,7 +8,10 @@ import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
+import cz.woitee.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.game.levelGenerators.LevelGenerator
 import org.junit.jupiter.api.Assertions.*
+import sun.java2d.pipe.SpanShapeRenderer
 import java.io.File
 import java.io.ObjectInputStream
 
@@ -34,9 +37,9 @@ internal class DFSTest {
     }
 
     internal fun runTestFromFile(filePath: String, expectGameOver: Boolean = false, time: Double = 2.0,
-                                 dfsProvider: DFSBase = DFS(debug = true), gameDescription: GameDescription = BitTripGameDescription()) {
+                                 dfsProvider: DFSBase = DFS(), gameDescription: GameDescription = BitTripGameDescription()) {
         val game = Game(
-                SimpleLevelGenerator(),
+                FlatLevelGenerator(),
                 DFSPlayerController(dfsProvider),
 
 //                null,
@@ -55,9 +58,11 @@ internal class DFSTest {
             game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e -> exception = e }
 
         game.start()
-        // Warning! The time on which this joins will kill live debugging
+
+//         Warning! The time on which this joins will kill live debugging
         game.updateThread.join((time * 1000).toLong())
 //        game.updateThread.join()
+
         game.stop()
         assertEquals(expectGameOver, game.gameState.isGameOver)
         if (exception != null) {

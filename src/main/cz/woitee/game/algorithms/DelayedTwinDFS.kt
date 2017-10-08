@@ -46,6 +46,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         delayedState = null
         currentState = null
         dfsStack.clear()
+        actionsForDelayedState.clear()
         timesCalled = 0
     }
 
@@ -102,7 +103,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         }
     }
 
-    protected fun advanceBothStates(action: UndoableAction?): TwoStatesUndo {
+    fun advanceBothStates(action: UndoableAction?): TwoStatesUndo {
         val stagedAction = actionsForDelayedState.peekFirst()
         val currentUndo = advanceState(currentState!!, action)
         val delayedUndo = advanceDelayedState(action)
@@ -128,8 +129,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         bothUndo.delayedUndo.undo(delayedState!!)
     }
 
-    // to make it a little simpler, but limited
-//    override fun orderedPerformableActions(gameState: GameState): List<UndoableAction?> {
+//     to make it a little simpler, but limited
 //        return super.orderedPerformableActions(gameState).filter{ it?.isApplicableOn(delayedState!!) ?: true }
 //    }
 
@@ -145,17 +145,22 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         if (actionsForDelayedState.isNotEmpty()) {
             if (action != null)
                 actionsForDelayedState.addLast(action)
-
-            return if (actionsForDelayedState.peekFirst().isApplicableOn(delayedState)) {
-                val nextAction = actionsForDelayedState.pollFirst()
-                UndoFactory.doubleUndo(
-                    object : IUndo {
-                        override fun undo(gameState: GameState) { actionsForDelayedState.push(nextAction) }
-                    },
-                    advanceState(delayedState, nextAction)
-                )
+            val nextAction = actionsForDelayedState.peekFirst()
+            val nextActionApplicable = nextAction.isApplicableOn(delayedState)
+            val advancementUndo = if (nextActionApplicable) {
+                actionsForDelayedState.pollFirst()
+                advanceState(delayedState, nextAction)
             } else {
                 advanceState(delayedState, null)
+            }
+            return object : IUndo {
+                override fun undo(gameState: GameState) {
+                    advancementUndo.undo(gameState)
+                    if (nextActionApplicable)
+                        actionsForDelayedState.addFirst(nextAction)
+                    if (action != null)
+                        actionsForDelayedState.pollLast()
+                }
             }
         }
 
@@ -181,9 +186,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
 
         val placeholderUndo = TwoStatesUndo(NoActionUndo, NoActionUndo, null)
         while (dfsStack.count() < maxDepth && currentState.player.nextX(this.updateTime) + currentState.player.widthPx < maxX) {
-            if (currentState.player.x > 49825) {
-                val a = 5
-            }
             val currentActions: List<UndoableAction?> = orderedPerformableActions(currentState)
             var stackData = StackData(
                     placeholderUndo,

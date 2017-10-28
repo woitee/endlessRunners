@@ -72,6 +72,8 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         } else {
             // Synchronize beginning - stack beginnings
             // Try catch-up, otherwise throw exception
+            if (dfsStack.count() == 0)
+                throw Exception("Empty stack in DelayedTwinDFS. Did you call it on a GameState after a dead end has been found?")
             while (gameState.player.x > dfsStack.peekLast().playerX) {
                 dfsStack.pollLast()
             }
@@ -86,13 +88,13 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
             // Synchronize end - new additions to grid
             val currentState = this.currentState!!
             val delayedState = this.delayedState!!
-            if (gameState.gridX > currentState.gridX) {
+            while (gameState.gridX > currentState.gridX) {
                 columnCopier.savedColumn = gameState.grid.getColumn(gameState.grid.width - 1)
                 synchronized(currentState.gameObjects) {
-                    currentState.addColumn(columnCopier)
+                    currentState.addColumn(columnCopier.generateNextColumn(currentState))
                 }
                 synchronized(delayedState.gameObjects) {
-                    delayedState.addColumn(columnCopier)
+                    delayedState.addColumn(columnCopier.generateNextColumn(delayedState))
                 }
             }
         }

@@ -37,10 +37,13 @@ class Gravity(
     }
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {
+        // Don't fall if a block is underneath
         val target = (findTarget(gameState) as MovingObject?) ?: return NoActionUndo
         if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
             return NoActionUndo
         }
+
+        // Else fall
         val originalYSpeed = target.yspeed
         target.yspeed -= strength * BlockHeight * gameState.game.updateTime
 

@@ -10,6 +10,7 @@ import cz.woitee.game.algorithms.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
+import cz.woitee.game.levelGenerators.encapsulators.Measuring
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.utils.StopWatch
 
@@ -56,10 +57,10 @@ fun createGame(): Game {
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), DFS())
+    val levelGenerator = Measuring(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25)))
 //    val levelGenerator = DFSEnsuring(BlockLevelGenerator(gameDescription))
 
-    val playerController = DFSPlayerController(DelayedTwinDFS(0.1))
+    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
 //    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 

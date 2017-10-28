@@ -93,24 +93,44 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 (gameObject.y / BlockHeight).toInt()
                 ] = null
     }
-    internal fun addColumn(levelGenerator: LevelGenerator) {
-        shiftGrid()
-        val column = levelGenerator.generateNextColumn(this)
-        for (y in 0..column.lastIndex) {
-            addToGrid(column[y], WidthBlocks - 1, y)
-        }
+    internal fun addColumn(column: ArrayList<GameObject?>): ArrayList<GameObject?> {
+        return _addColumn(column)
     }
-    private fun shiftGrid() {
-        gridX += 1
+    internal fun undoAddColumn(column: ArrayList<GameObject?>): ArrayList<GameObject?> {
+        return _addColumn(column, false)
+    }
+    /**
+     * Adds a new column of GameObjects on selected side of the Grid (useful for undoing operations).
+     */
+    protected fun _addColumn(column: ArrayList<GameObject?>, toRight: Boolean = true): ArrayList<GameObject?> {
+        val oldColumn = shiftGrid(toRight)
+        val newColumn = column
+        val newColumnX = if (toRight) WidthBlocks - 1 else 0
+        for (y in 0..newColumn.lastIndex) {
+            addToGrid(newColumn[y], newColumnX, y)
+        }
+        return oldColumn
+    }
+
+    /**
+     * Advances the grid one square towards one of the direction, and returns the leftest column, that has fallen out of grid.
+     */
+    internal fun shiftGrid(towardsRight: Boolean = true): ArrayList<GameObject?> {
+        val gridXDiff = if (towardsRight) 1 else -1
+        val dropX = if (towardsRight) 0 else grid.width - 1
+
+        gridX += gridXDiff
+        val column = grid.getColumn(dropX)
         for (y in 0 .. grid.height - 1) {
-            val gameObject = grid[0, y]
+            val gameObject = grid[dropX, y]
             gameObject ?: continue
             gameObjects.remove(gameObject)
             if (gameObject.isUpdated)
                 updateObjects.remove(gameObject)
         }
-        grid.shiftX(1)
-        System.gc()
+        grid.shiftX(gridXDiff)
+//        System.gc()
+        return column
     }
 
     fun advance(time: Double, scrolling:Boolean = false) {
@@ -139,7 +159,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
                     for (i in 1..blockOffset) {
 //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                        this.addColumn(levelGenerator)
+                        this.addColumn(levelGenerator.generateNextColumn(this))
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package game.collisions
+package cz.woitee.game.collisions
 
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.geom.Direction4

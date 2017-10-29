@@ -54,6 +54,11 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     val allActions: List<GameAction>
         get() = game.gameDescription.allActions
 
+    /**
+     * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)
+     */
+    public var serializationVersion = 2
+
     init {
         player.x = PlayerScreenX
         player.y = BlockHeight.toDouble()
@@ -129,7 +134,6 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 updateObjects.remove(gameObject)
         }
         grid.shiftX(gridXDiff)
-//        System.gc()
         return column
     }
 
@@ -323,6 +327,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     }
 
     override fun writeObject(oos: ObjectOutputStream): GameState {
+        oos.writeInt(serializationVersion)
         oos.writeInt(gridX)
         oos.writeInt(heldActions.count())
         for ((holdAction, time) in heldActions) {
@@ -361,8 +366,8 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         for (i in 1 .. gameObjectCount) {
             val char: Char = ois.readChar()
             val gameObject = game.gameDescription.charToObject[char]!!.makeCopy()
-            gameObject.readObject(ois)
             gameObject.gameState = this
+            gameObject.readObject(ois)
             gameObjects.add(gameObject)
             if (gameObject.isUpdated)
                 updateObjects.add(gameObject)

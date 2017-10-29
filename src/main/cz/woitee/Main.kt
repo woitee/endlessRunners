@@ -11,8 +11,10 @@ import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.levelGenerators.encapsulators.Measuring
+import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.utils.StopWatch
+import java.util.concurrent.Delayed
 
 /**
  * Created by woitee on 09/01/2017.
@@ -50,14 +52,14 @@ fun test() {
 }
 
 fun createGame(): Game {
+//    val gameDescription = BitTripGameDescription()
     val gameDescription = BitTripGameDescription()
-//    val gameDescription = GameDescription()
 
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = Measuring(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25)))
+    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25)))
 //    val levelGenerator = DFSEnsuring(BlockLevelGenerator(gameDescription))
 
     val playerController = DFSPlayerController(DelayedTwinDFS(0.25))

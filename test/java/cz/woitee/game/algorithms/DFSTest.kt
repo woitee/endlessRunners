@@ -1,4 +1,4 @@
-package game.algorithms
+package cz.woitee.game.algorithms
 
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.DFS
@@ -18,25 +18,25 @@ import java.io.ObjectInputStream
 internal class DFSTest {
     @org.junit.jupiter.api.Test
     fun bugWrongCollisionWhenFarIntoTheGame() {
-        runTestFromFile("test/data/GameState_2017_09_03-14_52_43.dmp", expectGameOver = true)
+        runTestFromFile("test/data/GameState_2017_09_03-14_52_43.dmp", 1, expectGameOver = true)
     }
 
     @org.junit.jupiter.api.Test
     fun bugAfterAddingCustomBlocks() {
-        runTestFromFile("test/data/GameState_2017_09_21-22_11_14.dmp", expectGameOver = true)
+        runTestFromFile("test/data/GameState_2017_09_21-22_11_14.dmp", 1, expectGameOver = true)
     }
 
     @org.junit.jupiter.api.Test
     fun bugOfSimultaneousActions() {
-        runTestFromFile("test/data/GameState_2017_09_23-17_40_36.dmp")
+        runTestFromFile("test/data/GameState_2017_09_23-17_40_36.dmp", 1)
     }
 
     @org.junit.jupiter.api.Test
     fun pertainingTest() {
-        runTestFromFile("test/data/GameState_2017_09_28-16_07_19.dmp")
+        runTestFromFile("test/data/GameState_2017_09_28-16_07_19.dmp", 1)
     }
 
-    internal fun runTestFromFile(filePath: String, expectGameOver: Boolean = false, time: Double = 2.0,
+    internal fun runTestFromFile(filePath: String, serializationVersion: Int, expectGameOver: Boolean = false, time: Double = 2.0,
                                  dfsProvider: DFSBase = DFS(), gameDescription: GameDescription = BitTripGameDescription()) {
         val game = Game(
                 FlatLevelGenerator(),
@@ -49,7 +49,7 @@ internal class DFSTest {
                 gameDescription = gameDescription,
                 restartOnGameOver = false
         )
-
+        game.gameState.serializationVersion = serializationVersion
         val file = File(filePath)
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)

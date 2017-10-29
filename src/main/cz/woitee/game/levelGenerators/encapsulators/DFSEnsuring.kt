@@ -20,7 +20,7 @@ class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFSBase):
         dfsProvider.reset()
 
         // just making copy for debug purposes, no other reason
-//        lastGameState = gameState.makeCopy()
+        lastGameState = gameState.makeCopy()
 
 //        val column = innerGenerator.generateNextColumn(gameState)
         val generatedColumn = innerGenerator.generateNextColumn(gameState)

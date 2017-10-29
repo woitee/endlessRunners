@@ -60,6 +60,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
             updateThread.join()
             animatorThread?.join()
         }
+        visualizer?.stop()
     }
 
     fun reset() {

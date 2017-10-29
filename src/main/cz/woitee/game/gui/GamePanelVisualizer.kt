@@ -58,7 +58,6 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
     }
 
     override fun stop() {
-        println("Running STOP")
         SwingUtilities.invokeLater {
             frame.isVisible = false
         }

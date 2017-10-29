@@ -72,6 +72,10 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
         cachedStates.clear()
     }
 
+    protected fun isPlayerAtEnd(gameState: GameState): Boolean {
+        return gameState.player.nextX(this.updateTime) + gameState.player.widthPx >= maxX
+    }
+
     /**
      * Returns actions that should be tried ordered by priority, which is:
      * a) stop holding an action

@@ -6,16 +6,16 @@ import cz.woitee.game.HeightBlocks
 import cz.woitee.game.actions.ChangeShapeAction
 import cz.woitee.game.actions.JumpAction
 import cz.woitee.game.actions.abstract.GameAction
+import cz.woitee.game.algorithms.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
+import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.utils.arrayList
-import game.algorithms.DFSTest
 import org.junit.jupiter.api.Assertions.*
 import java.util.*
 
@@ -56,7 +56,7 @@ internal class DelayedTwinDFSTest {
         }
     }
 
-    fun correctCaching(delayTime: Double = 0.25, minCrouchTime: Double = 0.25) {
+    private fun correctCaching(delayTime: Double = 0.25, minCrouchTime: Double = 0.25) {
         // We mainly need the min time-limit on ChangeShapeAction
         val gameDescription = TimedChangeShapeGameDescription(minCrouchTime)
         val levelGenerator = HolesLevelGenerator()
@@ -82,16 +82,39 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun multipleActionsOnStackForDelayedState() {
+        runTestFromFile("test/data/GameStates_2017_10_02-00_45_4417.dmp", 0.1, 1)
+    }
+
+    private fun runTestFromFile(
+            filePath: String,
+            twinDFSdelay: Double,
+            serializationVersion: Int,
+            gameDescription: GameDescription = TimedChangeShapeGameDescription(0.25),
+            runTime: Double = 5.0,
+            expectGameOver: Boolean = false) {
         val dfsTest = DFSTest()
 
-        val delayedTwinDFS = DelayedTwinDFS(0.1)
-//        val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
-//        delayedTwinDFSVisualizer.start()
+        val delayedTwinDFS = DelayedTwinDFS(twinDFSdelay)
+        val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
+        delayedTwinDFSVisualizer.start()
         dfsTest.runTestFromFile(
-                "test/data/GameStates_2017_10_02-00_45_4417.dmp",
+                filePath,
+                serializationVersion,
                 dfsProvider = delayedTwinDFS,
-                time = 5.0,
-                gameDescription = TimedChangeShapeGameDescription(0.25)
+                time = runTime,
+                gameDescription = gameDescription,
+                expectGameOver = expectGameOver
         )
+//        delayedTwinDFSVisualizer.stop()
+    }
+
+    @org.junit.jupiter.api.Test
+    fun searchBeginningsAndEnds_stillFoundAWay() {
+        runTestFromFile("out/states/GameStates_2017_10_29-18_17_44/28.dmp", 0.25, 2, BitTripGameDescription())
+    }
+
+    @org.junit.jupiter.api.Test
+    fun searchBeginningsAndEnds_noLongerAWay() {
+        runTestFromFile("out/states/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription(), expectGameOver = true)
     }
 }

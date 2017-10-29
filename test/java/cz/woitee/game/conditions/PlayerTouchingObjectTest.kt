@@ -1,4 +1,4 @@
-package game.conditions
+package cz.woitee.game.conditions
 
 import cz.woitee.game.BlockHeight
 import cz.woitee.game.BlockWidth

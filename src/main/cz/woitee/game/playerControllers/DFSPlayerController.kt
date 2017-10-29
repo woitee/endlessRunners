@@ -6,6 +6,7 @@ import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.GameState
 import cz.woitee.game.algorithms.DFSBase
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
+import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter
@@ -63,15 +64,17 @@ class DFSPlayerController(val dfs: DFSBase = DFS()): PlayerController() {
 
     fun dumpState(gameState: GameState) {
         return
-        val dfsLevelGenerator = gameState.game.levelGenerator as? DFSEnsuring
+        val dfsLevelGenerator = gameState.game.levelGenerator
+        val dfsEnsuringGenerator = (gameState.game.levelGenerator as StateRemembering?)?.innerGenerator as DFSEnsuring?
 
         val logFileName = "out/states/GameState_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
         val file = File(logFileName)
         val oos = ObjectOutputStream(file.outputStream())
         gameState.writeObject(oos)
-        if (dfsLevelGenerator != null) {
-            dfsLevelGenerator.lastGameState?.writeObject(oos)
+        if (dfsEnsuringGenerator != null) {
+            dfsEnsuringGenerator.lastGameState?.writeObject(oos)
         }
+        (dfsLevelGenerator as StateRemembering?)?.dumpAll()
         oos.flush()
         oos.close()
     }

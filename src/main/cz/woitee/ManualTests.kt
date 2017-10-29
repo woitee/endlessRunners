@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
     // Recommended breakpoint in DelayedTwinDFS::searchInternal
     val gameDescription = BitTripGameDescription()
-    val levelGenerator = StateRemembering(SimpleLevelGenerator())
+    val levelGenerator = SimpleLevelGenerator()
     val delayedTwinDFS = DelayedTwinDFS(delayTime)
     val playerController = DFSPlayerController(delayedTwinDFS)
     val visualizer = GamePanelVisualizer()

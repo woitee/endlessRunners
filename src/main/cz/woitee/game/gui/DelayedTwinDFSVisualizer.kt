@@ -35,5 +35,7 @@ class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS) {
             currentStateThread.join()
             delayedStateThread.join()
         }
+        currentStateVisualizer.stop()
+        delayedStateVisualizer.stop()
     }
 }

@@ -15,7 +15,7 @@ import java.util.*
  * must perform the same actions as the first one. This should in effect better emulate actions by a player that doesn't have
  * exact accuracy.
  */
-class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean = false,
+class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean = true,
                      val allowSearchInBeginning: Boolean = false): DFSBase(true, maxDepth, debug) {
     // Type BEGINNING has only currentState undos and Type END has only delayed undos (beginning of algorithm / end of algorithm)
     enum class TwoStatesUndoType { BEGINNING, MIDDLE, END }
@@ -23,7 +23,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                              val type: TwoStatesUndoType = TwoStatesUndoType.MIDDLE)
     //TODO: Change var to val
     data class StackData(var statesUndo: TwoStatesUndo, var actionIx: Int, val possibleActions:List<UndoableAction?>,
-                         var playerX: Double, var playerY: Double, var playerYSpeed: Double) {
+                         var cachedState: CachedState) {
         val action: UndoableAction?
             get() = possibleActions[actionIx]
         val delayedAction: UndoableAction?
@@ -85,14 +85,16 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
             // Try catch-up, otherwise throw exception
             if (dfsStack.count() == 0)
                 throw Exception("Empty stack in DelayedTwinDFS. Did you call it on a GameState after a dead end has been found?")
-            while (gameState.player.x > dfsStack.peekLast().playerX) {
+            while (gameState.player.x > dfsStack.peekLast().cachedState.playerX) {
                 dfsStack.pollLast()
             }
-            if (gameState.player.x != dfsStack.peekLast().playerX || gameState.player.y != dfsStack.peekLast().playerY || gameState.player.yspeed != dfsStack.peekLast().playerYSpeed) {
+            if (gameState.player.x != dfsStack.peekLast().cachedState.playerX ||
+                gameState.player.y != dfsStack.peekLast().cachedState.playerY ||
+                gameState.player.yspeed != dfsStack.peekLast().cachedState.playerYSpeed) {
                 throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed! " +
-                        "(ExpectedX: ${dfsStack.peekLast().playerX} ActualX: ${gameState.player.x}) " +
-                        "(ExpectedY: ${dfsStack.peekLast().playerY} ActualY: ${gameState.player.y}) " +
-                        "(ExpectedYSpeed: ${dfsStack.peekLast().playerYSpeed} ActualYSpeed: ${gameState.player.yspeed}) "
+                        "(ExpectedX: ${dfsStack.peekLast().cachedState.playerX} ActualX: ${gameState.player.x}) " +
+                        "(ExpectedY: ${dfsStack.peekLast().cachedState.playerY} ActualY: ${gameState.player.y}) " +
+                        "(ExpectedYSpeed: ${dfsStack.peekLast().cachedState.playerYSpeed} ActualYSpeed: ${gameState.player.yspeed}) "
                 )
             }
 
@@ -234,9 +236,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                     placeholderUndo,
                     0,
                     currentActions,
-                    delayedState.player.x,
-                    delayedState.player.y,
-                    delayedState.player.yspeed
+                    CachedState(delayedState)
             )
             if (sleepTime > 0) sleep(sleepTime)
             stackData.statesUndo = advanceBothStates(currentActions[0])
@@ -256,7 +256,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                     ++lastStats.backtrackedStates
                     ++stackData.actionIx
                     while (stackData.actionIx < stackData.possibleActions.count()) {
-                        stackData.playerYSpeed = delayedState.player.yspeed
                         if (sleepTime > 0) sleep(sleepTime)
                         val undo = advanceBothStates(stackData.action)
                         if (isGameOverInEitherState() || statesCache.contains(currentState, delayedState)) {

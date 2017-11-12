@@ -31,9 +31,6 @@ import java.io.ObjectOutputStream
  */
 
 class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: String = "") : MySerializable {
-    // parameterless constructor for serialization purposes
-    constructor(): this(DummyObjects.createDummyGame(), null)
-
     var player = Player()
     var gameObjects = arrayListOf<GameObject>(player)
     var updateObjects = arrayListOf<GameObject>(player)
@@ -57,7 +54,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     /**
      * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)
      */
-    public var serializationVersion = 2
+    public var serializationVersion = 3
 
     init {
         player.x = PlayerScreenX
@@ -344,6 +341,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     }
 
     override fun readObject(ois: ObjectInputStream): GameState {
+        if (serializationVersion >= 3)
+            this.serializationVersion = ois.readInt()
+
         gridX = ois.readInt()
 
         heldActions.clear()

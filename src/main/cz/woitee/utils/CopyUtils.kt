@@ -3,7 +3,7 @@ package cz.woitee.utils
 import java.io.*
 
 object CopyUtils {
-    inline fun <reified T: MySerializable> copyBySerialization(obj: T): T {
+    inline fun <reified T: MySerializable> copyBySerialization(sourceObj: T, targetObj: T): T {
         var oos: ObjectOutputStream? = null
         var ois: ObjectInputStream? = null
         try {
@@ -11,27 +11,16 @@ object CopyUtils {
             oos = ObjectOutputStream(bos)
             // serialize and pass the object
 
-            obj.writeObject(oos)
+            sourceObj.writeObject(oos)
             oos.flush()
             val bin = ByteArrayInputStream(bos.toByteArray())
             ois = ObjectInputStream(bin)
             // return the new object
-            val copy = getInstanceOfObject<T>()
-            copy.readObject(ois)
-            return copy
+            targetObj.readObject(ois)
+            return targetObj
         } finally {
             oos?.close()
             ois?.close()
         }
-    }
-
-    inline fun <reified T: MySerializable> getInstanceOfObject(): T {
-        for (constructor in T::class.constructors) {
-            val count = constructor.parameters.count { !it.isOptional }
-            if (count == 0) {
-                return constructor.call()
-            }
-        }
-        throw Exception("Unable to copy class without zero-parameter constuctors.")
     }
 }

@@ -59,7 +59,7 @@ fun createGame(): Game {
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25)))
+    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25, allowSearchInBeginning = true), doDFSAfterFail = true))
 //    val levelGenerator = DFSEnsuring(BlockLevelGenerator(gameDescription))
 
     val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
@@ -73,7 +73,9 @@ fun createGame(): Game {
 }
 
 fun runGame() {
-    createGame().run()
+    val game = createGame()
+    game.gameState.tag = "Main"
+    game.run()
 }
 
 fun main(args: Array<String>) {

@@ -1,6 +1,7 @@
 package utils
 
 import cz.woitee.game.DummyObjects
+import cz.woitee.game.GameState
 import cz.woitee.game.HeightBlocks
 import cz.woitee.game.WidthBlocks
 import cz.woitee.game.objects.GameObjectClass
@@ -19,12 +20,13 @@ internal class CopyUtilsTest {
         player.yspeed = 1.5
         player.gameState = DummyObjects.createDummyGameState()
 
-        val playerCopy = CopyUtils.copyBySerialization(player)
+        val playerCopy = Player()
+        playerCopy.gameState = player.gameState
+        CopyUtils.copyBySerialization(player, playerCopy)
         assertEquals(player.x, playerCopy.x)
         assertEquals(player.y, playerCopy.y)
         assertEquals(player.xspeed, playerCopy.yspeed)
         assertEquals(player.yspeed, playerCopy.yspeed)
-        assertThrows(UninitializedPropertyAccessException::class.java, { playerCopy.gameState })
         assertNotEquals(player, playerCopy)
     }
 
@@ -44,7 +46,11 @@ internal class CopyUtilsTest {
         gameState.addToGrid(solidBlock, 1, 2)
         gameState.player.x = 1.5
 
-        val copy = if (bySerialization) {CopyUtils.copyBySerialization(gameState)} else {gameState.makeCopy()}
+        val copy = if (bySerialization) {
+            CopyUtils.copyBySerialization(gameState, GameState(gameState.game, gameState.levelGenerator))
+        } else {
+            gameState.makeCopy()
+        }
         assertEquals(gameState.gameObjects.count(), copy.gameObjects.count())
 
         assertNotEquals(gameState.player, copy.player)

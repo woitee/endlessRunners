@@ -64,7 +64,7 @@ internal class DFSTest {
 //        game.updateThread.join()
 
         game.stop()
-        assertEquals(expectGameOver, game.gameState.isGameOver)
+        assertEquals(expectGameOver, game.gameState.isGameOver, if (expectGameOver) "A gameover was expected, but didn't happen" else "A gameover happened, but was not expected")
         if (exception != null) {
             throw exception!!
         }

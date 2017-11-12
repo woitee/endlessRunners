@@ -15,8 +15,13 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
+import cz.woitee.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.game.levelGenerators.SimpleLevelGenerator
+import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.utils.arrayList
 import org.junit.jupiter.api.Assertions.*
+import java.io.File
+import java.io.ObjectInputStream
 import java.util.*
 
 internal class DelayedTwinDFSTest {
@@ -82,7 +87,7 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun multipleActionsOnStackForDelayedState() {
-        runTestFromFile("test/data/GameStates_2017_10_02-00_45_4417.dmp", 0.1, 1)
+        runTestFromFile("test/data/GameStates_2017_10_02-00_45_4417.dmp", 0.2, 1)
     }
 
     private fun runTestFromFile(
@@ -91,10 +96,11 @@ internal class DelayedTwinDFSTest {
             serializationVersion: Int,
             gameDescription: GameDescription = TimedChangeShapeGameDescription(0.25),
             runTime: Double = 5.0,
-            expectGameOver: Boolean = false) {
+            expectGameOver: Boolean = false,
+            allowSearchInBeginning: Boolean = false) {
         val dfsTest = DFSTest()
 
-        val delayedTwinDFS = DelayedTwinDFS(twinDFSdelay)
+        val delayedTwinDFS = DelayedTwinDFS(twinDFSdelay, allowSearchInBeginning = allowSearchInBeginning)
         val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
         delayedTwinDFSVisualizer.start()
         dfsTest.runTestFromFile(
@@ -115,6 +121,32 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun searchBeginningsAndEnds_noLongerAWay() {
-        runTestFromFile("out/states/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription(), expectGameOver = true)
+        runTestFromFile("out/states/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription(), expectGameOver = true, allowSearchInBeginning = false)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun unknownBug() {
+        val delayedTwinDFS = DelayedTwinDFS(0.25, allowSearchInBeginning = true)
+        val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
+        delayedTwinDFSVisualizer.start()
+        val game = Game(
+                DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, doDFSAfterFail = true),
+                DFSPlayerController(DelayedTwinDFS(0.25)),
+//                null,
+                GamePanelVisualizer(),
+                mode = Game.Mode.INTERACTIVE,
+                gameDescription = BitTripGameDescription(),
+                restartOnGameOver = false
+        )
+        game.gameState.serializationVersion = 3
+        val file = File("out/states/NotEnsuredDump_2017_11_06-00_15_43.dmp")
+        val ois = ObjectInputStream(file.inputStream())
+        game.gameState.readObject(ois)
+        game.levelGenerator.generateNextColumn(game.gameState)
+//        for (i in 0 .. 31) {
+//            println("Doing $i")
+//            runTestFromFile("out/states/GameStates_2017_11_05-21_15_27/$i.dmp", 0.25, 2, BitTripGameDescription())
+//        }
+
     }
 }

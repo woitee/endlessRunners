@@ -63,7 +63,8 @@ class DFSPlayerController(val dfs: DFSBase = DFS()): PlayerController() {
     }
 
     fun dumpState(gameState: GameState) {
-        return
+        if (gameState.tag != "Main")
+            return
         val dfsLevelGenerator = gameState.game.levelGenerator
         val dfsEnsuringGenerator = (gameState.game.levelGenerator as StateRemembering?)?.innerGenerator as DFSEnsuring?
 

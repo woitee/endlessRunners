@@ -1,12 +1,11 @@
-package cz.woitee.game.algorithms
+package cz.woitee.game.algorithms.dfs
 
 import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.BlockWidth
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.actions.abstract.GameAction
-import cz.woitee.game.actions.abstract.UndoableAction
-import cz.woitee.game.actions.abstract.UndoableHoldAction
+import cz.woitee.game.actions.abstract.HoldAction
 import cz.woitee.game.undoing.UndoFactory
 import java.util.*
 
@@ -85,37 +84,37 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
      *
      * Note that there is always some actionIx in this list, as it also contains null.
      */
-    open protected fun orderedPerformableActions(gameState: GameState): List<UndoableAction?> {
-        val list = ArrayList<UndoableAction?>()
+    open fun orderedPerformableActions(gameState: GameState): List<GameAction?> {
+        val list = ArrayList<GameAction?>()
         // stop holding action
         for (heldAction in gameState.heldActions.keys) {
             if (heldAction.canBeStoppedApplyingOn(gameState))
-                list.add((heldAction as UndoableHoldAction).asStopAction)
+                list.add(heldAction.asStopAction)
         }
         // do nothing
         list.add(null)
         // do a non-holding action
         for (action in gameState.allActions) {
-            if (action !is UndoableHoldAction && action.isApplicableOn(gameState))
-                list.add(action as UndoableAction)
+            if (action !is HoldAction && action.isApplicableOn(gameState))
+                list.add(action)
 
         }
         // start holding an action
         for (action in gameState.allActions) {
-            if (action is UndoableHoldAction && action.isApplicableOn(gameState))
+            if (action is HoldAction && action.isApplicableOn(gameState))
                 list.add(action.asStartAction)
         }
         return list
     }
 
     /**
-     * Decides whether the current gameState should be cached to not be searched multiple times from.
+     * Decides whether the current currentState should be cached to not be searched multiple times from.
      */
     open protected fun shouldCache(gameState: GameState): Boolean {
-//        return gameState.grid[
-//            gameState.gridLocation(
-//                gameState.player.x - gameState.gridX * BlockWidth,
-//                gameState.player.y - 0.1
+//        return currentState.grid[
+//            currentState.gridLocation(
+//                currentState.player.x - currentState.gridX * BlockWidth,
+//                currentState.player.y - 0.1
 //            )
 //        ]?.isSolid == true
         return true
@@ -133,7 +132,7 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
         }
     }
 
-    protected fun advanceState(gameState: GameState, gameAction: UndoableAction?): IUndo {
+    protected fun advanceState(gameState: GameState, gameAction: GameAction?): IUndo {
         ++lastStats.searchedStates
         if (gameAction == null)
             return gameState.advanceUndoable(updateTime)

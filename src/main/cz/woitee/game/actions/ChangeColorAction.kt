@@ -1,10 +1,10 @@
 package cz.woitee.game.actions
 
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.UndoableHoldAction
+import cz.woitee.game.actions.abstract.HoldAction
 import cz.woitee.game.objects.GameObjectColor
 
-class ChangeColorAction(val targetColor: GameObjectColor, minimumHoldTime: Double = 0.0): UndoableHoldAction(minimumHoldTime) {
+class ChangeColorAction(val targetColor: GameObjectColor, minimumHoldTime: Double = 0.0): HoldAction(minimumHoldTime) {
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
         return true
     }

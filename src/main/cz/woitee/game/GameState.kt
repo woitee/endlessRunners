@@ -50,6 +50,8 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         get() = (lastColumnX * BlockWidth).toDouble()
     val allActions: List<GameAction>
         get() = game.gameDescription.allActions
+    val allElementaryActions: List<GameAction?>
+        get() = game.gameDescription.allElementaryActions
 
     /**
      * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)

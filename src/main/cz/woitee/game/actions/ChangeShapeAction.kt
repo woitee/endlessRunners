@@ -1,7 +1,7 @@
 package cz.woitee.game.actions
 
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.UndoableHoldAction
+import cz.woitee.game.actions.abstract.HoldAction
 
 /**
  * An action that supports changing shape for the player, e.g. crouching.
@@ -9,7 +9,7 @@ import cz.woitee.game.actions.abstract.UndoableHoldAction
  * Created by woitee on 13/01/2017.
  */
 
-class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHoldTime: Double = 0.0): UndoableHoldAction(minimumHoldTime) {
+class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHoldTime: Double = 0.0): HoldAction(minimumHoldTime) {
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
         innerApplyOn(gameState)
         for (collPoint in gameState.player.collPoints) {

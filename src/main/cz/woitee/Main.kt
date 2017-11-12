@@ -5,16 +5,13 @@ import cz.woitee.game.Game
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.Grid2D
-import cz.woitee.game.algorithms.DFS
-import cz.woitee.game.algorithms.DelayedTwinDFS
+import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.game.levelGenerators.encapsulators.Measuring
 import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.utils.StopWatch
-import java.util.concurrent.Delayed
 
 /**
  * Created by woitee on 09/01/2017.
@@ -47,7 +44,7 @@ fun testBasic() {
 fun test() {
     //Moving by x:1.40, y:-0.54 from (514.10, 24.52)
 //    val game = cz.woitee.createGame()
-//    val locs = game.gameState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
+//    val locs = game.currentState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
 //    println(locs)
 }
 

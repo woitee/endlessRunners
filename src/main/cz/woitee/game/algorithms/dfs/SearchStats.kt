@@ -1,4 +1,4 @@
-package cz.woitee.game.algorithms
+package cz.woitee.game.algorithms.dfs
 
 /**
  * Created by woitee on 30/04/2017.

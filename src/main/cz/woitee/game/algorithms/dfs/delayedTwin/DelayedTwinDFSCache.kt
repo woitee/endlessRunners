@@ -1,12 +1,12 @@
-package cz.woitee.game.algorithms
+package cz.woitee.game.algorithms.dfs.delayedTwin
 
-import cz.woitee.game.Game
 import cz.woitee.game.GameState
+import cz.woitee.game.algorithms.dfs.CachedState
 import java.util.*
 
 class DelayedTwinDFSCache {
     data class TwinCachedState(val currentCached: CachedState, val delayedCached: CachedState) {
-        constructor(currentState: GameState, delayedState: GameState): this(CachedState(currentState), CachedState(delayedState))
+        constructor(currentState: GameState, delayedState: GameState) : this(CachedState(currentState), CachedState(delayedState))
     }
     val cachedStates = HashSet<TwinCachedState>()
 

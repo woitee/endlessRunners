@@ -6,7 +6,7 @@ import cz.woitee.game.HeightBlocks
 import cz.woitee.game.actions.ChangeShapeAction
 import cz.woitee.game.actions.JumpAction
 import cz.woitee.game.actions.abstract.GameAction
-import cz.woitee.game.algorithms.DelayedTwinDFS
+import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.gui.DelayedTwinDFSVisualizer
@@ -15,7 +15,6 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.utils.arrayList
@@ -129,8 +128,9 @@ internal class DelayedTwinDFSTest {
         val delayedTwinDFS = DelayedTwinDFS(0.25, allowSearchInBeginning = true)
         val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
         delayedTwinDFSVisualizer.start()
+        val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, doDFSAfterFail = true)
         val game = Game(
-                DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, doDFSAfterFail = true),
+                levelGenerator,
                 DFSPlayerController(DelayedTwinDFS(0.25)),
 //                null,
                 GamePanelVisualizer(),
@@ -139,10 +139,13 @@ internal class DelayedTwinDFSTest {
                 restartOnGameOver = false
         )
         game.gameState.serializationVersion = 3
-        val file = File("out/states/NotEnsuredDump_2017_11_06-00_15_43.dmp")
+        val file = File("out/states/NotEnsuredDump_2017_11_06-00_16_31.dmp")
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)
         game.levelGenerator.generateNextColumn(game.gameState)
+
+        assertNotEquals(DFSEnsuring.DFSResult.FAIL_COPYCOLUMN, levelGenerator.lastResult)
+
 //        for (i in 0 .. 31) {
 //            println("Doing $i")
 //            runTestFromFile("out/states/GameStates_2017_11_05-21_15_27/$i.dmp", 0.25, 2, BitTripGameDescription())

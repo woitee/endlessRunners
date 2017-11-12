@@ -1,10 +1,10 @@
 package cz.woitee.game.playerControllers
 
-import cz.woitee.game.algorithms.DFS
-import cz.woitee.game.algorithms.SearchStatsSummer
+import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.SearchStatsSummer
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.DFSBase
+import cz.woitee.game.algorithms.dfs.DFSBase
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import java.io.File

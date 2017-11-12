@@ -1,8 +1,8 @@
-package cz.woitee.game.algorithms
+package cz.woitee.game.algorithms.dfs
 
 import cz.woitee.game.GameState
+import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.actions.abstract.UndoableAction
 import cz.woitee.utils.pop
 import java.util.*
 
@@ -22,10 +22,10 @@ open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boo
     override fun searchInternal(gameState: GameState, updateTime: Double): SearchResult {
         val undoList = ArrayList<IUndo>()
         val actionList = ArrayList<Int>()
-        val possibleActionsList = ArrayList<List<UndoableAction?>>()
+        val possibleActionsList = ArrayList<List<GameAction?>>()
 
         while (undoList.count() < maxDepth && !isPlayerAtEnd(gameState)) {
-            val currentActions: List<UndoableAction?> = orderedPerformableActions(gameState)
+            val currentActions: List<GameAction?> = orderedPerformableActions(gameState)
             undoList.add(advanceState(gameState, currentActions[0]))
 
             if (undoList.count() > lastStats.reachedDepth)
@@ -66,7 +66,7 @@ open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boo
 
         for (undo in undoList.asReversed()) {
             // uncomment to print plan as a road of player
-//                println("Plan ${game State.player.x} ${gameState.player.y} ${gameState.player.yspeed}")
+//                println("Plan ${game State.player.x} ${currentState.player.y} ${currentState.player.yspeed}")
             undo.undo(gameState)
         }
 

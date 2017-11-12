@@ -1,17 +1,14 @@
 package cz.woitee.game.algorithms
 
 import cz.woitee.game.Game
-import cz.woitee.game.algorithms.DFS
-import cz.woitee.game.algorithms.DFSBase
+import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.DFSBase
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.descriptions.GameDescription
-import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.levelGenerators.FlatLevelGenerator
-import cz.woitee.game.levelGenerators.LevelGenerator
 import org.junit.jupiter.api.Assertions.*
-import sun.java2d.pipe.SpanShapeRenderer
 import java.io.File
 import java.io.ObjectInputStream
 

@@ -1,6 +1,6 @@
 package cz.woitee.game.gui
 
-import cz.woitee.game.algorithms.DelayedTwinDFS
+import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.utils.TimedThread
 
 class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS) {

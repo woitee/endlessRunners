@@ -1,4 +1,4 @@
-package cz.woitee.game.algorithms
+package cz.woitee.game.algorithms.dfs
 
 import cz.woitee.game.GameState
 

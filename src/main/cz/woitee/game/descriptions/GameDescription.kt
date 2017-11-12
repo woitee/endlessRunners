@@ -7,12 +7,15 @@ import cz.woitee.game.effects.*
 import cz.woitee.game.collisions.collisionEffects.*
 import cz.woitee.game.collisions.BaseCollisionHandler.CollisionHandlerEntry
 import cz.woitee.game.actions.abstract.GameAction
+import cz.woitee.game.actions.abstract.HoldAction
 import cz.woitee.game.collisions.collisionEffects.ICollisionEffect
 import cz.woitee.game.effects.GameEffect
 import cz.woitee.game.effects.Gravity
 import cz.woitee.game.objects.GameObject
+import cz.woitee.game.objects.GameObjectClass
 import cz.woitee.game.objects.Player
 import cz.woitee.game.objects.SolidBlock
+import cz.woitee.geom.Direction4
 import java.util.*
 
 /**
@@ -35,7 +38,8 @@ open class GameDescription {
     open val allActions = listOf<GameAction>(JumpAction(22.0))
     open val permanentEffects = listOf(Gravity(GameEffect.Target.PLAYER, 100 * 0.7 / BlockHeight))
     open val collisionEffects = mapOf<CollisionHandlerEntry, ICollisionEffect>(
-//  This setting is now default for any collision with SolidBlock. It can however be overriden to be set differently.
+//  This setting is now default for any collision with SolidBlock, and that without needing to be set here.
+//  It can however be overriden in descendant classes to be set differently.
 //        Pair(
 //            CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.DOWN or Direction4.UP),
 //            MoveToContact()
@@ -45,6 +49,27 @@ open class GameDescription {
 //            ApplyGameEffect(GameOver())
 //        )
     )
+
+    /**
+     * This includes all elementary actions - actions performable in a single update. HoldActions are split into two
+     * and null action is added.
+     */
+    val _allElementaryActions = ArrayList<GameAction?>()
+    val allElementaryActions: List<GameAction?>
+        get() {
+            if (_allElementaryActions.count() == 0) {
+                _allElementaryActions.add(null)
+                for (action in allActions) {
+                    if (action is HoldAction) {
+                        _allElementaryActions.add(action.asStartAction)
+                        _allElementaryActions.add(action.asStopAction)
+                    } else {
+                        _allElementaryActions.add(action)
+                    }
+                }
+            }
+            return _allElementaryActions
+        }
 
     /**
      * Returns all gameObjects used in this game.

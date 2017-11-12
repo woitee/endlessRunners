@@ -8,7 +8,7 @@ import cz.woitee.game.GameState
 
 interface IUndoable: IApplicable {
     /**
-     * Perform on gameState and return how to undo it.
+     * Perform on currentState and return how to undo it.
      */
     fun applyUndoablyOn(gameState: GameState): IUndo
 }

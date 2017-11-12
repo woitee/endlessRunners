@@ -1,15 +1,15 @@
 package cz.woitee.game.actions.composite
 
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.UndoableHoldAction
+import cz.woitee.game.actions.abstract.HoldAction
 import cz.woitee.game.conditions.GameCondition
 import cz.woitee.game.conditions.TrueCondition
 
 class ConditionalHoldAction(
-        val holdAction: UndoableHoldAction,
+        val holdAction: HoldAction,
         val applicableCondition: GameCondition,
         val keptApplyingCondition: GameCondition = TrueCondition(),
-        val stopApplyingCondition: GameCondition = TrueCondition()): UndoableHoldAction(holdAction.minimumHoldTime) {
+        val stopApplyingCondition: GameCondition = TrueCondition()): HoldAction(holdAction.minimumHoldTime) {
 
     override fun innerIsApplicableOn(gameState: GameState): Boolean {
         return applicableCondition.isTrue(gameState)

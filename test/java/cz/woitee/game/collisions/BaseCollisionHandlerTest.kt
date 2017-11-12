@@ -66,7 +66,7 @@ class BaseCollisionHandlerTest {
         assertNull(coll)
 
         // Test not collision moving on wall upwards
-//        coll = game.collHandler.nearestCollision(game.gameState, 22.0, 24.0, 26.0, 24.0)
+//        coll = game.collHandler.nearestCollision(game.currentState, 22.0, 24.0, 26.0, 24.0)
 //        assertNull(coll)
     }
 

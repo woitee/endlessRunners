@@ -94,7 +94,7 @@ class KeyboardPlayerController: PlayerController() {
             val actionKeys = keyMapping[action] ?: continue
             var actionKeyPressed = false
 
-            // any action key pressed -> start hold action
+            // any action button pressed -> start hold action
             for (actionKey in actionKeys) {
                 if (actionKey in pressedKeys) {
                     if (!heldActions[action]!!) {
@@ -104,7 +104,7 @@ class KeyboardPlayerController: PlayerController() {
                     actionKeyPressed = true
                 }
             }
-            // no action key pressed -> stop hold action
+            // no action button pressed -> stop hold action
             if (!actionKeyPressed && heldActions[action]!! && (action as HoldAction).canBeStoppedApplyingOn(gameState)) {
                 heldActions[action] = false
                 return action.release()

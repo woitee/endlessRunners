@@ -7,7 +7,7 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.MovingObject
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.NoActionUndo
+import cz.woitee.game.undoing.NoUndo
 import cz.woitee.geom.Direction4
 import cz.woitee.geom.Vector2Double
 
@@ -47,7 +47,7 @@ class MoveToContact: IUndoableCollisionEffect {
     }
 
     override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
-        val movingSource = source as MovingObject? ?: return NoActionUndo
+        val movingSource = source as MovingObject? ?: return NoUndo
         val undo = MoveToContactUndo(source, movingSource.location, movingSource.velocity)
         apply(source, collision)
         return undo

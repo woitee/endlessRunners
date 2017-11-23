@@ -13,7 +13,7 @@ import cz.woitee.game.actions.abstract.HoldAction
 import cz.woitee.game.objects.UndoableUpdateGameObject
 import cz.woitee.game.effects.UndoableGameEffect
 import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.undoing.NoActionUndo
+import cz.woitee.game.undoing.NoUndo
 import cz.woitee.game.undoing.UndoFactory
 import cz.woitee.geom.Vector2Double
 import cz.woitee.geom.Vector2Int
@@ -52,6 +52,10 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         get() = game.gameDescription.allActions
     val allElementaryActions: List<GameAction?>
         get() = game.gameDescription.allElementaryActions
+
+    /** Maximum x of an object that is still in the state. */
+    val maxX: Int
+        get() = (gridX + grid.width) * BlockWidth
 
     /**
      * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)
@@ -173,12 +177,12 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 //        println("Got object ${DefaultUndoListPool.numActive} ${DefaultUndoListPool.numIdle}")
         updateObjects.map {
             val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
-            if (undo != NoActionUndo)
+            if (undo != NoUndo)
                 undoList.add(undo)
         }
         game.gameDescription.permanentEffects.map {
             val undo = (it as UndoableGameEffect).applyUndoablyOn(this)
-            if (undo != NoActionUndo)
+            if (undo != NoUndo)
                 undoList.add(undo)
         }
 

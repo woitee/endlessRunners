@@ -8,14 +8,14 @@ class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS) {
     val delayedStateVisualizer = GamePanelVisualizer("TwinDFS: Delayed State")
 
     val currentStateThread: TimedThread = TimedThread({
-        if (delayedTwinDFS.currentState != null) {
-            currentStateVisualizer.update(delayedTwinDFS.currentState!!)
+        if (delayedTwinDFS.buttonModel != null) {
+            currentStateVisualizer.update(delayedTwinDFS.buttonModel!!.currentState)
         }},
         75.0
     )
     val delayedStateThread: TimedThread = TimedThread({
-        if (delayedTwinDFS.delayedState != null) {
-            delayedStateVisualizer.update(delayedTwinDFS.delayedState!!)
+        if (delayedTwinDFS.buttonModel != null) {
+            delayedStateVisualizer.update(delayedTwinDFS.buttonModel!!.delayedState)
         }},
         75.0
     )

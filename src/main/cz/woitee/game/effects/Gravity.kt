@@ -4,7 +4,7 @@ import cz.woitee.game.BlockHeight
 import cz.woitee.game.objects.MovingObject
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.NoActionUndo
+import cz.woitee.game.undoing.NoUndo
 
 /**
  * Gravity effect, defaultly targeted on player, but can also be used for other objects.
@@ -38,9 +38,9 @@ class Gravity(
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {
         // Don't fall if a block is underneath
-        val target = (findTarget(gameState) as MovingObject?) ?: return NoActionUndo
+        val target = (findTarget(gameState) as MovingObject?) ?: return NoUndo
         if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
-            return NoActionUndo
+            return NoUndo
         }
 
         // Else fall

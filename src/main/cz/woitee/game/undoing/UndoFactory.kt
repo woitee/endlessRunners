@@ -32,7 +32,7 @@ object UndoFactory {
         if (undoList != null) {
             if (undoList.count() == 0) {
                 DefaultUndoListPool.returnObject(undoList)
-                return NoActionUndo
+                return NoUndo
             }
             if (undoList.count() == 1) {
                 val res = undoList[0]
@@ -41,6 +41,6 @@ object UndoFactory {
             }
             return MultiUndo(undoList)
         }
-        return NoActionUndo
+        return NoUndo
     }
 }

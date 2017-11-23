@@ -6,6 +6,7 @@ import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.actions.abstract.HoldAction
+import cz.woitee.game.algorithms.dfs.delayedTwin.DFSUtils
 import cz.woitee.game.undoing.UndoFactory
 import java.util.*
 
@@ -31,7 +32,6 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
      * Holding statistics from the last search.
      */
     var lastStats = SearchStats()
-    protected var maxX: Int = 0
     protected var updateTime: Double = 0.0
     protected val cachedStates = HashSet<CachedState>()
     /**
@@ -51,7 +51,6 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
         if (debug)
             visualizer?.debugObjects?.clear()
 
-        maxX = (gameState.gridX + gameState.grid.width) * BlockWidth
         val result = if (debug) {
             searchInternal(gameState, this.updateTime)
         } else {
@@ -72,7 +71,7 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
     }
 
     protected fun isPlayerAtEnd(gameState: GameState): Boolean {
-        return gameState.player.nextX(this.updateTime) + gameState.player.widthPx >= maxX
+        return gameState.player.nextX(this.updateTime) + gameState.player.widthPx >= gameState.maxX
     }
 
     /**
@@ -134,17 +133,6 @@ abstract class DFSBase (val persistentCache:Boolean = true, var maxDepth: Int = 
 
     protected fun advanceState(gameState: GameState, gameAction: GameAction?): IUndo {
         ++lastStats.searchedStates
-        if (gameAction == null)
-            return gameState.advanceUndoable(updateTime)
-        else {
-            val firstUndo = gameAction.applyUndoablyOn(gameState)
-            if (gameState.player.nextX(updateTime) + gameState.player.widthPx >= maxX) {
-                // This only happens as the last update at the end of the screen, and generally is successful,
-                // so really happens at MOST once per search. The extra class encapsulation overhead is negligible
-                return NoStateAdvanceUndo(firstUndo)
-            }
-            val secondUndo = gameState.advanceUndoable(updateTime)
-            return UndoFactory.doubleUndo(firstUndo, secondUndo)
-        }
+        return DFSUtils.advanceGameStateSafely(gameState, gameAction, updateTime)
     }
 }

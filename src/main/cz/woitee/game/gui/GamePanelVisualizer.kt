@@ -85,9 +85,9 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
             _dbg.color = Color.WHITE
             _dbg.fillRect(0, 0, GameWidth, GameHeight)
 
-//            synchronized(gameState.gameObjects) {
+            synchronized(gameState.gameObjects) {
                 drawEverything(gameState, _dbg)
-//            }
+            }
             frame.title = "$panelName Score:${gameState.gridX / 10}"
 
             repaint()

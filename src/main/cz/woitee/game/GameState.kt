@@ -141,10 +141,15 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return column
     }
 
-    fun advance(time: Double, scrolling:Boolean = false) {
+    fun advance(time: Double, scrolling:Boolean = false, excludeAction: GameButtonAction? = null) {
         lastAdvanceTime = time
 
         synchronized(gameObjects) {
+            // Keep applying press actions that are held
+            buttons
+                    .filter { it.isPressed && it.action !is HoldButtonAction && it.action.isApplicableOn(this) && it.action != excludeAction}
+                    .forEach { it.action.applyOn(this) }
+
             for (gameObject in updateObjects) {
                 gameObject.update(time)
             }
@@ -152,17 +157,15 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 gameEffect.applyOn(this)
             }
             gameTime += time
-        }
-        if (scrolling) {
-            if (levelGenerator == null) {
-                println("Level Generator should be set when scrolling!")
-            } else {
-                val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
-                val blockOffset = (offset / BlockWidth).toInt()
+            if (scrolling) {
+                if (levelGenerator == null) {
+                    println("Level Generator should be set when scrolling!")
+                } else {
+                    val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
+                    val blockOffset = (offset / BlockWidth).toInt()
 
-                for (i in 1..blockOffset) {
-//                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                    synchronized(gameObjects) {
+                    for (i in 1..blockOffset) {
+    //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
                         val column = levelGenerator.generateNextColumn(this)
                         this.addColumn(column)
                     }
@@ -172,20 +175,26 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     }
 
 
-    fun advanceUndoable(time: Double): IUndo {
-        val undoList = DefaultUndoListPool.borrowObject()
-        updateObjects.map {
-            val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
-            if (undo != NoUndo)
-                undoList.add(undo)
+    fun advanceUndoable(time: Double, excludeAction: GameButtonAction? = null): IUndo {
+        synchronized(gameObjects) {
+            val undoList = DefaultUndoListPool.borrowObject()
+            buttons
+                    .filter { it.isPressed && it.action !is HoldButtonAction && it.action.isApplicableOn(this) && it.action != excludeAction }
+                    .forEach { undoList.add(it.action.applyUndoablyOn(this)) }
+
+            updateObjects.map {
+                val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
+                if (undo != NoUndo)
+                    undoList.add(undo)
+            }
+            game.gameDescription.permanentEffects.map {
+                val undo = (it as UndoableGameEffect).applyUndoablyOn(this)
+                if (undo != NoUndo)
+                    undoList.add(undo)
+            }
+            gameTime += time
+            return UndoFactory.multiUndo(undoList)
         }
-        game.gameDescription.permanentEffects.map {
-            val undo = (it as UndoableGameEffect).applyUndoablyOn(this)
-            if (undo != NoUndo)
-                undoList.add(undo)
-        }
-        gameTime += time
-        return UndoFactory.multiUndo(undoList)
     }
 
     /**
@@ -313,7 +322,6 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             stateCopy.buttons[i].isPressed = buttons[i].isPressed
             stateCopy.buttons[i].pressedGameTime = buttons[i].pressedGameTime
         }
-        stateCopy.buttons = ArrayList(buttons)
 
         // Handle gameObjects
         stateCopy.gameObjects.clear()

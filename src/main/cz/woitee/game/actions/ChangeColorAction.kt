@@ -31,7 +31,7 @@ class ChangeColorAction(val targetColor: GameObjectColor): HoldButtonAction() {
 
     override fun stopApplyingUndoablyOn(gameState: GameState): IUndo {
         val originalColor = gameState.player.color
-        stopApplyingUndoablyOn(gameState)
+        stopApplyingOn(gameState)
 
         return object : IUndo {
             override fun undo(gameState: GameState) {

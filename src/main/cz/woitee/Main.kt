@@ -11,6 +11,7 @@ import cz.woitee.game.descriptions.CrouchGameDescription
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.playerControllers.DFSPlayerController
+import cz.woitee.game.playerControllers.KeyboardPlayerController
 import cz.woitee.utils.StopWatch
 
 /**
@@ -55,12 +56,12 @@ fun createGame(): Game {
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
-//    val levelGenerator = SimpleLevelGenerator()
+    val levelGenerator = SimpleLevelGenerator()
 //    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), BasicDFS(), doDFSAfterFail = true))
-    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), BasicDFS())
+//    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), BasicDFS())
 
-    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
-//    val playerController = KeyboardPlayerController()
+//    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
+    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
     return Game(levelGenerator, playerController, visualiser,

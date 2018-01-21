@@ -14,6 +14,6 @@ class ColumnCopyingLevelGenerator(var savedColumn: List<GameObject?> = ArrayList
         return column
     }
 
-    override fun reset() {
+    override fun init(gameState: GameState) {
     }
 }

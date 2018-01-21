@@ -1,5 +1,6 @@
 package cz.woitee.game.playerControllers
 
+import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 
 /**
@@ -7,7 +8,7 @@ import cz.woitee.game.GameState
  */
 
 class NoActionPlayerController: PlayerController() {
-    override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
+    override fun onUpdate(gameState: GameState): GameButton.StateChange? {
         return null
     }
 }

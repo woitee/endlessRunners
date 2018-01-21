@@ -1,5 +1,6 @@
 package cz.woitee.game.playerControllers
 
+import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 
 /**
@@ -7,6 +8,8 @@ import cz.woitee.game.GameState
  */
 
 abstract class PlayerController {
-    abstract fun onUpdate(gameState: GameState): PlayerControllerOutput?
-    open fun reset() {}
+    // button mode - if set to true, the controller returns presses of releases of buttons
+    // specifically, it also returns releases of non-hold actions
+    abstract fun onUpdate(gameState: GameState): GameButton.StateChange?
+    open fun init(gameState: GameState) {}
 }

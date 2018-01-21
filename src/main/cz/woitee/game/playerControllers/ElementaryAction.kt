@@ -1,0 +1,37 @@
+//package cz.woitee.game.playerControllers
+//
+//import cz.woitee.game.GameState
+//import cz.woitee.game.actions.abstract.GameButtonAction
+//import cz.woitee.game.actions.abstract.HoldButtonAction
+//import cz.woitee.game.undoing.IUndo
+//import cz.woitee.game.undoing.NoUndo
+//
+///**
+// * Created by woitee on 23/07/2017.
+// */
+//data class ElementaryAction(val gameAction: GameButtonAction, val isPress: Boolean) {
+//    fun applyOn(gameState: GameState) {
+//        if (isPress)
+//            gameAction.applyOn(gameState)
+//        else if (!isPress && gameAction is HoldButtonAction)
+//            gameAction.stopApplyingOn(gameState)
+//    }
+//    fun applyUndoablyOn(gameState: GameState): IUndo {
+//        if (isPress)
+//            return gameAction.applyUndoablyOn(gameState)
+//        else if (!isPress && gameAction is HoldButtonAction)
+//            return gameAction.stopApplyingUndoablyOn(gameState)
+//
+//        // in case of releasing a non-hold
+//        return NoUndo
+//    }
+//    fun isApplicableOn(gameState: GameState): Boolean {
+//        if (isPress)
+//            return gameAction.isApplicableOn(gameState)
+//        else if (!isPress && gameAction is HoldButtonAction)
+//            return gameAction.canBeStoppedApplyingOn(gameState)
+//
+//        // in case of releasing a non-hold, it doesn't do anything
+//        return false
+//    }
+//}

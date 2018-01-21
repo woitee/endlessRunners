@@ -20,7 +20,7 @@ class OneScreenThenDeath(val innerGenerator: LevelGenerator): LevelGenerator() {
         return arrayList(HeightBlocks, { SolidBlock() })
     }
 
-    override fun reset() {
-        innerGenerator.reset()
+    override fun init(gameState: GameState) {
+        innerGenerator.init(gameState)
     }
 }

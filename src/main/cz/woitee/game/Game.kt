@@ -5,7 +5,6 @@ import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.playerControllers.PlayerController
 import cz.woitee.game.collisions.GridDetectingCollisionHandler
 import cz.woitee.game.descriptions.GameDescription
-import cz.woitee.game.actions.abstract.HoldAction
 import java.util.*
 
 /**
@@ -14,7 +13,8 @@ import java.util.*
 
 class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
-           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true) {
+           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true,
+           val updateCallback: (Game) -> Unit = { _ -> }) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION
@@ -25,7 +25,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     // This shows time since last update, and can be used in methods
     var updateTime = 1.0 / updateRate
 
-    val updateThread = TimedThread({ time -> this.updateTime = time; update(time) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
+    val updateThread = TimedThread({ update(updateTime) }, updateRate, useRealTime = mode == Mode.INTERACTIVE)
     val animatorThread = if (visualizer != null) TimedThread({ visualize() }, visualizeFrameRate, useRealTime = true) else null
 
     var onGameOver = { if (restartOnGameOver) this.reset() else this.stop(false) }
@@ -37,6 +37,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
      */
     fun run() {
         init()
+        animatorThread?.start()
         updateThread.run()
         println("Game finished")
         stop()
@@ -47,11 +48,12 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
      */
     fun start() {
         init()
+        animatorThread?.start()
         updateThread.start()
     }
 
     /**
-     * Requests to stop the game peacefully and waits until it finished.
+     * Requests to dispose the game peacefully and waits until it finished.
      */
     fun stop(awaitJoin: Boolean = true) {
         updateThread.stop()
@@ -60,17 +62,17 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
             updateThread.join()
             animatorThread?.join()
         }
-        visualizer?.stop()
+        visualizer?.dispose()
     }
 
     fun reset() {
-        levelGenerator.reset()
-        playerController.reset()
         gameState = GameState(this, levelGenerator, gameState.tag)
+        init()
     }
 
     private fun init() {
-        animatorThread?.start()
+        playerController.init(gameState)
+        levelGenerator.init(gameState)
     }
 
     private fun visualize() {
@@ -78,16 +80,13 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     }
 
     private fun update(time: Double) {
-        val controllerOutput = playerController.onUpdate(gameState)
-        if (controllerOutput != null) {
-            val gameAction = controllerOutput.action
-            if (controllerOutput.press && gameAction.isApplicableOn(gameState))
-                gameAction.applyOn(gameState)
-            else if (!controllerOutput.press && (gameAction as HoldAction?)?.canBeStoppedApplyingOn(gameState) == true) {
-                gameAction.stopApplyingOn(gameState)
-            }
-        }
+        // Get the action that should be performed
+        val controllerAction = playerController.onUpdate(gameState)
+        // Update the GameState by it
+        gameState.advanceByAction(controllerAction, time, true)
+        // Notify the levelGenerator of the update
+        levelGenerator.onUpdate(time, controllerAction, gameState)
 
-        gameState.advance(time, true)
+        updateCallback(this)
     }
 }

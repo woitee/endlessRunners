@@ -11,8 +11,7 @@ import java.io.ObjectOutputStream
 /**
  * Created by woitee on 15/01/2017.
  */
-
-abstract class MovingObject(x:Double = 0.0, y:Double = 0.0): UndoableUpdateGameObject(x, y) {
+abstract class MovingObject(x: Double, y: Double): UndoableUpdateGameObject(x, y) {
     class MovingObjectUndo(val movingObject: MovingObject, val collUndos: List<IUndo>, val x: Double, val y: Double): IUndo {
         override fun undo(gameState: GameState) {
             movingObject.x = x

@@ -8,10 +8,7 @@ import java.io.ObjectOutputStream
  * Created by woitee on 13/01/2017.
  */
 
-class Player(x: Double, y:Double): MovingObject(x, y) {
-    // parameterless constructor for serialization purposes
-    constructor(): this(0.0, 0.0)
-
+class Player(x: Double, y: Double): MovingObject(x, y) {
     override val gameObjectClass = GameObjectClass.PLAYER
 
     override val defaultHeightBlocks = 2
@@ -27,7 +24,7 @@ class Player(x: Double, y:Double): MovingObject(x, y) {
     }
 
     override fun makeCopy(): Player {
-        val player = Player(this.x, this.y)
+        val player = Player(x, y)
         player.xspeed = xspeed
         player.yspeed = yspeed
         player.heightBlocks = heightBlocks

@@ -6,7 +6,7 @@ import cz.woitee.game.GameState
  * Created by woitee on 09/04/2017.
  */
 
-interface IUndoable: IApplicable {
+interface IUndoable {
     /**
      * Perform on currentState and return how to undo it.
      */

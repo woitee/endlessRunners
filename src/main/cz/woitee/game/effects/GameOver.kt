@@ -2,6 +2,7 @@ package cz.woitee.game.effects
 
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
+import java.time.LocalDateTime
 
 /**
  * Created by woitee on 23/01/2017.
@@ -19,6 +20,7 @@ class GameOver: UndoableGameEffect() {
         println("-------------")
         println("| GAME OVER |")
         println("-------------")
+        println(LocalDateTime.now())
         gameState.game.onGameOver()
     }
 

@@ -24,8 +24,8 @@ class StateRemembering(val innerGenerator: LevelGenerator, val rememberCount: In
         return innerGenerator.generateNextColumn(gameState)
     }
 
-    override fun reset() {
-        innerGenerator.reset()
+    override fun init(gameState: GameState) {
+        innerGenerator.init(gameState)
     }
 
     fun dumpAll() {

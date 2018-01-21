@@ -1,41 +1,36 @@
 package cz.woitee.game.gui
 
+import cz.woitee.game.GameState
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.utils.TimedThread
+import java.awt.Graphics
 
-class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS) {
-    val currentStateVisualizer = GamePanelVisualizer("TwinDFS: Current State")
-    val delayedStateVisualizer = GamePanelVisualizer("TwinDFS: Delayed State")
-
-    val currentStateThread: TimedThread = TimedThread({
+class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS, val frameX: Int = 700, val frameY: Int = 0): GamePanelVisualizer() {
+    val visualizeThread: TimedThread = TimedThread({
         if (delayedTwinDFS.buttonModel != null) {
-            currentStateVisualizer.update(delayedTwinDFS.buttonModel!!.currentState)
+            this.update(delayedTwinDFS.buttonModel!!.currentState)
         }},
         75.0
     )
-    val delayedStateThread: TimedThread = TimedThread({
-        if (delayedTwinDFS.buttonModel != null) {
-            delayedStateVisualizer.update(delayedTwinDFS.buttonModel!!.delayedState)
-        }},
-        75.0
-    )
+
+    val currentState
+        get() = delayedTwinDFS.buttonModel!!.currentState
+    val delayedState
+        get() = delayedTwinDFS.buttonModel!!.delayedState
 
     fun start() {
-        currentStateVisualizer.frame.setLocation(700, 0)
-        delayedStateVisualizer.frame.setLocation(700, 450)
-
-        currentStateThread.start()
-        delayedStateThread.start()
+        frame.setLocation(frameX, frameY)
+        frame.title = "Visualization"
+        visualizeThread.start()
     }
 
-    fun stop(awaitJoin: Boolean = true) {
-        currentStateThread.stop()
-        delayedStateThread.stop()
-        if (awaitJoin) {
-            currentStateThread.join()
-            delayedStateThread.join()
-        }
-        currentStateVisualizer.stop()
-        delayedStateVisualizer.stop()
+    override fun drawEverything(gameState: GameState, g: Graphics) {
+        super.drawEverything(gameState, g)
+        drawGameObject(delayedState.player, g, currentState.player.x)
+    }
+
+    fun stop() {
+        visualizeThread.stop(true)
+        dispose()
     }
 }

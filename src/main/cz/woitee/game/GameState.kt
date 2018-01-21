@@ -8,8 +8,8 @@ import cz.woitee.game.objects.Player
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.objects.GameObject
-import cz.woitee.game.actions.abstract.GameAction
-import cz.woitee.game.actions.abstract.HoldAction
+import cz.woitee.game.actions.abstract.GameButtonAction
+import cz.woitee.game.actions.abstract.HoldButtonAction
 import cz.woitee.game.objects.UndoableUpdateGameObject
 import cz.woitee.game.effects.UndoableGameEffect
 import cz.woitee.game.objects.GameObjectClass
@@ -20,6 +20,7 @@ import cz.woitee.geom.Vector2Int
 import cz.woitee.utils.MySerializable
 import cz.woitee.utils.pools.DefaultUndoListPool
 import cz.woitee.utils.reverse
+import nl.pvdberg.hashkode.hashKode
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
@@ -31,7 +32,7 @@ import java.io.ObjectOutputStream
  */
 
 class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: String = "") : MySerializable {
-    var player = Player()
+    var player = Player(0.0, 0.0)
     var gameObjects = arrayListOf<GameObject>(player)
     var updateObjects = arrayListOf<GameObject>(player)
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
@@ -40,7 +41,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         private set
     var gameTime = 0.0
         private set
-    var heldActions = HashMap<HoldAction, Double>()
+    var buttons = ArrayList<GameButton>()
 
     var isGameOver = false
 
@@ -48,10 +49,8 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         get() = gridX + WidthBlocks
     val lastColumnXpx: Double
         get() = (lastColumnX * BlockWidth).toDouble()
-    val allActions: List<GameAction>
+    val allActions: List<GameButtonAction>
         get() = game.gameDescription.allActions
-    val allElementaryActions: List<GameAction?>
-        get() = game.gameDescription.allElementaryActions
 
     /** Maximum x of an object that is still in the state. */
     val maxX: Int
@@ -60,16 +59,18 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     /**
      * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)
      */
-    public var serializationVersion = 3
+    public var serializationVersion = 5
 
     init {
         player.x = PlayerScreenX
         player.y = BlockHeight.toDouble()
         player.xspeed = game.gameDescription.playerStartingSpeed
         player.gameState = this
-        for (i in 0 .. WidthBlocks - 1) {
+        for (i in 0 until WidthBlocks) {
             addToGrid(SolidBlock(), i, 0)
         }
+        for (i in allActions.indices)
+            buttons.add(GameButton(allActions[i], this, i))
     }
 
     internal fun addToGrid(gameObject: GameObject?, x: Int, y:Int) {
@@ -150,31 +151,29 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             for (gameEffect in game.gameDescription.permanentEffects) {
                 gameEffect.applyOn(this)
             }
-            for (heldAction in heldActions.keys) {
-                if (!heldAction.canBeKeptApplyingOn(this)) {
-                    heldAction.stopApplyingOn(this)
-                }
-            }
             gameTime += time
+        }
+        if (scrolling) {
+            if (levelGenerator == null) {
+                println("Level Generator should be set when scrolling!")
+            } else {
+                val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
+                val blockOffset = (offset / BlockWidth).toInt()
 
-            if (scrolling) {
-                if (levelGenerator == null) {
-                    println("Level Generator should be set when scrolling!")
-                } else {
-                    val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
-                    val blockOffset = (offset / BlockWidth).toInt()
-
-                    for (i in 1..blockOffset) {
+                for (i in 1..blockOffset) {
 //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                        this.addColumn(levelGenerator.generateNextColumn(this))
+                    synchronized(gameObjects) {
+                        val column = levelGenerator.generateNextColumn(this)
+                        this.addColumn(column)
                     }
                 }
             }
         }
     }
+
+
     fun advanceUndoable(time: Double): IUndo {
         val undoList = DefaultUndoListPool.borrowObject()
-//        println("Got object ${DefaultUndoListPool.numActive} ${DefaultUndoListPool.numIdle}")
         updateObjects.map {
             val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
             if (undo != NoUndo)
@@ -185,29 +184,23 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             if (undo != NoUndo)
                 undoList.add(undo)
         }
-
         gameTime += time
-        var stoppedHolding: HashMap<HoldAction, Double>? = null
-        for (heldAction in heldActions.keys) {
-            if (!heldAction.canBeKeptApplyingOn(this)) {
-                if (stoppedHolding == null)
-                    stoppedHolding = HashMap<HoldAction, Double>()
-                stoppedHolding[heldAction] = heldActions[heldAction]!!
-                heldAction.stopApplyingOn(this)
-            }
-        }
-        // Undo default advances
-        undoList.add(object : IUndo {
-            override fun undo(gameState: GameState) {
-                gameState.gameTime -= time
-                if (stoppedHolding != null) {
-                    for (heldAction in stoppedHolding!!.keys) {
-                        gameState.heldActions[heldAction] = stoppedHolding!![heldAction]!!
-                    }
-                }
-            }
-        })
         return UndoFactory.multiUndo(undoList)
+    }
+
+    /**
+     * Advances the gameState when using a specific action.
+     */
+    fun advanceByAction(action: GameButton.StateChange?, time: Double, scrolling: Boolean = false) {
+        action?.applyOn(this)
+        this.advance(time, scrolling)
+    }
+
+    fun advanceUndoableByAction(action: GameButton.StateChange?, time: Double, scrolling: Boolean = false): IUndo {
+        return UndoFactory.DoubleUndo(
+            action?.applyUndoablyOn(this) ?: NoUndo,
+            this.advanceUndoable(time)
+        )
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {
@@ -285,20 +278,28 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         }
     }
 
-    fun getPerformableActions(): ArrayList<GameAction> {
-        val performableActions = ArrayList<GameAction>()
-        for (action in game.gameDescription.allActions) {
-            if (action is HoldAction) {
-                if (action.isApplicableOn(this))
-                    performableActions.add(action.asStartAction)
-                else if (action.canBeStoppedApplyingOn(this))
-                    performableActions.add(action.asStopAction)
-            } else if (action.isApplicableOn(this)) {
-                performableActions.add(action)
+    /**
+     * Gets all the buttons the player can press / release.
+     */
+    fun getPerformableButtonInteractions(onlyHolds: Boolean = false): ArrayList<GameButton.StateChange> {
+        val results = ArrayList<GameButton.StateChange>()
+        for (button in buttons) {
+            val action = button.action
+            if (action !is HoldButtonAction && button.makesSenseToPress) {
+                results.add(
+                    GameButton.StateChange(button,
+                        if (onlyHolds) GameButton.InteractionType.HOLD else GameButton.InteractionType.PRESS
+                    )
+                )
+            } else if (action is HoldButtonAction && button.makesSenseToPress) {
+                results.add(GameButton.StateChange(button,
+                    GameButton.InteractionType.HOLD
+                ))
+            } else if (button.makesSenseToRelease) {
+                results.add(GameButton.StateChange(button, GameButton.InteractionType.RELEASE))
             }
         }
-
-        return performableActions
+        return results
     }
 
     /**
@@ -306,8 +307,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
      */
     fun makeCopy(): GameState {
         val stateCopy = GameState(game, levelGenerator)
+        stateCopy.gameTime = gameTime
         stateCopy.gridX = gridX
-        stateCopy.heldActions = HashMap(heldActions)
+        for (i in 0 until buttons.size) {
+            stateCopy.buttons[i].isPressed = buttons[i].isPressed
+            stateCopy.buttons[i].pressedGameTime = buttons[i].pressedGameTime
+        }
+        stateCopy.buttons = ArrayList(buttons)
 
         // Handle gameObjects
         stateCopy.gameObjects.clear()
@@ -331,11 +337,18 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
     override fun writeObject(oos: ObjectOutputStream): GameState {
         oos.writeInt(serializationVersion)
+        oos.writeDouble(gameTime)
         oos.writeInt(gridX)
-        oos.writeInt(heldActions.count())
-        for ((holdAction, time) in heldActions) {
-            oos.writeObject(holdAction.javaClass.simpleName)
-            oos.writeDouble(time)
+//        oos.writeInt(pressedActions.count())
+//        for ((pressedButton, time) in pressedActions) {
+//            oos.writeObject(pressedButton.javaClass.simpleName)
+//            oos.writeDouble(time)
+//        }
+        oos.writeInt(buttons.size)
+        for (button in buttons) {
+            oos.writeObject(button.action.javaClass.simpleName)
+            oos.writeBoolean(button.isPressed)
+            oos.writeDouble(button.pressedGameTime)
         }
         oos.writeInt(gameObjects.count())
         for (gameObject in gameObjects) {
@@ -347,20 +360,33 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     }
 
     override fun readObject(ois: ObjectInputStream): GameState {
+        // version 3 is when serialization version was added to retain backwards compatiblity
+        // I know that backwards compatibility is good code killer, but since all this is used just for saving
+        // gamestates for debugging and experiment resuming principles, it is not so bad
+
         if (serializationVersion >= 3)
             this.serializationVersion = ois.readInt()
-
+        if (serializationVersion >= 4)
+            this.gameTime = ois.readDouble()
         gridX = ois.readInt()
 
-        heldActions.clear()
-        val heldActionsCount = ois.readInt()
-        for (i in 1 .. heldActionsCount) {
-            val holdActionName = ois.readObject() as String
-            for (holdAction in allActions) {
-                if (holdAction.javaClass.simpleName == holdActionName) {
-                    heldActions[holdAction as HoldAction] = ois.readDouble()
-                    break
-                }
+        if (serializationVersion < 5) {
+            val pressedActionsCount = ois.readInt()
+            for (i in 1 .. pressedActionsCount) {
+                ois.readObject() as String
+                ois.readDouble()
+            }
+        } else {
+            val buttonCount = ois.readInt()
+            if (buttonCount != buttons.size)
+                throw Exception("Exception while serializing GameState: Wrong number of buttons! Is the same GameDescription used?")
+            for (i in 0 until buttons.size) {
+                val actionName = buttons[i].action.javaClass.simpleName
+                val serializedName = ois.readObject() as String
+                if (actionName != serializedName)
+                    throw Exception("Exception while serializing GameState: Different buttons! Is the same GameDescription used?")
+                buttons[i].isPressed = ois.readBoolean()
+                buttons[i].pressedGameTime = ois.readDouble()
             }
         }
 
@@ -391,6 +417,38 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return this
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is GameState)
+            return false
+
+        if (gameObjects.size != other.gameObjects.size) return false
+        if (gridX != other.gridX) return false
+        if (gameTime != other.gameTime) return false
+        if (isGameOver != other.isGameOver) return false
+
+        if (buttons.size != other.buttons.size) return false
+
+        for (i in 0 until buttons.size) {
+            if (other.buttons[i] != buttons[i]) return false
+            if (other.buttons[i].isPressed != buttons[i].isPressed) return false
+            if (other.buttons[i].pressedGameTime != buttons[i].pressedGameTime) return false
+        }
+
+        if (player != other.player) return false
+        for (gameObject in gameObjects) {
+            if (gameObject.gameObjectClass != GameObjectClass.PLAYER) {
+                val gridLocation = gridLocation(gameObject.location)
+                val otherObject = other.grid[gridLocation] ?: return false
+                if (gameObject.x != otherObject.x) return false
+                if (gameObject.y != otherObject.y) return false
+                if (gameObject.gameObjectClass != otherObject.gameObjectClass) return false
+            }
+        }
+        return true
+    }
+
+    override fun hashCode() = hashKode(gameObjects.size, gridX, player.x, player.y, player.xspeed, player.yspeed, heldButtonsAsFlags())
+
     /**
      * Returns currently held actions as bit array (in an Int).
      * The bits are 1 - when actionIx is held and 0 when actionIx is not held, ordered from lowest to highest by the order
@@ -398,16 +456,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
      *
      * Useful for hashing.
      */
-    fun currentHeldActionsAsFlags(): Int {
+    fun heldButtonsAsFlags(): Int {
         var flags = 0
         var curFlag = 1
-        for (action in allActions) {
-            if (action is HoldAction) {
-                if (heldActions.containsKey(action)) {
-                    flags += curFlag
-                }
-                curFlag *= 2
-            }
+        for (button in buttons) {
+            if (button.isPressed)
+                flags += curFlag
+            curFlag *= 2
         }
         return flags
     }

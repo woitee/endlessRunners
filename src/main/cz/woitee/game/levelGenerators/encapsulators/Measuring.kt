@@ -28,7 +28,7 @@ class Measuring(val innerGenerator: LevelGenerator, val sumEvery: Int = 10): Lev
         return column
     }
 
-    override fun reset() {
-        innerGenerator.reset()
+    override fun init(gameState: GameState) {
+        innerGenerator.init(gameState)
     }
 }

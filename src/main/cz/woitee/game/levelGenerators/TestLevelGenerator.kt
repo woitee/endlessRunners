@@ -26,6 +26,6 @@ class TestLevelGenerator: LevelGenerator() {
         return col
     }
 
-    override fun reset() {
+    override fun init(gameState: GameState) {
     }
 }

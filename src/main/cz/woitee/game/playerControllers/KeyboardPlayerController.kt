@@ -1,9 +1,10 @@
 package cz.woitee.game.playerControllers
 
+import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
-import cz.woitee.game.Game
-import cz.woitee.game.actions.abstract.GameAction
-import cz.woitee.game.actions.abstract.HoldAction
+import cz.woitee.game.actions.abstract.GameButtonAction
+import cz.woitee.game.actions.abstract.HoldButtonAction
+import cz.woitee.utils.resizeTo
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.*
@@ -20,12 +21,10 @@ class KeyboardPlayerController: PlayerController() {
      */
     class KeyboardHelper: KeyAdapter() {
         var pressedKeys = HashSet<Int>()
-        var pressedSinceLastUpdate = HashSet<Int>()
 
         override fun keyPressed(e: KeyEvent?) {
             if (e != null) {
                 pressedKeys.add(e.keyCode)
-                pressedSinceLastUpdate.add(e.keyCode)
             }
         }
 
@@ -35,17 +34,13 @@ class KeyboardPlayerController: PlayerController() {
             }
         }
 
-        public fun getKeys(): Set<Int> {
-            val res = pressedSinceLastUpdate
-            res.addAll(pressedKeys)
-            pressedSinceLastUpdate = HashSet<Int>()
-            return res
+        fun pressedAnyOf(keys: IntArray): Boolean {
+            return keys.any { pressedKeys.contains(it) }
         }
     }
     val keyboardHelper = KeyboardHelper()
     var inited = false
-    val keyMapping = HashMap<GameAction, IntArray>()
-    val heldActions = HashMap<HoldAction, Boolean>()
+    val keyMapping = ArrayList<IntArray>()
 
     val keyDefaults = arrayOf(
         intArrayOf(KeyEvent.VK_UP, KeyEvent.VK_Z, KeyEvent.VK_Y, KeyEvent.VK_SPACE),
@@ -54,61 +49,28 @@ class KeyboardPlayerController: PlayerController() {
         intArrayOf(KeyEvent.VK_LEFT, KeyEvent.VK_V, KeyEvent.VK_ALT)
     )
 
-    fun init(game: Game) {
-        if (game.visualizer == null) {
+    override fun init(gameState: GameState) {
+        if (gameState.game.visualizer == null) {
             throw InstantiationException("Keyboard Controller can't be set up on games without visualization")
         }
-        game.visualizer.addKeyListener(keyboardHelper)
+        gameState.game.visualizer.addKeyListener(keyboardHelper)
 
-        val allActions = game.gameDescription.allActions
-        if (allActions.count() > keyDefaults.count()) {
-            println("Warning! KeyboardController will only be able to control first ${keyDefaults.count()} of the ${allActions.count()} of game actions.")
+        if (gameState.buttons.size > keyDefaults.size) {
+            println("Warning! KeyboardController will only be able to control first ${keyDefaults.size} of the ${keyMapping.size} of game actions.")
         }
-        for (i in 0 .. allActions.lastIndex) {
-            val action = allActions[i]
-
-            keyMapping.put(action, keyDefaults[i])
-            if (action is HoldAction) {
-                heldActions[action] = false
-            }
-        }
+        keyMapping.addAll(keyDefaults)
         inited = true
     }
 
-    override fun onUpdate(gameState: GameState): PlayerControllerOutput? {
-        if (!inited) {
-            init(gameState.game)
-        }
-        val pressedKeys = keyboardHelper.getKeys()
-        // Process trigger actions first, as they are impulses which may not be held until next tick
-        for (action in gameState.getPerformableActions().filter{ it !is HoldAction }) {
-            val actionKeys = keyMapping[action] ?: continue
-            for (actionKey in actionKeys) {
-                if (actionKey in pressedKeys) {
-                    return action.press()
-                }
-            }
-        }
-        // Process hold actions second, as they can be resolved one tick later
-        for (action in gameState.game.gameDescription.allActions.filter{ it is HoldAction }) {
-            val actionKeys = keyMapping[action] ?: continue
-            var actionKeyPressed = false
+    override fun onUpdate(gameState: GameState): GameButton.StateChange? {
+        for (i in 0 .. gameState.buttons.lastIndex) {
+            val button = gameState.buttons[i]
+            val keyPressed = keyboardHelper.pressedAnyOf(keyMapping[i])
 
-            // any action button pressed -> start hold action
-            for (actionKey in actionKeys) {
-                if (actionKey in pressedKeys) {
-                    if (!heldActions[action]!!) {
-                        heldActions[action as HoldAction] = true
-                        return action.press()
-                    }
-                    actionKeyPressed = true
-                }
-            }
-            // no action button pressed -> stop hold action
-            if (!actionKeyPressed && heldActions[action]!! && (action as HoldAction).canBeStoppedApplyingOn(gameState)) {
-                heldActions[action] = false
-                return action.release()
-            }
+            if (!button.isPressed && keyPressed) {
+                return button.hold
+            } else if (button.isPressed && !keyPressed)
+                return button.release
         }
         return null
     }

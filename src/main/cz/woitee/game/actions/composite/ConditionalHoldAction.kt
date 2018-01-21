@@ -1,41 +1,42 @@
 package cz.woitee.game.actions.composite
 
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.HoldAction
+import cz.woitee.game.actions.abstract.HoldButtonAction
 import cz.woitee.game.conditions.GameCondition
 import cz.woitee.game.conditions.TrueCondition
+import cz.woitee.game.undoing.IUndo
 
 class ConditionalHoldAction(
-        val holdAction: HoldAction,
+        val holdButtonAction: HoldButtonAction,
         val applicableCondition: GameCondition,
         val keptApplyingCondition: GameCondition = TrueCondition(),
-        val stopApplyingCondition: GameCondition = TrueCondition()): HoldAction(holdAction.minimumHoldTime) {
+        val stopApplyingCondition: GameCondition = TrueCondition()): HoldButtonAction() {
 
-    override fun innerIsApplicableOn(gameState: GameState): Boolean {
+    override fun isApplicableOn(gameState: GameState): Boolean {
         return applicableCondition.isTrue(gameState)
     }
 
-    override fun innerCanBeKeptApplyingOn(gameState: GameState): Boolean {
+    override fun canBeKeptApplyingOn(gameState: GameState): Boolean {
         return keptApplyingCondition.isTrue(gameState)
     }
 
-    override fun innerCanBeStoppedApplyingOn(gameState: GameState): Boolean {
+    override fun canBeStoppedApplyingOn(gameState: GameState): Boolean {
         return stopApplyingCondition.isTrue(gameState)
     }
 
-    override fun innerApplyUndoablyOn(gameState: GameState): HoldActionUndo {
-        return holdAction.applyUndoablyOn(gameState)
+    override fun applyUndoablyOn(gameState: GameState): IUndo {
+        return holdButtonAction.applyUndoablyOn(gameState)
     }
 
-    override fun innerStopApplyingUndoablyOn(gameState: GameState, timeStart: Double): HoldActionStopUndo {
-        return holdAction.innerStopApplyingUndoablyOn(gameState, timeStart)
+    override fun stopApplyingUndoablyOn(gameState: GameState): IUndo {
+        return holdButtonAction.stopApplyingUndoablyOn(gameState)
     }
 
-    override fun innerApplyOn(gameState: GameState) {
-        return holdAction.innerApplyOn(gameState)
+    override fun applyOn(gameState: GameState) {
+        return holdButtonAction.applyOn(gameState)
     }
 
-    override fun innerStopApplyingOn(gameState: GameState, timeStart: Double) {
-        return holdAction.innerStopApplyingOn(gameState, timeStart)
+    override fun stopApplyingOn(gameState: GameState) {
+        return holdButtonAction.stopApplyingOn(gameState)
     }
 }

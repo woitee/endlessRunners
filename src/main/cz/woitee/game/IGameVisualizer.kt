@@ -7,8 +7,8 @@ import java.awt.event.KeyListener
  */
 
 interface IGameVisualizer {
-    fun start()
+    fun init()
     fun update(gameState: GameState)
-    fun stop()
+    fun dispose()
     fun addKeyListener(listener: KeyListener)
 }

@@ -79,7 +79,7 @@ class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode =
         return col
     }
 
-    override fun reset() {
+    override fun init(gameState: GameState) {
         currentBlockIx = -1
         currentBlockOffset = 0
     }

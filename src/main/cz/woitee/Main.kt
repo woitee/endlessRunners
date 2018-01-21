@@ -5,11 +5,11 @@ import cz.woitee.game.Game
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.Grid2D
+import cz.woitee.game.algorithms.dfs.BasicDFS
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.descriptions.BitTripGameDescription
+import cz.woitee.game.descriptions.CrouchGameDescription
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
 import cz.woitee.game.playerControllers.DFSPlayerController
 import cz.woitee.utils.StopWatch
 
@@ -50,14 +50,14 @@ fun test() {
 
 fun createGame(): Game {
 //    val gameDescription = BitTripGameDescription()
-    val gameDescription = BitTripGameDescription()
+    val gameDescription = CrouchGameDescription()
 
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
-//    val levelGenerator = TestLevelGenerator()
-    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), DelayedTwinDFS(0.25, allowSearchInBeginning = true), doDFSAfterFail = true))
-//    val levelGenerator = DFSEnsuring(BlockLevelGenerator(gameDescription))
+//    val levelGenerator = SimpleLevelGenerator()
+//    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), BasicDFS(), doDFSAfterFail = true))
+    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), BasicDFS())
 
     val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
 //    val playerController = KeyboardPlayerController()

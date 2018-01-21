@@ -1,10 +1,12 @@
 package cz.woitee.geom
 
+import java.io.Serializable
+
 /**
  * Created by woitee on 22/01/2017.
  */
 
-data class Vector2Double(var x: Double = 0.0, var y: Double = 0.0) {
+data class Vector2Double(var x: Double = 0.0, var y: Double = 0.0): Serializable {
     fun length(): Double {
         return Math.sqrt(x * x + y * y)
     }

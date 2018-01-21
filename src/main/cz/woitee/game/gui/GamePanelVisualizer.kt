@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
  * Created by woitee on 15/01/2017.
  */
 
-class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val debugging:Boolean = false): IGameVisualizer {
+open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val debugging:Boolean = false): IGameVisualizer {
     lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
@@ -27,11 +27,11 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
     val debugObjects = ArrayList<GameObject>()
 
     init {
-        start()
+        init()
     }
 
-    override fun start() {
-        SwingUtilities.invokeAndWait {
+    override final fun init() {
+        SwingUtilities.invokeAndWait() {
             frame = createFrame()
         }
         running = true
@@ -57,7 +57,7 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
         return frame
     }
 
-    override fun stop() {
+    override final fun dispose() {
         SwingUtilities.invokeLater {
             frame.isVisible = false
         }
@@ -75,7 +75,7 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
                 dbImage = panel.createImage(GameWidth, GameHeight)
                 if (dbImage == null) {
                     println("DBImage is null")
-                    stop()
+                    dispose()
                     return@swingThread
                 }
                 dbg = dbImage!!.graphics
@@ -85,28 +85,28 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
             _dbg.color = Color.WHITE
             _dbg.fillRect(0, 0, GameWidth, GameHeight)
 
-            drawEverything(gameState, _dbg)
+//            synchronized(gameState.gameObjects) {
+                drawEverything(gameState, _dbg)
+//            }
             frame.title = "$panelName Score:${gameState.gridX / 10}"
 
             repaint()
         }
     }
 
-    override fun addKeyListener(listener: KeyListener) {
+    override final fun addKeyListener(listener: KeyListener) {
         panel.addKeyListener(listener)
     }
 
-    fun drawEverything(gameState: GameState, g: Graphics) {
-        synchronized(gameState.gameObjects) {
-            val playerX = gameState.player.x
+    open fun drawEverything(gameState: GameState, g: Graphics) {
+        val playerX = gameState.player.x
 
-            for (gameObject in gameState.gameObjects)
-                drawGameObject(gameObject, g, playerX)
+        for (gameObject in gameState.gameObjects)
+            drawGameObject(gameObject, g, playerX)
 
-            if (debugging)
-                for (debugObject in debugObjects)
-                    drawGameObject(debugObject, g, playerX)
-        }
+        if (debugging)
+            for (debugObject in debugObjects)
+                drawGameObject(debugObject, g, playerX)
     }
 
     fun drawGameObject(gameObject: GameObject, g: Graphics, playerX: Double) {
@@ -115,7 +115,7 @@ class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val deb
         drawGameObjectAt(gameObject, g, topLeftX, topLeftY)
     }
 
-    fun drawGameObjectAt(gameObject: GameObject, g: Graphics, x: Int, y: Int) {
+    open fun drawGameObjectAt(gameObject: GameObject, g: Graphics, x: Int, y: Int) {
         val x2 = x + gameObject.widthPx
         val y2 = y + gameObject.heightPx
         if (gameObject.gameObjectClass == GameObjectClass.SOLIDBLOCK) {

@@ -32,7 +32,7 @@ internal class ButtonModelTest {
     @Test
     fun orderedApplicableButtonActions() {
         val list = buttonModel.orderedApplicableButtonActions()
-        assertEquals(2, list.count())
+        assertEquals(3, list.count())
         assertNull(list[0])
         assertNotNull(list[1])
 

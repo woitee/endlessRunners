@@ -33,37 +33,38 @@ class SimpleLevelGenerator: LevelGenerator() {
     var tunnelProbability = 0.0
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
-        val col = arrayList<GameObject?>(HeightBlocks, { null })
-        for (i in 0 .. currentHeight - 1) {
+        val col = generateEmptyColumn()
+        for (i in 0 until currentHeight) {
             col[i] = SolidBlock()
         }
         val random = gameState.game.random
         if (random.nextDouble() < tunnelProbability) {
             col[currentHeight + 1] = SolidBlock()
-            // Blocked Tunnels
-            if (random.nextDouble() < 0.01) {
-                col[currentHeight] = CustomBlock(1)
-            } else if (random.nextDouble() < 0.03) {
-                col[currentHeight + 2] = CustomBlock(1)
-            }
         } else {
-            // Trampoline
-            if (random.nextDouble() < 0.02) {
-                col[currentHeight - 1] = CustomBlock(0)
-            }
-            // Blockage of various heights
-            if (random.nextDouble() < 0.03) {
-                col[currentHeight] = CustomBlock(1)
-                if (random.nextDouble() < 0.5) {
-                    col[currentHeight + 1] = CustomBlock(1)
-                    if (random.nextDouble() < 0.5) {
-                        col[currentHeight + 2] = CustomBlock(1)
-                        if (random.nextDouble() < 0.5) {
-                            col[currentHeight + 3] = CustomBlock(1)
-                        }
-                    }
-                }
-            }
+            // Blocked Tunnels
+//            if (random.nextDouble() < 0.01) {
+//                col[currentHeight] = CustomBlock(1)
+//            } else if (random.nextDouble() < 0.03) {
+//                col[currentHeight + 2] = CustomBlock(1)
+//            }
+//        } else {
+//            // Trampoline
+//            if (random.nextDouble() < 0.02) {
+//                col[currentHeight - 1] = CustomBlock(0)
+//            }
+//            // Blockage of various heights
+//            if (random.nextDouble() < 0.03) {
+//                col[currentHeight] = CustomBlock(1)
+//                if (random.nextDouble() < 0.5) {
+//                    col[currentHeight + 1] = CustomBlock(1)
+//                    if (random.nextDouble() < 0.5) {
+//                        col[currentHeight + 2] = CustomBlock(1)
+//                        if (random.nextDouble() < 0.5) {
+//                            col[currentHeight + 3] = CustomBlock(1)
+//                        }
+//                    }
+//                }
+//            }
             var rnd = random.nextDouble()
             for ((key, value) in probableTransfers) {
                 rnd -= value
@@ -77,7 +78,7 @@ class SimpleLevelGenerator: LevelGenerator() {
         return col
     }
 
-    override fun reset() {
+    override fun init(gameState: GameState) {
         currentHeight = 1
     }
 }

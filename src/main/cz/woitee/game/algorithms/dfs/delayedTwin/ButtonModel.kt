@@ -1,22 +1,25 @@
 package cz.woitee.game.algorithms.dfs.delayedTwin
 
+import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.GameAction
-import cz.woitee.game.actions.abstract.HoldAction
+import cz.woitee.game.actions.abstract.HoldButtonAction
 import cz.woitee.game.levelGenerators.ColumnCopyingLevelGenerator
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.undoing.NoUndo
-import cz.woitee.utils.arrayList
+import cz.woitee.utils.MySerializable
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 import java.util.*
 
 
-class ButtonModel(var currentState: GameState, var delayedState: GameState, val updateTime: Double) {
+class ButtonModel(var currentState: GameState, var delayedState: GameState, val updateTime: Double): MySerializable {
+    enum class ThreeStateInteraction { NONE, PRESS, RELEASE }
     enum class DisabledStates { NONE, CURRENT, DELAYED, BOTH }
-    data class ButtonAction(val button: Int, val isPress: Boolean = true)
-    open class ButtonUndo(val currentStateUndo: IUndo, val delayedStateUndo: IUndo,
-                          val actionInDelayed: GameAction?, val disabledStates: DisabledStates) {
-        constructor(buttonUndo: ButtonUndo) : this(buttonUndo.currentStateUndo, buttonUndo.delayedStateUndo, buttonUndo.actionInDelayed, buttonUndo.disabledStates)
+    data class ButtonAction(val button: Int, val isPress: Boolean)
+    open class ButtonUndo(val currentStateUndo: IUndo, val delayedStateUndo: IUndo, val disabledStates: DisabledStates): Serializable {
+        constructor(buttonUndo: ButtonUndo) : this(buttonUndo.currentStateUndo, buttonUndo.delayedStateUndo, buttonUndo.disabledStates)
         open fun undo(currentState: GameState, delayedState: GameState) {
             currentStateUndo.undo(currentState)
             delayedStateUndo.undo(delayedState)
@@ -25,7 +28,7 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
             undo(buttonModel.currentState, buttonModel.delayedState)
         }
     }
-    val disabledStates: DisabledStates
+    var disabledStates: DisabledStates
         get () =
             if (currentStateDisabled) {
                 if (delayedStateDisabled)
@@ -38,15 +41,39 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
                 else
                     DisabledStates.NONE
             }
+        set(value) {
+            when (value) {
+                DisabledStates.NONE    -> { currentStateDisabled = false; delayedStateDisabled = false }
+                DisabledStates.DELAYED -> { currentStateDisabled = false; delayedStateDisabled = true }
+                DisabledStates.CURRENT -> { currentStateDisabled = true;  delayedStateDisabled = false }
+                DisabledStates.BOTH    -> { currentStateDisabled = true;  delayedStateDisabled = true }
+            }
+        }
 
-    fun noUndo() = ButtonUndo(NoUndo, NoUndo, null, disabledStates)
+    fun noUndo() = ButtonUndo(NoUndo, NoUndo, disabledStates)
+    fun threeStateInteractionFromBool(isPress: Boolean): ThreeStateInteraction {
+        return if (isPress) ThreeStateInteraction.PRESS else ThreeStateInteraction.RELEASE
+    }
 
-    val button2Action = currentState.allActions
     val maxButton: Int
-        get() = button2Action.count() - 1
+        get() = currentState.allActions.lastIndex
+
+    /**
+     * We only update buttonStates in non-disabled states, so we check those when in need of info how to .
+     */
+    fun isPressed(button: Int): Boolean {
+        return when (disabledStates) {
+            ButtonModel.DisabledStates.NONE -> {
+                assert(currentState.buttons[button].isPressed == delayedState.buttons[button].isPressed)
+                currentState.buttons[button].isPressed
+            }
+            ButtonModel.DisabledStates.CURRENT -> delayedState.buttons[button].isPressed
+            ButtonModel.DisabledStates.DELAYED -> currentState.buttons[button].isPressed
+            ButtonModel.DisabledStates.BOTH -> false
+        }
+    }
 
     val allButtonActions = ArrayList<ArrayList<ButtonAction>>()
-    val buttonsPressStates = arrayList(button2Action.count(), { false })
 
     var currentStateDisabled = false
     var delayedStateDisabled = false
@@ -67,8 +94,6 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
 
     fun reset() {
     }
-
-    fun actionToButton(gameAction: GameAction): Int = button2Action.indexOf(gameAction)
 
     fun setStates(gameState: GameState, delayedState: GameState) {
         this.currentState = gameState
@@ -91,24 +116,24 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         }
     }
 
-    fun isReleasable(button: Int): Boolean {
-        if (!buttonsPressStates[button])
-            return false
+    fun undoAddColumn(column: List<GameObject?>) {
+        columnCopier.savedColumn = column
+        synchronized(currentState.gameObjects) {
+            currentState.undoAddColumn(columnCopier.generateNextColumn(currentState))
+        }
+        synchronized(delayedState.gameObjects) {
+            delayedState.undoAddColumn(columnCopier.generateNextColumn(delayedState))
+        }
+    }
 
-        val action = button2Action[button]
-        if (action !is HoldAction)
-            return true
-        return (!currentStateDisabled && action.canBeStoppedApplyingOn(currentState))
-                || (!delayedStateDisabled && action.canBeStoppedApplyingOn(delayedState))
+    fun isReleasable(button: Int): Boolean {
+        return (!currentStateDisabled && currentState.buttons[button].makesSenseToRelease)
+                || (!delayedStateDisabled && delayedState.buttons[button].makesSenseToRelease)
     }
 
     fun isPressable(button: Int): Boolean {
-        if (buttonsPressStates[button])
-            return false
-
-        val action = button2Action[button]
-        return (!currentStateDisabled && action.isApplicableOn(currentState))
-                || (!delayedStateDisabled && action.isApplicableOn(delayedState))
+        return (!currentStateDisabled && currentState.buttons[button].makesSenseToPress)
+                || (!delayedStateDisabled && delayedState.buttons[button].makesSenseToPress)
     }
 
     fun orderedApplicableButtonActions(): ArrayList<ButtonAction?> {
@@ -121,7 +146,7 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         }
         // Do nothing
         list.add(null)
-        // Try to press some buttons
+        // Try to isPress some buttons
         for (button in 0 .. maxButton) {
             if (isPressable(button))
                 list.add(getButtonAction(button, true))
@@ -129,57 +154,68 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         return list
     }
 
-    internal fun press(button: Int): ButtonUndo = toggleButton(button, true)
+    internal fun press(button: Int): ButtonUndo = updateStatesUndoably(button, ThreeStateInteraction.PRESS)
+    internal fun release(button: Int): ButtonUndo = updateStatesUndoably(button, ThreeStateInteraction.RELEASE)
+    internal fun noAction(): ButtonUndo = updateStatesUndoably(-1, ThreeStateInteraction.NONE)
 
-    internal fun release(button: Int): ButtonUndo = toggleButton(button, false)
-
-    protected fun toggleButton(button: Int, press: Boolean): ButtonUndo {
-        if ((press && !isPressable(button)) || (!press && !isReleasable(button)))
-            return updateStatesUndoably()
-
-        buttonsPressStates[button] = press
-        val statesUndo = updateStatesUndoably()
-        return object : ButtonUndo(statesUndo) {
-            override fun undo(currentState: GameState, delayedState: GameState) {
-                buttonsPressStates[button] = !press
-                super.undo(currentState, delayedState)
-            }
+    protected fun updateStatesUndoably(button: Int, press: ThreeStateInteraction): ButtonUndo {
+        val currentStateChange = when (press) {
+            ButtonModel.ThreeStateInteraction.NONE -> null
+            ButtonModel.ThreeStateInteraction.PRESS -> currentState.buttons[button].hold
+            ButtonModel.ThreeStateInteraction.RELEASE -> currentState.buttons[button].release
         }
-    }
-
-    protected fun updateStatesUndoably(): ButtonUndo {
-        val currentAction = if (currentStateDisabled) null else getActionFromButtons(currentState)
-        val delayedAction = if (delayedStateDisabled) null else getActionFromButtons(delayedState)
+        val delayedStateChange = when (press) {
+            ButtonModel.ThreeStateInteraction.NONE -> null
+            ButtonModel.ThreeStateInteraction.PRESS -> delayedState.buttons[button].hold
+            ButtonModel.ThreeStateInteraction.RELEASE -> delayedState.buttons[button].release
+        }
 
         return ButtonUndo(
-                if (currentStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(currentState, currentAction, updateTime),
-                if (delayedStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(delayedState, delayedAction, updateTime),
-                delayedAction,
+                if (currentStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(currentState, currentStateChange, updateTime),
+                if (delayedStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(delayedState, delayedStateChange, updateTime),
                 disabledStates
         )
     }
 
-    protected fun getActionFromButtons(gameState: GameState): GameAction? {
-        // try to release an already happening action
-        for (button in buttonsPressStates.indices) {
-            val action = button2Action[button]
-            if (!buttonsPressStates[button] && action is HoldAction && action.canBeStoppedApplyingOn(gameState)) {
-                return action.asStopAction
-            }
-        }
-        // try to press an action
-        for (button in buttonsPressStates.indices) {
-            val action = button2Action[button]
-            if (buttonsPressStates[button] && action.isApplicableOn(gameState))
-                return action
-        }
-        // do nothing
-        return null
+    fun updateUndoable(btnAction: ButtonAction?): ButtonUndo {
+        return if (btnAction == null) noAction()
+        else updateStatesUndoably(btnAction.button, threeStateInteractionFromBool(btnAction.isPress))
     }
 
-    fun updateUndoable(btnAction: ButtonAction?): ButtonUndo {
-        if (btnAction == null)
-            return updateStatesUndoably()
-        return toggleButton(btnAction.button, btnAction.isPress)
+    fun heldButtonsAsFlags(): Int {
+        return currentState.heldButtonsAsFlags()
+    }
+
+
+    // ======================
+    //      SERIALIZATION
+    // ======================
+
+    override fun writeObject(oos: ObjectOutputStream): ButtonModel {
+        oos.writeInt(maxButton)
+        for (i in 0 .. maxButton) {
+            // backwards compatibility
+            oos.writeBoolean(currentState.buttons[i].isPressed)
+        }
+        oos.writeBoolean(currentStateDisabled)
+        oos.writeBoolean(delayedStateDisabled)
+        currentState.writeObject(oos)
+        delayedState.writeObject(oos)
+
+        return this
+    }
+
+    override fun readObject(ois: ObjectInputStream): ButtonModel {
+        ois.readInt()
+        for (i in 0 .. maxButton) {
+            // backwards compatibility
+            ois.readBoolean()
+        }
+        currentStateDisabled = ois.readBoolean()
+        delayedStateDisabled = ois.readBoolean()
+        currentState.readObject(ois)
+        delayedState.readObject(ois)
+
+        return this
     }
 }

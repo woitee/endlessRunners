@@ -23,4 +23,24 @@ object CopyUtils {
             ois?.close()
         }
     }
+
+    inline fun <reified T: Serializable> copyByJavaSerialization(sourceObj: T): T {
+        var oos: ObjectOutputStream? = null
+        var ois: ObjectInputStream? = null
+        try {
+            val bos = ByteArrayOutputStream()
+            oos = ObjectOutputStream(bos)
+            // serialize and pass the object
+
+            oos.writeObject(sourceObj)
+            oos.flush()
+            val bin = ByteArrayInputStream(bos.toByteArray())
+            ois = ObjectInputStream(bin)
+            // return the new object
+            return ois.readObject() as T
+        } finally {
+            oos?.close()
+            ois?.close()
+        }
+    }
 }

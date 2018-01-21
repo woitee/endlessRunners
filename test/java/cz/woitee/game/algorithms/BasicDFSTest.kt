@@ -1,8 +1,8 @@
 package cz.woitee.game.algorithms
 
 import cz.woitee.game.Game
+import cz.woitee.game.algorithms.dfs.BasicDFS
 import cz.woitee.game.algorithms.dfs.DFS
-import cz.woitee.game.algorithms.dfs.DFSBase
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.playerControllers.DFSPlayerController
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream
 
-internal class DFSTest {
+internal class BasicDFSTest {
     @org.junit.jupiter.api.Test
     fun bugWrongCollisionWhenFarIntoTheGame() {
         runTestFromFile("test/data/GameState_2017_09_03-14_52_43.dmp", 1, expectGameOver = true)
@@ -34,7 +34,7 @@ internal class DFSTest {
     }
 
     internal fun runTestFromFile(filePath: String, serializationVersion: Int, expectGameOver: Boolean = false, time: Double = 2.0,
-                                 dfsProvider: DFSBase = DFS(), gameDescription: GameDescription = BitTripGameDescription()) {
+                                 dfsProvider: DFS = BasicDFS(), gameDescription: GameDescription = BitTripGameDescription()) {
         val game = Game(
                 FlatLevelGenerator(),
                 DFSPlayerController(dfsProvider),
@@ -50,6 +50,22 @@ internal class DFSTest {
         val file = File(filePath)
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)
+
+        //TODO remove this
+//        // UNCOMMENT to remove removable blocks
+//        val toRemove = ArrayList<GameObject>()
+//        for (gameObject in game.gameState.gameObjects) {
+//            if (gameObject.dumpChar == '1')
+//                toRemove.add(gameObject)
+//        }
+//        for (gameObject in toRemove) {
+//            game.gameState.remove(gameObject)
+//        }
+
+        // Moving player right or left
+//        game.gameState.player.x -= 3
+//        game.gameState.addColumn(LevelGenerationUtils.generateColumnFromString("######", game.gameState))
+//        DebugUtils.printDebugInfo(game.gameState)
 
         var exception: Throwable? = null
             game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e -> exception = e }

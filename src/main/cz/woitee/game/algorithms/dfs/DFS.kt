@@ -1,77 +1,137 @@
 package cz.woitee.game.algorithms.dfs
 
+import cz.woitee.game.GameButton
+import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.GameAction
 import cz.woitee.game.undoing.IUndo
-import cz.woitee.utils.pop
+import cz.woitee.game.actions.abstract.HoldButtonAction
+import cz.woitee.game.algorithms.dfs.delayedTwin.DFSUtils
 import java.util.*
 
 /**
- * A basic DFS implementation for the game. It caches the states to prevent exploring from the same state multiple times.
- * It should be instantiated for each place running it, as the cache (of dead states) is persistent between different searches -
- * this speeds up subsequent lookups.
+ * A place that you can init when creating a BasicDFS or some other search algorithm for the game. Provides useful methods,
+ * measures time running, etc.
  *
  * Created by woitee on 30/04/2017.
  */
 
-open class DFS (persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boolean = false): DFSBase(persistentCache, maxDepth, debug) {
-    constructor(dfs: DFS): this(dfs.persistentCache, dfs.maxDepth, dfs.debug) {
-        cachedStates.addAll(dfs.cachedStates)
-    }
-
-    override fun searchInternal(gameState: GameState, updateTime: Double): SearchResult {
-        val undoList = ArrayList<IUndo>()
-        val actionList = ArrayList<Int>()
-        val possibleActionsList = ArrayList<List<GameAction?>>()
-
-        while (undoList.count() < maxDepth && !isPlayerAtEnd(gameState)) {
-            val currentActions: List<GameAction?> = orderedPerformableActions(gameState)
-            undoList.add(advanceState(gameState, currentActions[0]))
-
-            if (undoList.count() > lastStats.reachedDepth)
-                lastStats.reachedDepth = undoList.count()
-            actionList.add(0)
-            possibleActionsList.add(currentActions)
-            if (gameState.isGameOver || isInCache(gameState)) {
-                //backtrack
-                var finishedBacktrack = false
-                while (!finishedBacktrack) {
-                    if (undoList.isEmpty()) {
-                        // No option but to lose the game
-                        return SearchResult(false)
-                    }
-                    undoList.pop().undo(gameState)
-                    ++lastStats.backtrackedStates
-                    var action = actionList.pop() + 1
-                    val actions = possibleActionsList.pop()
-                    while (action < actions.count()) {
-                        val undo = advanceState(gameState, actions[action])
-                        if (gameState.isGameOver || isInCache(gameState)) {
-                            undo.undo(gameState)
-                            ++lastStats.backtrackedStates
-                            ++action
-                        } else {
-                            undoList.add(undo)
-                            actionList.add(action)
-                            possibleActionsList.add(actions)
-                            finishedBacktrack = true
-                            break
-                        }
-                    }
-                    if (action >= actions.count())
-                        if (shouldCache(gameState)) cache(gameState)
-                }
-            }
-        }
-
-        for (undo in undoList.asReversed()) {
-            // uncomment to print plan as a road of player
-//                println("Plan ${game State.player.x} ${currentState.player.y} ${currentState.player.yspeed}")
+abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
+    data class SearchResult(val success: Boolean, val action: GameButton.StateChange? = null)
+    /**
+     * Assistant class for notifying that the last state advance managed to only perform the gameAction, and not a state update.
+     */
+    class NoStateAdvanceUndo(val undo: IUndo): IUndo {
+        override fun undo(gameState: GameState) {
             undo.undo(gameState)
         }
+    }
 
-        val actionIx = actionList[0]
-        val action = possibleActionsList[0][actionIx]
-        return SearchResult(true, action)
+    /**
+     * Holding statistics from the last search.
+     */
+    var lastStats = SearchStats()
+    protected var updateTime: Double = 0.0
+    protected val cachedStates = HashSet<CachedState>()
+    /**
+     * Searches for an gameAction that doesn't lead to death and returns it, or null if it doesn't exist.
+     */
+    fun searchForAction (gameState: GameState, updateTime: Double = -1.0): GameButton.StateChange? {
+        this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
+        if (persistentCache) {
+            pruneUnusableCache(gameState)
+        } else {
+            cachedStates.clear()
+        }
+
+        lastStats = SearchStats()
+        val startTime = System.nanoTime()
+        val visualizer = gameState.game.visualizer as GamePanelVisualizer?
+        if (debug)
+            visualizer?.debugObjects?.clear()
+
+        val result = if (debug) {
+            searchInternal(gameState, this.updateTime)
+        } else {
+            synchronized(gameState.gameObjects) {
+                searchInternal(gameState, this.updateTime)
+            }
+        }
+        lastStats.success = result.success
+        lastStats.cachedStates = cachedStates.count()
+        lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000000
+        return result.action
+    }
+
+    abstract protected fun searchInternal(gameState: GameState, updateTime: Double): SearchResult
+
+    open fun init(gameState: GameState) {
+        updateTime = gameState.game.updateTime
+        cachedStates.clear()
+    }
+
+    protected fun isPlayerAtEnd(gameState: GameState): Boolean {
+        return gameState.player.nextX(this.updateTime) + gameState.player.widthPx >= gameState.maxX
+    }
+
+    /**
+     * Returns actions that should be tried ordered by priority, which is:
+     * a) stop holding a gameAction
+     * b) do nothing (null)
+     * c) do a non-holding gameAction
+     * d) start holding a gameAction
+     *
+     * Note that there is always some actionIx in this list, as it also contains null.
+     */
+    open fun orderedPerformableButtonActions(gameState: GameState): List<GameButton.StateChange?> {
+        val list = ArrayList<GameButton.StateChange?>()
+        // dispose holding gameAction
+        for (button in gameState.buttons) {
+            if (button.isPressed && (button.action !is HoldButtonAction || button.action.canBeStoppedApplyingOn(gameState)))
+                list.add(button.release)
+        }
+        // do nothing (we can always do nothing)
+        list.add(null)
+        // do a non-holding gameAction
+        for (button in gameState.buttons) {
+            if (!button.isPressed && button.action !is HoldButtonAction && button.action.isApplicableOn(gameState))
+                list.add(button.hold) // DFS always holds
+        }
+        // start holding a holdaction
+        for (button in gameState.buttons) {
+            if (!button.isPressed && button.action is HoldButtonAction && button.action.isApplicableOn(gameState))
+                list.add(button.hold)
+        }
+        return list
+    }
+
+    /**
+     * Decides whether the current currentState should be cached to not be searched multiple times from.
+     */
+    protected open fun shouldCache(gameState: GameState): Boolean {
+        return true
+    }
+    protected fun cache(gameState: GameState) {
+        cachedStates.add(CachedState(gameState))
+    }
+    protected fun isInCache(gameState: GameState): Boolean {
+        return cachedStates.contains(CachedState(gameState))
+    }
+    protected open fun pruneUnusableCache(gameState: GameState) {
+        cachedStates
+                .filter { it.playerX < gameState.player.x }
+                .forEach { cachedStates.remove(it) }
+    }
+
+    protected fun advanceState(gameState: GameState, buttonStateChange: GameButton.StateChange?): IUndo {
+        ++lastStats.searchedStates
+        return DFSUtils.advanceGameStateSafely(gameState, buttonStateChange, updateTime)
+    }
+
+
+    /**
+     * This function is called whenever the state we are helping to simulate changes. It can be useful to update
+     * internal structures based on it.
+     */
+    open internal fun onUpdate(updateTime: Double, buttonStateChange: GameButton.StateChange?, gameState: GameState) {
     }
 }

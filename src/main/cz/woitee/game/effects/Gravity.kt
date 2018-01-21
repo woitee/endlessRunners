@@ -17,13 +17,6 @@ class Gravity(
         targetedAt: Target = Target.PLAYER,
         var strength: Double = 0.5): UndoableGameEffect() {
 
-    class GravityUndo(val gravity: Gravity): IUndo {
-        override fun undo(gameState: GameState) {
-            val target = (gravity.findTarget(gameState) as MovingObject?) ?: return
-            target.yspeed += gravity.strength * BlockHeight * gameState.game.updateTime
-        }
-    }
-
     override val target = targetedAt
     override val timing = Timing.PERSISTENT
 
@@ -49,7 +42,9 @@ class Gravity(
 
         return object : IUndo {
             override fun undo(gameState: GameState) {
-                target.yspeed = originalYSpeed
+                val targetInGameState = findTarget(gameState)
+                if (targetInGameState != null)
+                    target.yspeed = originalYSpeed
             }
         }
     }

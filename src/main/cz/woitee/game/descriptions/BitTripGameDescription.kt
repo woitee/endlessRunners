@@ -6,7 +6,7 @@ import cz.woitee.game.collisions.collisionEffects.DestroyOther
 import cz.woitee.game.collisions.collisionEffects.composite.ConditionalCollisionEffect
 import cz.woitee.game.actions.ChangeColorAction
 import cz.woitee.game.actions.ChangeShapeAction
-import cz.woitee.game.actions.abstract.GameAction
+import cz.woitee.game.actions.abstract.GameButtonAction
 import cz.woitee.game.actions.JumpAction
 import cz.woitee.game.actions.composite.ConditionalAction
 import cz.woitee.game.conditions.PlayerHasColor
@@ -26,11 +26,11 @@ open class BitTripGameDescription: GameDescription() {
             JumpAction(30.0)
     )
 
-    override val allActions: List<GameAction> = listOf(
+    override val allActions: List<GameButtonAction> = listOf(
             JumpAction(22.0),
             ChangeShapeAction(2, 1),
             trampolineAction,
-            ChangeColorAction(GameObjectColor.YELLOW, 1.0)
+            ChangeColorAction(GameObjectColor.YELLOW)
     )
     override val customObjects = arrayListOf(CustomBlock(0), CustomBlock(1))
 

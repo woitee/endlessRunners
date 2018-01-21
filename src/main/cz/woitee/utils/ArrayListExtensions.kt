@@ -14,6 +14,16 @@ fun <T> arrayList(size: Int, factory: () -> T): ArrayList<T> {
     return res
 }
 
+fun <T> ArrayList<T>.resizeTo(size: Int, factory: () -> T): ArrayList<T> {
+    while (this.size > size) {
+        this.removeAt(this.size - 1)
+    }
+    while (this.size < size) {
+        this.add(factory())
+    }
+    return this
+}
+
 /**
     Shifts all the elements either left (for positive amount) or right (for negative amount), filling the blank space
     with results from given factory.

@@ -5,9 +5,13 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.GameObjectClass
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.utils.arrayList
 import cz.woitee.utils.dumpToFile
+import java.io.File
+import java.io.ObjectOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -32,9 +36,18 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFS,
             if (!dfsProvider.lastStats.success) {
                 println("${gameState.gridX} Not suceeding in search even after copying identical column!")
                 lastResult = DFSResult.FAIL_COPYCOLUMN
-                if (dumpErrors)
-                    lastGameState?.dumpToFile("NotEnsuredDump")
-                return columnCopy
+                if (dfsProvider is DelayedTwinDFS) {
+                    val buttonModel = dfsProvider.buttonModel!!
+                    val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
+                    println("Dumping buttonModel to $logFileName")
+                    val file = File(logFileName)
+                    val oos = ObjectOutputStream(file.outputStream())
+                    buttonModel.writeObject(oos)
+                    oos.close()
+                }
+//                if (dumpErrors)
+//                    lastGameState?.dumpToFile("NotEnsuredDump")
+//                return columnCopy
             }
         }
 
@@ -59,7 +72,7 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFS,
     protected open fun tryDFS(gameState: GameState, newColumn: ArrayList<GameObject?>? = null): ArrayList<GameObject?> {
         beforeDFS(gameState)
 
-        val generatedColumn = if (newColumn != null) newColumn else innerGenerator.generateNextColumn(gameState)
+        val generatedColumn = newColumn ?: innerGenerator.generateNextColumn(gameState)
         val droppedColumn = gameState.addColumn(generatedColumn)
 
         // Search it by BasicDFS
@@ -71,7 +84,7 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFS,
         return generatedColumn
     }
 
-    protected fun copySolidBlocksFromLastColumn(gameState: GameState): ArrayList<GameObject?> {
+    fun copySolidBlocksFromLastColumn(gameState: GameState): ArrayList<GameObject?> {
         val column = arrayList<GameObject?>(gameState.grid.height, { null })
         for (i in 0 until gameState.grid.height) {
             if (gameState.grid[gameState.grid.width - 1, i]?.gameObjectClass == GameObjectClass.SOLIDBLOCK)

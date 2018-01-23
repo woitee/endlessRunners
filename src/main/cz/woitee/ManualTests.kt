@@ -48,6 +48,7 @@ fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
                 }
             }
     )
+//    game.random.setSeed(1234)
 //    game.currentState.addToGrid(SolidBlock(), 20, 1)
 
     val levelGeneratorDFSVisualizer = DelayedTwinDFSVisualizer(dfsOfLevelGenerator, 700, 400)

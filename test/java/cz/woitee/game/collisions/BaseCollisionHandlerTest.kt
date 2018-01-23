@@ -1,8 +1,10 @@
 package cz.woitee.game.collisions
 
+import cz.woitee.game.BlockWidth
 import cz.woitee.game.objects.SolidBlock
 import cz.woitee.geom.Direction4
 import cz.woitee.game.DummyObjects
+import cz.woitee.game.GameWidth
 import org.junit.jupiter.api.Assertions.*
 import cz.woitee.game.levelGenerators.BlockLevelGenerator.Block
 
@@ -102,7 +104,7 @@ class BaseCollisionHandlerTest {
         game.gameState.addToGrid(SolidBlock(), 1, 1)
 
         // Direct Right Collision
-        var coll = game.collHandler.nearestCollision(game.gameState, 2412.0, 36.0, 2436.0, 36.0)
+        val coll = game.collHandler.nearestCollision(game.gameState, 2412.0, 36.0, 2436.0, 36.0)
         assertNotNull(coll)
         assertEquals(game.gameState.grid[1, 1]!!, coll!!.other)
         assertEquals(2424.0, coll.locationX)
@@ -139,5 +141,17 @@ class BaseCollisionHandlerTest {
         val coll = game.collHandler.getCollision(game.gameState.player)
         assertNotNull(coll)
         assertEquals(coll!!.direction, Direction4.RIGHT)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun notCrashingOnOutOfGridCollisions() {
+        val game = DummyObjects.createDummyGame()
+        game.gameState.gameObjects.clear()
+        game.gameState.addToGrid(SolidBlock(), 1, 1)
+        game.gameState.addToGrid(SolidBlock(), 2, 1)
+
+        val borderX = game.gameState.grid.width * BlockWidth
+        val coll = game.collHandler.nearestCollision(game.gameState, borderX - 10.0, 1.0, borderX + 10.0, 1.0)
+        assertNull(coll)
     }
 }

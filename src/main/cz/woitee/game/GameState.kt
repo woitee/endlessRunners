@@ -42,6 +42,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     var gameTime = 0.0
         private set
     var buttons = ArrayList<GameButton>()
+    var heldActions = HashMap<HoldButtonAction, Double>()
 
     var isGameOver = false
 
@@ -49,7 +50,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         get() = gridX + WidthBlocks
     val lastColumnXpx: Double
         get() = (lastColumnX * BlockWidth).toDouble()
-    val allActions: List<GameButtonAction>
+    val allActions
         get() = game.gameDescription.allActions
 
     /** Maximum x of an object that is still in the state. */
@@ -141,14 +142,11 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return column
     }
 
-    fun advance(time: Double, scrolling:Boolean = false, excludeAction: GameButtonAction? = null) {
+    fun advance(time: Double) {
         lastAdvanceTime = time
 
         synchronized(gameObjects) {
-            // Keep applying press actions that are held
-            buttons
-                    .filter { it.isPressed && it.action !is HoldButtonAction && it.action.isApplicableOn(this) && it.action != excludeAction}
-                    .forEach { it.action.applyOn(this) }
+            performActionsBasedOnButtons()
 
             for (gameObject in updateObjects) {
                 gameObject.update(time)
@@ -157,30 +155,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 gameEffect.applyOn(this)
             }
             gameTime += time
-            if (scrolling) {
-                if (levelGenerator == null) {
-                    println("Level Generator should be set when scrolling!")
-                } else {
-                    val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
-                    val blockOffset = (offset / BlockWidth).toInt()
-
-                    for (i in 1..blockOffset) {
-    //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
-                        val column = levelGenerator.generateNextColumn(this)
-                        this.addColumn(column)
-                    }
-                }
-            }
         }
     }
 
-
-    fun advanceUndoable(time: Double, excludeAction: GameButtonAction? = null): IUndo {
+    fun advanceUndoable(time: Double): IUndo {
         synchronized(gameObjects) {
             val undoList = DefaultUndoListPool.borrowObject()
-            buttons
-                    .filter { it.isPressed && it.action !is HoldButtonAction && it.action.isApplicableOn(this) && it.action != excludeAction }
-                    .forEach { undoList.add(it.action.applyUndoablyOn(this)) }
+            performActionsBasedOnButtonsUndoably(undoList)
 
             updateObjects.map {
                 val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
@@ -197,19 +178,91 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         }
     }
 
+    fun performActionsBasedOnButtons() {
+        for (button in buttons) {
+            val action = button.action
+            if (action !is HoldButtonAction) {
+                // press actions whose buttons are held
+                if (button.isPressed && action.isApplicableOn(this))
+                    button.action.applyOn(this)
+            } else {
+                // button is HoldButtonAction
+                if (button.isPressed && !action.isAppliedIn(this) && action.isApplicableOn(this)) {
+                    action.applyOn(this)
+                    heldActions[action] = gameTime
+                } else if ((!button.isPressed || !action.canBeKeptApplyingOn(this)) && action.isAppliedIn(this) && action.canBeStoppedApplyingOn(this)) {
+                    action.stopApplyingOn(this)
+                    heldActions.remove(action)
+                } else if (action.isAppliedIn(this)) {
+                    action.keepApplyingOn(this)
+                }
+            }
+        }
+    }
+
+    fun performActionsBasedOnButtonsUndoably(undoList: ArrayList<IUndo>) {
+        for (button in buttons) {
+            val action = button.action
+            if (action !is HoldButtonAction) {
+                // press actions whose buttons are held
+                if (button.isPressed && action.isApplicableOn(this))
+                    undoList.add(button.action.applyUndoablyOn(this))
+            } else {
+                // button is HoldButtonAction
+                if (button.isPressed && !action.isAppliedIn(this) && action.isApplicableOn(this)) {
+                    undoList.add(action.applyUndoablyOn(this))
+                    heldActions[action] = gameTime
+                    undoList.add(object : IUndo {
+                        override fun undo(gameState: GameState) {
+                            gameState.heldActions.remove(action)
+                        }
+                    })
+                } else if ((!button.isPressed || !action.canBeKeptApplyingOn(this)) && action.isAppliedIn(this) && action.canBeStoppedApplyingOn(this)) {
+                    undoList.add(action.stopApplyingUndoablyOn(this))
+                    val originalTime = heldActions[action]!!
+                    heldActions.remove(action)
+                    undoList.add(object : IUndo {
+                        override fun undo(gameState: GameState) {
+                            gameState.heldActions[action] = originalTime
+                        }
+                    })
+                } else if (action.isAppliedIn(this)) {
+                    undoList.add(action.keepApplyingUndoablyOn(this))
+                }
+            }
+        }
+    }
+
     /**
      * Advances the gameState when using a specific action.
      */
-    fun advanceByAction(action: GameButton.StateChange?, time: Double, scrolling: Boolean = false) {
+    fun advanceByAction(action: GameButton.StateChange?, time: Double) {
         action?.applyOn(this)
-        this.advance(time, scrolling)
+        this.advance(time)
     }
 
-    fun advanceUndoableByAction(action: GameButton.StateChange?, time: Double, scrolling: Boolean = false): IUndo {
+    fun advanceUndoableByAction(action: GameButton.StateChange?, time: Double): IUndo {
         return UndoFactory.DoubleUndo(
             action?.applyUndoablyOn(this) ?: NoUndo,
             this.advanceUndoable(time)
         )
+    }
+
+    fun scroll(time: Double) {
+        synchronized(gameObjects) {
+            if (levelGenerator == null) {
+                println("Level Generator should be set when scrolling!")
+            } else {
+                val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
+                val blockOffset = (offset / BlockWidth).toInt()
+
+                for (i in 1..blockOffset) {
+                    //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
+                    val column = levelGenerator.generateNextColumn(this)
+                    this.addColumn(column)
+                }
+            }
+        }
     }
 
     fun gridLocation(x: Double, y: Double): Vector2Int {

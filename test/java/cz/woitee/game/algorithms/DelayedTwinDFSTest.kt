@@ -4,6 +4,7 @@ import cz.woitee.game.*
 import cz.woitee.game.actions.ChangeShapeAction
 import cz.woitee.game.actions.JumpAction
 import cz.woitee.game.actions.abstract.GameButtonAction
+import cz.woitee.game.algorithms.dfs.BasicDFS
 import cz.woitee.game.algorithms.dfs.CachedState
 import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
@@ -168,7 +169,7 @@ internal class DelayedTwinDFSTest {
         val delayedTwinDFS = DelayedTwinDFS(0.25, allowSearchInBeginning = true)
         val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
         delayedTwinDFSVisualizer.start()
-        val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, doDFSAfterFail = true, dumpErrors = false)
+        val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, dumpErrors = false)
         val playerDFS = DelayedTwinDFS(0.25)
         val game = Game(
                 levelGenerator,
@@ -239,7 +240,37 @@ internal class DelayedTwinDFSTest {
         println("Both runs are ${if (firstRes) "succeeding" else "failing!"}")
     }
 
+    @org.junit.jupiter.api.Test
+    fun searchAfterFailure() {
+        val filePath = "out/buttonModels/TestButtonModel_2018_01_24-00_05_11.dmp"
+        val delayedTwinDFS = readDelayedTwinDFS(filePath)
+
+        val column1: ArrayList<GameObject?> = arrayList(HeightBlocks, { null })
+        column1[0] = SolidBlock()
+        column1[1] = SolidBlock()
+        column1[2] = SolidBlock()
+        val droppedColumn = delayedTwinDFS.buttonModel!!.addColumn(column1)
+
+        val firstRes = performDelayedTwinDFSWith(delayedTwinDFS)
+        assertFalse(firstRes)
+
+        delayedTwinDFS.buttonModel!!.undoAddColumn(column1)
+        // now it should be possible
+        column1[2] = null
+        delayedTwinDFS.buttonModel!!.addColumn(column1)
+
+        // This is the little thing that was fucking it up
+        delayedTwinDFS.statesCache.clear()
+        val secondRes = performDelayedTwinDFSWith(delayedTwinDFS)
+        assertTrue(secondRes)
+    }
+
     fun performDFSFromButtonModel(filePath: String, readTimes: Int = 1): Boolean {
+        val delayedTwinDFS = readDelayedTwinDFS(filePath, readTimes)
+        return performDelayedTwinDFSWith(delayedTwinDFS)
+    }
+
+    fun readDelayedTwinDFS(filePath: String, readTimes: Int = 1): DelayedTwinDFS {
         val dummyGame = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = BitTripGameDescription())
         val dummyState = dummyGame.gameState
 
@@ -251,7 +282,10 @@ internal class DelayedTwinDFSTest {
         for (i in 1 .. readTimes) {
             delayedTwinDFS.buttonModel!!.readObject(ois)
         }
+        return delayedTwinDFS
+    }
 
+    fun performDelayedTwinDFSWith(delayedTwinDFS: DelayedTwinDFS): Boolean {
         val gameState = delayedTwinDFS.buttonModel!!.delayedState
 
         val visualizer: DelayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)

@@ -80,7 +80,6 @@ class DFSPlayerController(val dfs: DFS = BasicDFS(), val backupDFS: DFS? = null)
     }
 
     fun performDFS(gameState: GameState, dfs: DFS = this.dfs): GameButton.StateChange? {
-        println("Searching from ${gameState.player.x} ${gameState.player.y}")
         val action = dfs.searchForAction(gameState)
         if (!dfs.lastStats.success) {
             print("Reached GameOver in depth of search: ${dfs.lastStats.reachedDepth}")

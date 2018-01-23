@@ -5,7 +5,6 @@ import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.GameState
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.algorithms.dfs.delayedTwin.DFSUtils
 import java.util.*
 
 /**
@@ -124,7 +123,7 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
 
     protected fun advanceState(gameState: GameState, buttonStateChange: GameButton.StateChange?): IUndo {
         ++lastStats.searchedStates
-        return DFSUtils.advanceGameStateSafely(gameState, buttonStateChange, updateTime)
+        return gameState.advanceUndoableByAction(buttonStateChange, updateTime)
     }
 
 

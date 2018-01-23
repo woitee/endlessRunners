@@ -12,10 +12,15 @@ import nl.pvdberg.hashkode.hashKode
 data class GameButton(val action: GameButtonAction, val gameState: GameState, val index: Int) {
     enum class InteractionType { PRESS, HOLD, RELEASE }
     data class StateChange (val gameButton: GameButton, val interactionType: InteractionType): IUndoable {
+        /**
+         * Applies the buttonStateChange on a GameState. PRESS interactions are resolved immediately if applicable and
+         * discarded otherwise. HOLD / RELEASE are just forwarded to the GameState which resolves them as soon
+         * as they are applicable.
+         */
         fun applyOn(gameState: GameState) {
             when (interactionType) {
                 GameButton.InteractionType.PRESS -> {
-                    if (!gameButton.isPressed) {
+                    if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
                         gameButton.action.applyOn(gameState)
                     }
                 }
@@ -23,22 +28,23 @@ data class GameButton(val action: GameButtonAction, val gameState: GameState, va
                     if (!gameButton.isPressed) {
                         gameButton.isPressed = true
                         gameButton.pressedGameTime = gameState.gameTime
-                        gameButton.action.applyOn(gameState)
                     }
                 }
                 GameButton.InteractionType.RELEASE -> {
                     if (gameButton.isPressed) {
                         gameButton.isPressed = false
-                        (gameButton.action as? HoldButtonAction)?.stopApplyingOn(gameState)
                     }
                 }
             }
         }
 
+        /**
+         * Applies the button stateChange on a gameState - undoably. See @applyOn.
+         */
         override fun applyUndoablyOn(gameState: GameState): IUndo {
             when (interactionType) {
                 GameButton.InteractionType.PRESS -> {
-                    if (!gameButton.isPressed) {
+                    if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
                         return gameButton.action.applyUndoablyOn(gameState)
                     }
                 }
@@ -48,28 +54,22 @@ data class GameButton(val action: GameButtonAction, val gameState: GameState, va
                         val previousPressedGameTime = gameButton.pressedGameTime
                         gameButton.pressedGameTime = gameState.gameTime
 
-                        return UndoFactory.DoubleUndo(
-                            gameButton.action.applyUndoablyOn(gameState),
-                            object : IUndo {
-                                override fun undo(gameState: GameState) {
-                                    gameButton.pressedGameTime = previousPressedGameTime
-                                    gameButton.isPressed = false
-                                }
+                        return object : IUndo {
+                            override fun undo(gameState: GameState) {
+                                gameButton.pressedGameTime = previousPressedGameTime
+                                gameButton.isPressed = false
                             }
-                        )
+                        }
                     }
                 }
                 GameButton.InteractionType.RELEASE -> {
                     if (gameButton.isPressed) {
                         gameButton.isPressed = false
-                        val firstUndo = object : IUndo {
+                        return object : IUndo {
                             override fun undo(gameState: GameState) {
                                 gameButton.isPressed = true
                             }
                         }
-                        val secondUndo = (gameButton.action as? HoldButtonAction)?.stopApplyingUndoablyOn(gameState)
-
-                        return if (secondUndo == null) firstUndo else UndoFactory.DoubleUndo(firstUndo, secondUndo)
                     }
                 }
             }

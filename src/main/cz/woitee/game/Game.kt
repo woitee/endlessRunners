@@ -83,9 +83,11 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
         // Get the action that should be performed
         val controllerAction = playerController.onUpdate(gameState)
         // Update the GameState by it
-        gameState.advanceByAction(controllerAction, time, true)
+        gameState.advanceByAction(controllerAction, time)
         // Notify the levelGenerator of the update
         levelGenerator.onUpdate(time, controllerAction, gameState)
+        // Scroll the screen, possibly asking the LevelGenerator for new content
+        gameState.scroll(time)
 
         updateCallback(this)
     }

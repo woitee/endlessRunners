@@ -91,7 +91,7 @@ internal class CopyUtilsTest {
             val copiedObject = copy.grid[copy.gridLocation(testObject.location)]
             assertNotNull(copiedObject)
 
-            assertNotEquals(testObject, copiedObject)
+            assertNotSame(testObject, copiedObject)
             assertEquals(testObject.gameObjectClass, copiedObject!!.gameObjectClass)
             assertEquals(testObject.x, copiedObject.x)
             assertEquals(testObject.y, copiedObject.y)

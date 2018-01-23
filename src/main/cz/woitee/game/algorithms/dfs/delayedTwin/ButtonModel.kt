@@ -1,5 +1,6 @@
 package cz.woitee.game.algorithms.dfs.delayedTwin
 
+import cz.woitee.game.Game
 import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 import cz.woitee.game.actions.abstract.HoldButtonAction
@@ -106,23 +107,23 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
      * Actual methods used in working with the ButtonModel.
      */
 
-    fun addColumn(column: List<GameObject?>) {
+    fun addColumn(column: List<GameObject?>): List<GameObject?> {
         columnCopier.savedColumn = column
         synchronized(currentState.gameObjects) {
             currentState.addColumn(columnCopier.generateNextColumn(currentState))
         }
         synchronized(delayedState.gameObjects) {
-            delayedState.addColumn(columnCopier.generateNextColumn(delayedState))
+            return delayedState.addColumn(columnCopier.generateNextColumn(delayedState))
         }
     }
 
-    fun undoAddColumn(column: List<GameObject?>) {
+    fun undoAddColumn(column: List<GameObject?>): List<GameObject?> {
         columnCopier.savedColumn = column
         synchronized(currentState.gameObjects) {
             currentState.undoAddColumn(columnCopier.generateNextColumn(currentState))
         }
         synchronized(delayedState.gameObjects) {
-            delayedState.undoAddColumn(columnCopier.generateNextColumn(delayedState))
+            return delayedState.undoAddColumn(columnCopier.generateNextColumn(delayedState))
         }
     }
 
@@ -171,8 +172,8 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         }
 
         return ButtonUndo(
-                if (currentStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(currentState, currentStateChange, updateTime),
-                if (delayedStateDisabled) NoUndo else DFSUtils.advanceGameStateSafely(delayedState, delayedStateChange, updateTime),
+                if (currentStateDisabled) NoUndo else currentState.advanceUndoableByAction(currentStateChange, updateTime),
+                if (delayedStateDisabled) NoUndo else delayedState.advanceUndoableByAction(delayedStateChange, updateTime),
                 disabledStates
         )
     }

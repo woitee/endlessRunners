@@ -28,16 +28,16 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         val velocityX = ax - bx
         val velocityY = ay - by
         if (gridsBetween.count() == 1) {
-            val gameObject = gameState.grid[gridsBetween[0]]
-            return if (gameObject?.isSolid ?: false) {
-                Collision(gameObject!!, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
+            val gameObject = gameState.grid.safeGet(gridsBetween[0])
+            return if (gameObject?.isSolid == true) {
+                Collision(gameObject, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
             } else {
                 null
             }
         }
         for (i in 1 .. gridsBetween.lastIndex) {
             val gridLoc = gridsBetween[i]
-            if (gameState.grid[gridLoc]?.isSolid == true) {
+            if (gameState.grid.safeGet(gridLoc)?.isSolid == true) {
                 // We found collision
                 // Direction is given by difference from last block
                 val dir = gridLoc - gridsBetween[i-1]
@@ -79,9 +79,9 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         val bGridY = by.toInt() / BlockWidth
         if (aGridX == bGridX && aGridY == bGridY) {
             // no change of grid location -> check if collision at this one spot
-            val gameObject = gameState.grid[aGridX, aGridY]
-            return if (gameObject?.isSolid ?: false) {
-                Collision(gameObject!!, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
+            val gameObject = gameState.grid.safeGet(aGridX, aGridY)
+            return if (gameObject?.isSolid == true) {
+                Collision(gameObject, ax, ay, ax, ay, twoNumbers2Direction4(bx - ax, by - ay))
             } else {
                 null
             }
@@ -101,7 +101,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
             for (gridY in autoRange(lastGridY, curGridY)) {
                 if (!skippedFirst) {
                     skippedFirst = true
-                } else if (gameState.grid[gridX, gridY]?.isSolid == true) {
+                } else if (gameState.grid.safeGet(gridX, gridY)?.isSolid == true) {
                     return collisionFromGridLoc(gameState, ax, ay, bx, by, gridX, gridY, gridX - prevGridX, gridY - prevGridY)
                 }
                 prevGridY = gridY
@@ -112,7 +112,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         for (gridY in autoRange(lastGridY, bGridY)) {
             if (!skippedFirst) {
                 skippedFirst = true
-            } else if (gameState.grid[bGridX, gridY]?.isSolid == true) {
+            } else if (gameState.grid.safeGet(bGridX, gridY)?.isSolid == true) {
                 return collisionFromGridLoc(gameState, ax, ay, bx, by, bGridX, gridY, bGridX - prevGridX, gridY - prevGridY)
             }
             prevGridX = bGridX

@@ -26,6 +26,15 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
         return this[p.x, p.y]
     }
 
+    fun safeGet(x: Int, y: Int): T? {
+        return if (contains(x, y)) this[x, y]
+        else null
+    }
+
+    fun safeGet(p: Vector2Int): T? {
+        return safeGet(p.x, p.y)
+    }
+
     operator fun set(x: Int, y: Int, obj: T): Grid2D<T> {
         grid[x][y] = obj
         return this

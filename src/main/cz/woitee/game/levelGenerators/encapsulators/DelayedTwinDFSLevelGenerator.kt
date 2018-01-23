@@ -31,6 +31,8 @@ class DelayedTwinDFSLevelGenerator(delayTime: Double, innerGenerator: LevelGener
         val backupColumn = super.generateBackupColumn(gameState)
         delayedTwin.buttonModel!!.undoAddColumn(generateEmptyColumn())
         delayedTwin.buttonModel!!.addColumn(backupColumn)
+        delayedTwin.statesCache.clear()
+
         return backupColumn
     }
 }

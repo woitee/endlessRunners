@@ -228,16 +228,10 @@ internal class DelayedTwinDFSTest {
     }
 
     @org.junit.jupiter.api.Test
-    fun consistentSearchExample1() {
+    fun consistentSearchExample() {
         consistentSearchInSubsequentSteps("out/buttonModels/ButtonModel_2018_01_21-15_37_41.dmp")
     }
 
-    @org.junit.jupiter.api.Test
-    fun consistentSearchExample2() {
-        consistentSearchInSubsequentSteps("out/buttonModels/ButtonModel_2018_01_21-16_36_41.dmp")
-    }
-
-    @org.junit.jupiter.api.Test
     fun consistentSearchInSubsequentSteps(filePath: String) {
         val firstRes = performDFSFromButtonModel(filePath, 2)
         val secondRes = performDFSFromButtonModel(filePath, 1)

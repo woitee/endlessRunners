@@ -67,7 +67,6 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
 
     override fun update(gameState: GameState) {
         if (!running) {
-            println("Not Running!")
             return
         }
         SwingUtilities.invokeAndWait swingThread@ {

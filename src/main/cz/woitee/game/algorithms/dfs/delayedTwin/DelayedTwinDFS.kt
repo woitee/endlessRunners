@@ -3,10 +3,8 @@ package cz.woitee.game.algorithms.dfs.delayedTwin
 import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 import cz.woitee.game.WidthBlocks
-import cz.woitee.game.actions.abstract.HoldButtonAction
 import cz.woitee.game.algorithms.dfs.CachedState
 import cz.woitee.game.algorithms.dfs.DFS
-import cz.woitee.game.undoing.UndoFactory
 import cz.woitee.geom.Vector2Double
 import cz.woitee.utils.MySerializable
 import java.io.ObjectInputStream
@@ -160,9 +158,9 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         }
 
         return ButtonModel.ButtonUndo(
-            buttonModel.currentState.advanceUndoableByAction(null, buttonModel.updateTime),
-            buttonModel.delayedState.advanceUndoableByAction(null, buttonModel.updateTime),
-            buttonModel.disabledStates
+                buttonModel.currentState.advanceUndoableByAction(currentAction, buttonModel.updateTime),
+                buttonModel.delayedState.advanceUndoableByAction(delayedAction, buttonModel.updateTime),
+                buttonModel.disabledStates
         )
     }
 

@@ -7,16 +7,15 @@ import java.awt.Graphics
 
 class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS, val frameX: Int = 700, val frameY: Int = 0): GamePanelVisualizer() {
     val visualizeThread: TimedThread = TimedThread({
-        if (delayedTwinDFS.buttonModel != null) {
-            this.update(delayedTwinDFS.buttonModel!!.currentState)
-        }},
+            this.update(delayedTwinDFS.buttonModel.currentState)
+        },
         75.0
     )
 
     val currentState
-        get() = delayedTwinDFS.buttonModel!!.currentState
+        get() = delayedTwinDFS.buttonModel.currentState
     val delayedState
-        get() = delayedTwinDFS.buttonModel!!.delayedState
+        get() = delayedTwinDFS.buttonModel.delayedState
 
     fun start() {
         frame.setLocation(frameX, frameY)

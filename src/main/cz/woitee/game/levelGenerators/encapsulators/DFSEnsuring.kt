@@ -37,7 +37,7 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFS,
                 println("${gameState.gridX} Not suceeding in search even after copying identical column!")
                 lastResult = DFSResult.FAIL_COPYCOLUMN
                 if (dfsProvider is DelayedTwinDFS) {
-                    val buttonModel = dfsProvider.buttonModel!!
+                    val buttonModel = dfsProvider.buttonModel
                     val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
                     println("Dumping buttonModel to $logFileName")
                     val file = File(logFileName)

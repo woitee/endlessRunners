@@ -34,7 +34,7 @@ class DFSPlayerController(val dfs: DFS = BasicDFS(), val backupDFS: DFS? = null)
 
         if (backupDFS != null && !wasReadyToDie) {
             if (!dfs.lastStats.success && backupDFS is DelayedTwinDFS) {
-                val buttonModel = backupDFS.buttonModel!!
+                val buttonModel = backupDFS.buttonModel
                 val logFileName = "out/buttonModels/ButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
                 println("Dumping buttonModel to $logFileName")
                 val file = File(logFileName)
@@ -48,7 +48,7 @@ class DFSPlayerController(val dfs: DFS = BasicDFS(), val backupDFS: DFS? = null)
                 if (lastButtonModel == null) {
                     lastButtonModel = ButtonModel(gameState.makeCopy(), gameState.makeCopy(), gameState.game.updateTime)
                 }
-                CopyUtils.copyBySerialization(backupDFS.buttonModel!!, lastButtonModel!!)
+                CopyUtils.copyBySerialization(backupDFS.buttonModel, lastButtonModel!!)
             }
             performDFS(gameState, backupDFS)
             backupDFS.onUpdate(gameState.game.updateTime, action, gameState)

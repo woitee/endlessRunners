@@ -33,10 +33,10 @@ fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
             mode = Game.Mode.INTERACTIVE,
             gameDescription = gameDescription,
             updateCallback = { game ->
-                val genDelayedState = dfsOfLevelGenerator.buttonModel!!.delayedState
-                val genCurrentState = dfsOfLevelGenerator.buttonModel!!.currentState
-                val conDelayedState = dfsOfPlayer.buttonModel!!.delayedState
-                val conCurrentState = dfsOfPlayer.buttonModel!!.currentState
+                val genDelayedState = dfsOfLevelGenerator.buttonModel.delayedState
+                val genCurrentState = dfsOfLevelGenerator.buttonModel.currentState
+                val conDelayedState = dfsOfPlayer.buttonModel.delayedState
+                val conCurrentState = dfsOfPlayer.buttonModel.currentState
                 val gameState = game.gameState
 
                 assert(genDelayedState.player.x == gameState.player.x)

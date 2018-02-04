@@ -1,5 +1,6 @@
 package cz.woitee.game.algorithms.dfs.delayedTwin
 
+import cz.woitee.game.DummyObjects
 import cz.woitee.game.Game
 import cz.woitee.game.GameButton
 import cz.woitee.game.GameState

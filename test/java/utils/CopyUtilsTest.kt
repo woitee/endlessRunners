@@ -143,6 +143,6 @@ internal class CopyUtilsTest {
         CopyUtils.copyBySerialization(delayedTwinDFS, delayedTwinCopy)
 
         assertNotEquals(delayedTwinDFS, delayedTwinCopy)
-        assertSimiliarButtonModel(delayedTwinDFS.buttonModel!!, delayedTwinCopy.buttonModel!!)
+        assertSimiliarButtonModel(delayedTwinDFS.buttonModel, delayedTwinCopy.buttonModel)
     }
 }

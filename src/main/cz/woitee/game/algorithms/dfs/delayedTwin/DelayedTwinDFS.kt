@@ -1,5 +1,6 @@
 package cz.woitee.game.algorithms.dfs.delayedTwin
 
+import cz.woitee.game.DummyObjects
 import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 import cz.woitee.game.WidthBlocks
@@ -30,7 +31,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
 
     // ButtonModel holding the two states and realizing what to do with them
 
-    var buttonModel: ButtonModel? = null
+    var buttonModel: ButtonModel = DummyObjects.createDummyButtonModel()
     var delayFrames: Int = Math.ceil(delayTime / updateTime).toInt()
     var currentlyFramesDelayed: Int = 0
         protected set
@@ -54,13 +55,13 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         delayFrames = Math.ceil(delayTime / updateTime).toInt()
 
         buttonModel = ButtonModel(gameState.makeCopy(), gameState.makeCopy(), updateTime)
-        buttonModel!!.delayedState.tag = "delayed"
-        buttonModel!!.currentState.tag = "current"
-        buttonModel!!.delayedStateDisabled = true
+        buttonModel.delayedState.tag = "delayed"
+        buttonModel.currentState.tag = "current"
+        buttonModel.delayedStateDisabled = true
 
         if (!allowSearchInBeginning) {
             for (i in 1 .. delayFrames) {
-                buttonModel!!.updateUndoable(null)
+                buttonModel.updateUndoable(null)
                 ++currentlyFramesDelayed
             }
         }
@@ -72,7 +73,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
     override fun searchInternal(gameState: GameState, updateTime: Double): SearchResult {
         ++timesCalled
         delayFrames = Math.ceil(delayTime / updateTime).toInt()
-        val buttonModel = buttonModel!!
 
         if (buttonModel.isGameOver())
             return SearchResult(false)
@@ -118,8 +118,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
      * end, we have to only advance the delayed state, to see, if the delayed actions lead to a possible end.
      */
     fun advanceCorrectStates(btnAction: ButtonModel.ButtonAction?): ButtonModel.ButtonUndo {
-        val buttonModel = buttonModel!!
-
         disableCorrectStates()
         if (buttonModel.disabledStates == ButtonModel.DisabledStates.DELAYED)
             ++currentlyFramesDelayed
@@ -132,7 +130,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
     }
 
     protected fun disableCorrectStates() {
-        val buttonModel = buttonModel!!
         if (isPlayerAtEnd(buttonModel.currentState)) {
             buttonModel.disabledStates = ButtonModel.DisabledStates.CURRENT
         } else if (currentlyFramesDelayed < delayFrames) {
@@ -147,8 +144,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
      * Useful when we want to state that the whole model has updated.
      */
     protected fun advanceBothStates(buttonIx: Int = -1, interaction: GameButton.InteractionType? = null): ButtonModel.ButtonUndo {
-        val buttonModel = buttonModel!!
-
         var currentAction: GameButton.StateChange? = null
         var delayedAction: GameButton.StateChange? = null
 
@@ -165,7 +160,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
     }
 
     fun applyUndo(statesUndo: ButtonModel.ButtonUndo) {
-        statesUndo.undo(buttonModel!!)
+        statesUndo.undo(buttonModel)
         if (statesUndo.disabledStates == ButtonModel.DisabledStates.DELAYED)
             --currentlyFramesDelayed
         disableCorrectStates()
@@ -175,8 +170,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
      * Both states are prepared (the real and the delayed one), just do the search.
      */
     protected fun searchFromTwoStates(gameState: GameState): SearchResult {
-        val buttonModel = this.buttonModel!!
-
         val debugPrints = false
 
         disableCorrectStates()
@@ -263,7 +256,6 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
 
     protected fun updateByAction(buttonStateChange: GameButton.StateChange?, releasesOfNonHoldAction: Boolean, gameState: GameState) {
 //        println("Updating by action $buttonStateChange")
-        val buttonModel = buttonModel!!
         if (buttonStateChange == null) {
             advanceBothStates()
         } else {
@@ -284,7 +276,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         oos.writeInt(maxDepth)
         oos.writeBoolean(debug)
         oos.writeBoolean(allowSearchInBeginning)
-        buttonModel!!.writeObject(oos)
+        buttonModel.writeObject(oos)
 
         // dfsstack and dfscache is considered internal state and is not serialized
 
@@ -303,7 +295,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
         debug = ois.readBoolean()
         ois.readBoolean()
 
-        buttonModel!!.readObject(ois)
+        buttonModel.readObject(ois)
 
         // dfsstack and dfscache is considered internal state and is not serialized
 

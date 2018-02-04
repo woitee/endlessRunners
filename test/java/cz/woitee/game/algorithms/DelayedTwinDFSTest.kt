@@ -224,8 +224,8 @@ internal class DelayedTwinDFSTest {
         delayedTwinDFS.searchForAction(dummyGameState)
 
         assertTrue(delayedTwinDFS.lastStats.success, "The simple search should succeed")
-        assertFalse(delayedTwinDFS.buttonModel!!.delayedStateDisabled, "Delayed State should not be disabled at end of successful search")
-        assertFalse(delayedTwinDFS.buttonModel!!.currentStateDisabled, "Current State should not be disabled at end of successful search")
+        assertFalse(delayedTwinDFS.buttonModel.delayedStateDisabled, "Delayed State should not be disabled at end of successful search")
+        assertFalse(delayedTwinDFS.buttonModel.currentStateDisabled, "Current State should not be disabled at end of successful search")
     }
 
     @org.junit.jupiter.api.Test
@@ -249,15 +249,15 @@ internal class DelayedTwinDFSTest {
         column1[0] = SolidBlock()
         column1[1] = SolidBlock()
         column1[2] = SolidBlock()
-        val droppedColumn = delayedTwinDFS.buttonModel!!.addColumn(column1)
+        val droppedColumn = delayedTwinDFS.buttonModel.addColumn(column1)
 
         val firstRes = performDelayedTwinDFSWith(delayedTwinDFS)
         assertFalse(firstRes)
 
-        delayedTwinDFS.buttonModel!!.undoAddColumn(column1)
+        delayedTwinDFS.buttonModel.undoAddColumn(column1)
         // now it should be possible
         column1[2] = null
-        delayedTwinDFS.buttonModel!!.addColumn(column1)
+        delayedTwinDFS.buttonModel.addColumn(column1)
 
         // This is the little thing that was fucking it up
         delayedTwinDFS.statesCache.clear()
@@ -280,13 +280,13 @@ internal class DelayedTwinDFSTest {
         val file = File(filePath)
         val ois = ObjectInputStream(file.inputStream())
         for (i in 1 .. readTimes) {
-            delayedTwinDFS.buttonModel!!.readObject(ois)
+            delayedTwinDFS.buttonModel.readObject(ois)
         }
         return delayedTwinDFS
     }
 
     fun performDelayedTwinDFSWith(delayedTwinDFS: DelayedTwinDFS): Boolean {
-        val gameState = delayedTwinDFS.buttonModel!!.delayedState
+        val gameState = delayedTwinDFS.buttonModel.delayedState
 
         val visualizer: DelayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
         visualizer.start()
@@ -309,14 +309,14 @@ internal class DelayedTwinDFSTest {
         var dummyState = dummyGame.gameState
 
         val delayedTwinDFS = delayedTwinDFSLevelGenerator.delayedTwin
-        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel.delayedState.player.x)
 
         // Do one update, check if state has updated
         val oldPlayerX = dummyState.player.x
         dummyGame.update(dummyGame.updateTime)
 
         assertNotEquals(oldPlayerX, dummyState.player.x)
-        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel.delayedState.player.x)
 
         // Perform GameOver and check if the offsets still match
         proxyPlayerController.desiredStateChange = dummyState.buttons[0].press
@@ -324,6 +324,6 @@ internal class DelayedTwinDFSTest {
         // State gets created anew on GameOver
         dummyState = dummyGame.gameState
 
-        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel.delayedState.player.x)
     }
 }

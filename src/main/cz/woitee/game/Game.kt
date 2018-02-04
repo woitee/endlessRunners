@@ -32,6 +32,8 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     // keep on bottom, it should be the last variable initialized
     var gameState = GameState(this, levelGenerator)
 
+    protected var inited = false
+
     /**
      * Runs the game synchronously - this function will not exit until the game finishes.
      */
@@ -66,20 +68,23 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     }
 
     fun reset() {
+        inited = false
         gameState = GameState(this, levelGenerator, gameState.tag)
         init()
     }
 
-    private fun init() {
+    fun init() {
         playerController.init(gameState)
         levelGenerator.init(gameState)
+        inited = true
     }
 
     private fun visualize() {
         visualizer?.update(gameState)
     }
 
-    private fun update(time: Double) {
+    fun update(time: Double) {
+        assert(inited)
         // Get the action that should be performed
         val controllerAction = playerController.onUpdate(gameState)
         // Update the GameState by it
@@ -90,5 +95,9 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
         gameState.scroll(time)
 
         updateCallback(this)
+
+        if (gameState.isGameOver) {
+            onGameOver()
+        }
     }
 }

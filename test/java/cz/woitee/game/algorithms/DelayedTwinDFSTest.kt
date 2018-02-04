@@ -10,6 +10,8 @@ import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.descriptions.GameDescription
+import cz.woitee.game.descriptions.GameOverGameDescription
+import cz.woitee.game.effects.GameOver
 import cz.woitee.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.objects.GameObject
@@ -19,6 +21,8 @@ import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
+import cz.woitee.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
+import cz.woitee.game.playerControllers.ExternalProxyPlayerController
 import cz.woitee.game.playerControllers.NoActionPlayerController
 import cz.woitee.utils.arrayList
 import cz.woitee.utils.readFromFile
@@ -292,5 +296,34 @@ internal class DelayedTwinDFSTest {
         visualizer.stop()
 
         return delayedTwinDFS.lastStats.success
+    }
+
+    @org.junit.jupiter.api.Test
+    fun correctInitializationAfterGameOver() {
+        // Initialize situation
+        val delayedTwinDFSLevelGenerator = DelayedTwinDFSLevelGenerator(0.25, FlatLevelGenerator())
+        val proxyPlayerController = ExternalProxyPlayerController()
+
+        val dummyGame = Game(delayedTwinDFSLevelGenerator, proxyPlayerController, GamePanelVisualizer(), gameDescription = GameOverGameDescription())
+        dummyGame.init()
+        var dummyState = dummyGame.gameState
+
+        val delayedTwinDFS = delayedTwinDFSLevelGenerator.delayedTwin
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
+
+        // Do one update, check if state has updated
+        val oldPlayerX = dummyState.player.x
+        dummyGame.update(dummyGame.updateTime)
+
+        assertNotEquals(oldPlayerX, dummyState.player.x)
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
+
+        // Perform GameOver and check if the offsets still match
+        proxyPlayerController.desiredStateChange = dummyState.buttons[0].press
+        dummyGame.update(dummyGame.updateTime)
+        // State gets created anew on GameOver
+        dummyState = dummyGame.gameState
+
+        assertEquals(dummyState.player.x, delayedTwinDFS.buttonModel!!.delayedState.player.x)
     }
 }

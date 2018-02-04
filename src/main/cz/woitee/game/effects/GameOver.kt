@@ -21,7 +21,6 @@ class GameOver: UndoableGameEffect() {
         println("| GAME OVER |")
         println("-------------")
         println(LocalDateTime.now())
-        gameState.game.onGameOver()
     }
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {

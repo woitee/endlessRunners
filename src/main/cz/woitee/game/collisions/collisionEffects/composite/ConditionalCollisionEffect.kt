@@ -10,7 +10,7 @@ import cz.woitee.game.undoing.IUndo
 class ConditionalCollisionEffect(
         val condition: GameCondition,
         val trueEffect: IUndoableCollisionEffect,
-        val falseEffect: IUndoableCollisionEffect = IgnoreCollision
+        val falseEffect: IUndoableCollisionEffect = IgnoreCollision()
     ): IUndoableCollisionEffect {
 
     override fun apply(source: GameObject, collision: Collision) {

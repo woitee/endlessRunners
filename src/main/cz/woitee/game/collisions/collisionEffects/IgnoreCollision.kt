@@ -5,7 +5,7 @@ import cz.woitee.game.objects.GameObject
 import cz.woitee.game.undoing.IUndo
 import cz.woitee.game.undoing.NoUndo
 
-object IgnoreCollision: IUndoableCollisionEffect {
+class IgnoreCollision: IUndoableCollisionEffect {
     override fun apply(source: GameObject, collision: Collision) {
         // do nothing
     }

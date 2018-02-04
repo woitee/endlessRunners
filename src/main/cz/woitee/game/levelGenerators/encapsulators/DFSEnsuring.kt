@@ -4,11 +4,10 @@ import cz.woitee.game.*
 import cz.woitee.game.objects.GameObject
 import cz.woitee.game.objects.GameObjectClass
 import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.AbstractDFS
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.utils.arrayList
-import cz.woitee.utils.dumpToFile
 import java.io.File
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
@@ -18,7 +17,7 @@ import java.util.*
  * Created by woitee on 22/07/2017.
  */
 
-open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: DFS, val doDFSAfterFail: Boolean = false, val dumpErrors: Boolean = true): LevelGenerator() {
+open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: AbstractDFS, val doDFSAfterFail: Boolean = false, val dumpErrors: Boolean = true): LevelGenerator() {
     enum class DFSResult { NONE, SUCCESS, FAIL, FAIL_COPYCOLUMN }
     var lastGameState: GameState? = null
     var lastResult: DFSResult = DFSResult.NONE

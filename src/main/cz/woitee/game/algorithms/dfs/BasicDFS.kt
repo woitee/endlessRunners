@@ -14,7 +14,7 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-open class BasicDFS(persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boolean = false): DFS(persistentCache, maxDepth, debug) {
+open class BasicDFS(persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boolean = false): AbstractDFS(persistentCache, maxDepth, debug) {
     constructor(dfs: BasicDFS): this(dfs.persistentCache, dfs.maxDepth, dfs.debug) {
         cachedStates.addAll(dfs.cachedStates)
     }
@@ -69,6 +69,8 @@ open class BasicDFS(persistentCache:Boolean = true, maxDepth: Int = 1000, debug:
 //                println("Plan ${game State.player.x} ${currentState.player.y} ${currentState.player.yspeed}")
             undo.undo(gameState)
         }
+
+        lastStats.cachedStates = cachedStates.count()
 
         val actionIx = actionList[0]
         val action = possibleActionsList[0][actionIx]

@@ -5,7 +5,7 @@ import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 import cz.woitee.game.WidthBlocks
 import cz.woitee.game.algorithms.dfs.CachedState
-import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.AbstractDFS
 import cz.woitee.geom.Vector2Double
 import cz.woitee.utils.MySerializable
 import java.io.ObjectInputStream
@@ -21,7 +21,8 @@ import java.util.*
  * exact accuracy.
  */
 class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean = false,
-                     val allowSearchInBeginning: Boolean = false): DFS(true, maxDepth, debug), MySerializable {
+                     val allowSearchInBeginning: Boolean = false): AbstractDFS(true, maxDepth, debug), MySerializable {
+
     data class StackData(var statesUndo: ButtonModel.ButtonUndo,
                          var actionIx: Int, val possibleActions: List<ButtonModel.ButtonAction?>,
                          var cachedState: CachedState): Serializable {
@@ -44,6 +45,9 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
 
     // We need two caches for this
     val statesCache = DelayedTwinDFSCache()
+
+    override val currentlyCachedStates: Int
+        get() = statesCache.count()
 
     override fun init(gameState: GameState) {
         super.init(gameState)
@@ -183,6 +187,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
             )
             if (sleepTime > 0) sleep(sleepTime)
             stackData.statesUndo = advanceCorrectStates(currentActions[0])
+            ++lastStats.searchedStates
             dfsStack.push(stackData)
             if (dfsStack.count() > lastStats.reachedDepth) lastStats.reachedDepth = dfsStack.count()
             if (buttonModel.isGameOver() || statesCache.contains(buttonModel)) {
@@ -200,6 +205,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                     ++stackData.actionIx
                     while (stackData.actionIx < stackData.possibleActions.count()) {
                         val undo = advanceCorrectStates(stackData.action)
+                        ++lastStats.searchedStates
                         if (buttonModel.isGameOver() || statesCache.contains(buttonModel)) {
                             applyUndo(undo)
                             ++lastStats.backtrackedStates
@@ -212,7 +218,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                         }
                     }
                     if (stackData.actionIx >= stackData.possibleActions.count())
-                        statesCache.store(buttonModel)
+                        statesCache.store(buttonModel, gameState.gameTime)
                 }
             }
         }
@@ -269,6 +275,10 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
             val delayedState = buttonModel.delayedState
             init(delayedState)
         }
+    }
+
+    override fun pruneUnusableCache(gameState: GameState) {
+        statesCache.pruneUnusable(gameState)
     }
 
     override fun writeObject(oos: ObjectOutputStream): DelayedTwinDFS {

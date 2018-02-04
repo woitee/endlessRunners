@@ -26,7 +26,7 @@ class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Uni
             return "SearchStatsAverage(" +
                 "count=$count, " +
                 "searched=${roundDouble(searchedStates)}, " +
-                "backtracked=${roundDouble(searchedStates)}, " +
+                "backtracked=${roundDouble(backtrackedStates)}, " +
                 "reachedDepth=${roundDouble(reachedDepth)}, " +
                 "success=${roundDouble(success)}, " +
                 "cachedStates=${roundDouble(cachedStates)}, " +

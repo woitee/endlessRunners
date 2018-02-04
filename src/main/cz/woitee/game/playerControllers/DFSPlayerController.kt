@@ -1,11 +1,10 @@
 package cz.woitee.game.playerControllers
 
-import cz.woitee.game.DummyObjects
 import cz.woitee.game.GameButton
 import cz.woitee.game.algorithms.dfs.BasicDFS
 import cz.woitee.game.algorithms.dfs.SearchStatsSummer
 import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.AbstractDFS
 import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
@@ -20,7 +19,7 @@ import java.util.*
 /**
  * Created by woitee on 09/04/2017.
  */
-class DFSPlayerController(val dfs: DFS = BasicDFS(), val backupDFS: DFS? = null): PlayerController() {
+class DFSPlayerController(val dfs: AbstractDFS = BasicDFS(), val backupDFS: AbstractDFS? = null): PlayerController() {
     var readyToDie = false
     var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 10000)
@@ -79,7 +78,7 @@ class DFSPlayerController(val dfs: DFS = BasicDFS(), val backupDFS: DFS? = null)
         readyToDie = false
     }
 
-    fun performDFS(gameState: GameState, dfs: DFS = this.dfs): GameButton.StateChange? {
+    fun performDFS(gameState: GameState, dfs: AbstractDFS = this.dfs): GameButton.StateChange? {
         val action = dfs.searchForAction(gameState)
         if (!dfs.lastStats.success) {
             print("Reached GameOver in depth of search: ${dfs.lastStats.reachedDepth}")

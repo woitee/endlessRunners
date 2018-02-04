@@ -2,7 +2,7 @@ package cz.woitee.game.algorithms
 
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.dfs.BasicDFS
-import cz.woitee.game.algorithms.dfs.DFS
+import cz.woitee.game.algorithms.dfs.AbstractDFS
 import cz.woitee.game.descriptions.BitTripGameDescription
 import cz.woitee.game.descriptions.GameDescription
 import cz.woitee.game.playerControllers.DFSPlayerController
@@ -34,7 +34,7 @@ internal class BasicDFSTest {
     }
 
     internal fun runTestFromFile(filePath: String, serializationVersion: Int, expectGameOver: Boolean = false, time: Double = 2.0,
-                                 dfsProvider: DFS = BasicDFS(), gameDescription: GameDescription = BitTripGameDescription()) {
+                                 dfsProvider: AbstractDFS = BasicDFS(), gameDescription: GameDescription = BitTripGameDescription()) {
         val game = Game(
                 FlatLevelGenerator(),
                 DFSPlayerController(dfsProvider),

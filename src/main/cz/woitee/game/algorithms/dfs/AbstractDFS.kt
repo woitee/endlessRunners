@@ -14,7 +14,7 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
+abstract class AbstractDFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
     data class SearchResult(val success: Boolean, val action: GameButton.StateChange? = null)
     /**
      * Assistant class for notifying that the last state advance managed to only perform the gameAction, and not a state update.
@@ -31,6 +31,9 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
     var lastStats = SearchStats()
     protected var updateTime: Double = 0.0
     protected val cachedStates = HashSet<CachedState>()
+    open val currentlyCachedStates: Int
+        get() = cachedStates.count()
+
     /**
      * Searches for an gameAction that doesn't lead to death and returns it, or null if it doesn't exist.
      */
@@ -39,7 +42,7 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
         if (persistentCache) {
             pruneUnusableCache(gameState)
         } else {
-            cachedStates.clear()
+            clearCache()
         }
 
         lastStats = SearchStats()
@@ -56,7 +59,7 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
             }
         }
         lastStats.success = result.success
-        lastStats.cachedStates = cachedStates.count()
+        lastStats.cachedStates = currentlyCachedStates
         lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000000
         return result.action
     }
@@ -65,7 +68,7 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
 
     open fun init(gameState: GameState) {
         updateTime = gameState.game.updateTime
-        cachedStates.clear()
+        clearCache()
     }
 
     protected fun isPlayerAtEnd(gameState: GameState): Boolean {
@@ -119,6 +122,9 @@ abstract class DFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000,
         cachedStates
                 .filter { it.playerX < gameState.player.x }
                 .forEach { cachedStates.remove(it) }
+    }
+    protected open fun clearCache() {
+        cachedStates.clear()
     }
 
     protected fun advanceState(gameState: GameState, buttonStateChange: GameButton.StateChange?): IUndo {

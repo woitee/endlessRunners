@@ -11,12 +11,14 @@ class RecordingWrapper(val innerController: PlayerController): PlayerController(
     var lastGridX = 0
 
     override fun init(gameState: GameState) {
+        recording.add("INIT")
+        lastGridX = 0
         innerController.init(gameState)
     }
     override fun onUpdate(gameState: GameState): GameButton.StateChange? {
         if (gameState.gridX > lastGridX) {
             lastGridX = gameState.gridX
-            val charColumn = gameState.grid.getColumn(WidthBlocks - 1).map { it?.dumpChar ?: '#' }.joinToString()
+            val charColumn = gameState.grid.getColumn(WidthBlocks - 1).map { it?.dumpChar ?: ' ' }.joinToString("")
 
             recording.add("NEWCOLUMN($charColumn)")
         }

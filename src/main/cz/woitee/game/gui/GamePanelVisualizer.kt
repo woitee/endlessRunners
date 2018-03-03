@@ -4,6 +4,8 @@ import cz.woitee.game.*
 import cz.woitee.game.objects.*
 import java.awt.*
 import java.awt.event.KeyListener
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.JPanel
@@ -13,7 +15,7 @@ import javax.swing.SwingUtilities
  * Created by woitee on 15/01/2017.
  */
 
-open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", val debugging:Boolean = false): IGameVisualizer {
+open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", var shouldEndGameOnStop: Boolean = true, val debugging:Boolean = false): GameVisualizerBase() {
     lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
@@ -39,7 +41,12 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
 
     private fun createFrame(): JFrame {
         val frame = JFrame(panelName)
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        frame.addWindowListener(object : WindowAdapter() {
+            override fun windowClosed(e: WindowEvent?) {
+                dispose()
+            }
+        })
         val pane = frame.contentPane
 
         panel.background = Color.RED
@@ -57,16 +64,21 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
         return frame
     }
 
-    override final fun dispose() {
+    final override fun dispose() {
         SwingUtilities.invokeLater {
             frame.isVisible = false
         }
         running = false
-        // TODO dispose of everything
+
+        dbg?.dispose()
+        frame.dispose()
     }
 
     override fun update(gameState: GameState) {
         if (!running) {
+            if (shouldEndGameOnStop) {
+                stopGame(gameState)
+            }
             return
         }
         SwingUtilities.invokeAndWait swingThread@ {

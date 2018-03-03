@@ -11,7 +11,7 @@ import java.util.*
  * Created by woitee on 13/01/2017.
  */
 
-class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: IGameVisualizer?,
+class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: GameVisualizerBase?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
            val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true,
            val updateCallback: (Game) -> Unit = { _ -> }) {

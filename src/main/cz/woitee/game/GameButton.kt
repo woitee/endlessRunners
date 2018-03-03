@@ -75,6 +75,22 @@ data class GameButton(val action: GameButtonAction, val gameState: GameState, va
             }
             return NoUndo
         }
+
+        override fun toString(): String {
+            return "StateChange(${gameButton.index},$interactionType)"
+        }
+
+        companion object {
+            fun fromString(gameState: GameState, stringRep: String): StateChange? {
+                if (!stringRep.startsWith("StateChange(") && stringRep.endsWith(")"))
+                    return null
+                val data = stringRep.substring("StateChange(".length .. stringRep.length - 2)
+                val split = data.split(',')
+                val index = split[0].toInt()
+                val interactionType = InteractionType.valueOf(split[1])
+                return StateChange(gameState.buttons[index], interactionType)
+            }
+        }
     }
 
     var isPressed: Boolean = false

@@ -90,4 +90,27 @@ internal class GameStateTest {
         assertFalse(gameState.buttons[1].isPressed)
         assertEquals(0, game.gameState.heldActions.count())
     }
+
+    @org.junit.jupiter.api.Test
+    fun buttonStateChangeSerializationTest() {
+        val gameState = DummyObjects.createDummyGameState()
+
+        // test press action
+        var buttonChange = gameState.buttons[0].press
+        var stringRep = buttonChange.toString()
+
+        var readButtonChange = GameButton.StateChange.fromString(gameState, stringRep)
+        assertNotNull(readButtonChange)
+        assertEquals(0, readButtonChange!!.gameButton.index)
+        assertEquals(GameButton.InteractionType.PRESS, readButtonChange.interactionType)
+
+        // test release action
+        buttonChange = gameState.buttons[1].release
+        stringRep = buttonChange.toString()
+
+        readButtonChange = GameButton.StateChange.fromString(gameState, stringRep)
+        assertNotNull(readButtonChange)
+        assertEquals(1, readButtonChange!!.gameButton.index)
+        assertEquals(GameButton.InteractionType.RELEASE, readButtonChange.interactionType)
+    }
 }

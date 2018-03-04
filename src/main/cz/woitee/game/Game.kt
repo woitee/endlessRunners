@@ -35,14 +35,19 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     protected var inited = false
 
     /**
-     * Runs the game synchronously - this function will not exit until the game finishes.
+     * Runs the game synchronously - this function will not exit until the game finishes, or until given timeout.
      */
-    fun run() {
+    fun run(timeLimitMillis: Long = -1L) {
         init()
         animatorThread?.start()
-        updateThread.run()
-        println("Game finished")
-        stop()
+        if (timeLimitMillis == -1L) {
+            updateThread.run()
+            stop()
+        } else {
+            updateThread.start()
+            updateThread.join(timeLimitMillis)
+            stop()
+        }
     }
 
     /**

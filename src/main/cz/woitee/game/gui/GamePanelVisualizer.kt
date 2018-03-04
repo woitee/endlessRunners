@@ -32,10 +32,15 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
         init()
     }
 
-    override final fun init() {
-        SwingUtilities.invokeAndWait() {
+    final override fun init() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeAndWait {
+                frame = createFrame()
+            }
+        } else {
             frame = createFrame()
         }
+
         running = true
     }
 

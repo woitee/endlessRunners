@@ -155,10 +155,14 @@ class ReactionTest {
             }
         }
 
-        textArea.text = "A to je vše! Díky!"
+        textArea.text = """
+            A to je vše! Díky!
+
+            Postupuji na další test.
+        """.trimIndent()
         colorLight.isVisible = false
         button.isVisible = false
-        saveLog("ReactionTest_${SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date())}.log")
+
         Thread.sleep(3000)
 
         synchronized(runLock) {

@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         arrayOf(
             {
                 println("Reaction Test clicked")
-                ReactionTest().run()
+                ReactionAndPrecisionTest().run()
             }, {
                 println("Game 1 Start")
                 runGame1()
@@ -44,7 +44,7 @@ fun runGame1(timeMinutes: Double = 5.0) {
             gameDescription = gameDescription
     )
 
-    game.gameState.tag = "Game 1"
+    game.gameState.tag = "Hra 1"
 
     game.run((timeMinutes * 60 * 1000).toLong())
 
@@ -63,7 +63,7 @@ fun runGame2(timeMinutes: Double = 5.0) {
             gameDescription = gameDescription
     )
 
-    game.gameState.tag = "Game 2"
+    game.gameState.tag = "Hra 2"
     game.run((timeMinutes * 60 * 1000).toLong())
 
     playerController.saveToFile("RecordingGame2_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")

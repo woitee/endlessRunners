@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 fun main(args: Array<String>) {
-    val replayPath: String = "Recording2018_03_03-23_14_29.dmp"
+    val replayPath: String = "RecordingGame12018_03_05-17_53_51.dmp"
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 

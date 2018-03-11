@@ -61,7 +61,6 @@ internal class CopyUtilsTest {
     fun assertSimiliarGameState(gameState: GameState, copy: GameState) {
         assertEquals(gameState.gameObjects.count(), copy.gameObjects.count())
         assertEquals(gameState.gridX, copy.gridX)
-        assertEquals(gameState.lastAdvanceTime, copy.lastAdvanceTime)
         assertEquals(gameState.gameTime, copy.gameTime)
         assertEquals(gameState.isGameOver, copy.isGameOver)
 

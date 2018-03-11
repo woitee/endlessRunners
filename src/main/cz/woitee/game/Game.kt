@@ -12,7 +12,7 @@ import java.util.*
  */
 
 class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: GameVisualizerBase?,
-           val visualizeFrameRate: Double = 75.0, val updateRate: Double = 75.0, val mode: Mode = Mode.INTERACTIVE,
+           val visualizeFrameRate: Double = 75.0, val updateRate: Double = 37.5, val mode: Mode = Mode.INTERACTIVE,
            val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true,
            val updateCallback: (Game) -> Unit = { _ -> }) {
 

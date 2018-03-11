@@ -271,7 +271,7 @@ internal class DelayedTwinDFSTest {
     }
 
     fun readDelayedTwinDFS(filePath: String, readTimes: Int = 1): DelayedTwinDFS {
-        val dummyGame = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = BitTripGameDescription())
+        val dummyGame = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = BitTripGameDescription(), updateRate = 75.0)
         val dummyState = dummyGame.gameState
 
         val delayedTwinDFS = DelayedTwinDFS(0.25)

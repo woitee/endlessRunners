@@ -41,6 +41,7 @@ internal class BasicDFSTest {
 
 //                null,
                 GamePanelVisualizer(),
+                updateRate = 75.0,
 
                 mode = Game.Mode.INTERACTIVE,
                 gameDescription = gameDescription,

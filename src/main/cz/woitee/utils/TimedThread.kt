@@ -1,5 +1,7 @@
 package cz.woitee.utils
 
+import java.util.concurrent.atomic.AtomicLong
+
 /**
  * Created by woitee on 14/01/2017.
  */
@@ -9,6 +11,8 @@ class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val use
     val thread = Thread(this)
     val cycleTimeMillis = (1000 / targetFrameRate).toLong()
     val cycleTimeSeconds = 1 / targetFrameRate
+
+    var lastUpdateAt = AtomicLong(-1L)
 
     fun start() {
         running = true
@@ -30,6 +34,7 @@ class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val use
                 fullCycleStopwatch.start()
                 timeTakenStopwatch.start()
                 task(cycleTimeSeconds)
+                lastUpdateAt.set(System.nanoTime())
                 val timeTaken = timeTakenStopwatch.stop()
                 if (cycleTimeMillis > timeTaken) {
                     Thread.sleep(cycleTimeMillis - timeTaken)

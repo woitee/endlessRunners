@@ -4,16 +4,24 @@ import java.awt.Button
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.TextArea
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import javax.swing.JFrame
 import javax.swing.JPanel
 
 class IntermediatoryDescriptorFrame(val description: String) {
     val frame = createFrame()
     val waitLock = Object()
+    var returnSuccess = true
 
     fun createFrame(): JFrame {
         val frame = JFrame("Intermediatory Frame")
         frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        frame.addWindowListener(object : WindowAdapter() {
+            override fun windowClosed(e: WindowEvent?) {
+                dispose()
+            }
+        })
         val panel = JPanel()
 
         addContent(panel)
@@ -28,6 +36,14 @@ class IntermediatoryDescriptorFrame(val description: String) {
         frame.pack()
 
         return frame
+    }
+
+    fun dispose() {
+        frame.dispose()
+        synchronized(waitLock) {
+            returnSuccess = false
+            waitLock.notify()
+        }
     }
 
     fun addContent(panel: JPanel) {
@@ -54,10 +70,11 @@ class IntermediatoryDescriptorFrame(val description: String) {
         frame.isVisible = false
     }
 
-    fun waitUntillInteraction() {
+    fun waitUntillInteraction(): Boolean {
         show()
         synchronized(waitLock) {
             waitLock.wait()
         }
+        return returnSuccess
     }
 }

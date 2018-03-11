@@ -392,6 +392,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
         }
 
+        stateCopy.lastAdvanceTime = lastAdvanceTime
         stateCopy.isGameOver = isGameOver
         return stateCopy
     }

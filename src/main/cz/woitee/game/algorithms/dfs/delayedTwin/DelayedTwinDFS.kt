@@ -98,10 +98,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
             }
         }
 
-        // Synchronize end - new additions to grid
-        for (gridX in buttonModel.currentState.gridX until gameState.gridX) {
-            buttonModel.addColumn(gameState.grid.getColumn(WidthBlocks - 1))
-        }
+        synchronizeEndWithGameState(gameState)
 
         // Do the search
         if (debug)
@@ -112,8 +109,15 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
                 return searchFromTwoStates(gameState)
             }
         }
+    }
 
-
+    /**
+     * Adds new additions to the grid to the owned model from a GameState.
+     */
+    fun synchronizeEndWithGameState(gameState: GameState) {
+        for (gridX in buttonModel.currentState.gridX until gameState.gridX) {
+            buttonModel.addColumn(gameState.grid.getColumn(WidthBlocks - 1))
+        }
     }
 
     /**
@@ -258,6 +262,7 @@ class DelayedTwinDFS(val delayTime: Double, maxDepth: Int = 1000, debug: Boolean
 
     override fun onUpdate(updateTime: Double, buttonStateChange: GameButton.StateChange?, gameState: GameState) {
         updateByAction(buttonStateChange, false, gameState)
+        synchronizeEndWithGameState(gameState)
     }
 
     protected fun updateByAction(buttonStateChange: GameButton.StateChange?, releasesOfNonHoldAction: Boolean, gameState: GameState) {

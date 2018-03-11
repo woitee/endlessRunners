@@ -32,10 +32,10 @@ import java.io.ObjectInputStream
 import java.util.*
 
 internal class DelayedTwinDFSTest {
-    class TimedChangeShapeGameDescription (time: Double): BitTripGameDescription() {
+    class TimedChangeShapeGameDescription: BitTripGameDescription() {
         override val allActions: List<GameButtonAction> = listOf(
                 JumpAction(22.0),
-                ChangeShapeAction(2, 1, time)
+                ChangeShapeAction(2, 1)
         )
     }
     class HolesLevelGenerator(val holeWidth: Int = 2): LevelGenerator() {
@@ -74,7 +74,7 @@ internal class DelayedTwinDFSTest {
 
     private fun correctCaching(delayTime: Double = 0.25, minCrouchTime: Double = 0.25) {
         // We mainly need the min time-limit on ChangeShapeAction
-        val gameDescription = TimedChangeShapeGameDescription(minCrouchTime)
+        val gameDescription = TimedChangeShapeGameDescription()
         val levelGenerator = HolesLevelGenerator()
 
         val delayedTwinDFS = DelayedTwinDFS(delayTime)
@@ -105,7 +105,7 @@ internal class DelayedTwinDFSTest {
             filePath: String,
             twinDFSdelay: Double,
             serializationVersion: Int,
-            gameDescription: GameDescription = TimedChangeShapeGameDescription(0.25),
+            gameDescription: GameDescription = TimedChangeShapeGameDescription(),
             runTime: Double = 5.0,
             expectGameOver: Boolean = false,
             allowSearchInBeginning: Boolean = false) {

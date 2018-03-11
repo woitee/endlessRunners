@@ -26,15 +26,12 @@ fun main(args: Array<String>) {
             }, {
                 println("Demonstration")
                 runDemo()
-                true
             }, {
                 println("Game 1 Start")
                 runGame1()
-                true
             }, {
                 println("Game 2 Start")
                 runGame2()
-                true
             }
         ),
         arrayOf("ReactionTest_.*log", "", "RecordingGame1_.*dmp", "RecordingGame2_.*dmp")
@@ -42,20 +39,21 @@ fun main(args: Array<String>) {
     gui.show()
 }
 
-fun runDemo(timeMinutes: Double = 0.5) {
-    val gamePreparation = IntermediatoryDescriptorFrame(""" Toto je automaticky hrané demo.
+fun runDemo(timeMinutes: Double = 0.5): Boolean {
+    val gamePreparation = IntermediatoryDescriptorFrame("""
+        Toto je automaticky hrané demo.
 
-            Hra se bude 30 sekund hrát "sama". Slouží pouze pro ilustraci, co Vás čeká.
+        Hra se bude 30 sekund hrát "sama". Slouží pouze pro ilustraci, co Vás čeká.
 
-            Stiskněte tlačítko pokračovat.
+        Stiskněte tlačítko pokračovat.
         """.trimIndent())
-    gamePreparation.waitUntillInteraction()
-
+    if (!gamePreparation.waitUntillInteraction())
+        return false
 
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Demo (30 sekund)")
 
-    val levelGenerator = DeterministicSeeds(SimpleLevelGenerator(), 2018031101)
+    val levelGenerator = DeterministicSeeds(SimpleLevelGenerator(), 2018031)
     val playerController = DFSPlayerController(dfs = DelayedTwinDFS(0.15))
 
     val game = Game(levelGenerator, playerController, visualiser,
@@ -64,20 +62,23 @@ fun runDemo(timeMinutes: Double = 0.5) {
     )
 
     game.run((timeMinutes * 60 * 1000).toLong())
+
+    return !game.endedFromVisualizer
 }
 
-fun runGame1(timeMinutes: Double = 5.0) {
+fun runGame1(timeMinutes: Double = 5.0): Boolean {
     val gamePreparation = IntermediatoryDescriptorFrame("""
-            Právě spouštíte první hru. Ve hře ovládáte modrou postavu (obdélník),
-            která se sama pohybuje směrem vpravo. Při stisknutí klávesy "šipka nahoru" postava vyskočí,
-            a při stisknutí klávesy "šipka dolů" se skrčí. Vašim cílem je nenarazit do překážek a dostat se co nejdále.
+        Právě spouštíte první hru. Ve hře ovládáte modrou postavu (obdélník),
+        která se sama pohybuje směrem vpravo. Při stisknutí klávesy "šipka nahoru" postava vyskočí,
+        a při stisknutí klávesy "šipka dolů" se skrčí. Vašim cílem je nenarazit do překážek a dostat se co nejdále.
 
-            Při naražení do překážky se hra restartuje a budete hrát opět od počátku - ale jinou úroveň.
-            Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
+        Při naražení do překážky se hra restartuje a budete hrát opět od počátku - ale jinou úroveň.
+        Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
 
-            Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra se ihned spustí.
+        Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra se ihned spustí.
         """.trimIndent())
-    gamePreparation.waitUntillInteraction()
+    if (!gamePreparation.waitUntillInteraction())
+        return false
 
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 1 (5 minut)")
@@ -92,31 +93,37 @@ fun runGame1(timeMinutes: Double = 5.0) {
 
     game.run((timeMinutes * 60 * 1000).toLong())
 
-    if (!game.endedFromVisualizer)
+    if (!game.endedFromVisualizer) {
         playerController.saveToFile("RecordingGame1_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+        return true
+    }
+    return false
 }
 
-fun runGame2(timeMinutes: Double = 5.0) {
-    val gamePreparation = IntermediatoryDescriptorFrame(""" Právě spouštíte druhou hru, která má stejný vzhled i ovládání jako hra první.
+fun runGame2(timeMinutes: Double = 5.0): Boolean {
+    val gamePreparation = IntermediatoryDescriptorFrame("""
+        Právě spouštíte druhou hru, která má stejný vzhled i ovládání jako hra první.
 
-            Rozdílem jsou jinak vytvořené úrovňe.
+        Rozdílem jsou jinak vytvořené úrovňe.
 
-            Tedy, při stisknutí klávesy "šipka nahoru" postava vyskočí, a při stisknutí klávesy "šipka dolů" se skrčí.
+        Opět, při stisknutí klávesy "šipka nahoru" postava vyskočí, a při stisknutí klávesy "šipka dolů" se skrčí.
+        Vašim cílem je nenarazit do překážek a dostat se co nejdále.
 
-            Vašim cílem je nenarazit do překážek a dostat se co nejdále.
+        Při naražení do překážky se hra restartuje a budete hrát opět od počátku - ale jinou úroveň.
+        Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
 
-            Při naražení do překážky se hra restartuje a budete hrát opět od počátku - ale jinou úroveň.
-            Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
-
-            Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra 2 se ihned spustí.
+        Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra 2 se ihned spustí.
         """.trimIndent())
-    gamePreparation.waitUntillInteraction()
+    if (!gamePreparation.waitUntillInteraction())
+        return false
 
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 2 (5 minut)")
 
-    val levelGenerator = DelayedTwinDFSLevelGenerator(0.15, DeterministicSeeds(SimpleLevelGenerator(), 2018031102))
+    val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, DeterministicSeeds(SimpleLevelGenerator(), 2018031102))
     val playerController = RecordingWrapper(KeyboardPlayerController())
+
+//    val playerController = RecordingWrapper(DFSPlayerController(DelayedTwinDFS(0.25)))
 
     val game = Game(levelGenerator, playerController, visualiser,
             mode = Game.Mode.INTERACTIVE,
@@ -125,8 +132,11 @@ fun runGame2(timeMinutes: Double = 5.0) {
 
     game.run((timeMinutes * 60 * 1000).toLong())
 
-    if (!game.endedFromVisualizer)
+    if (!game.endedFromVisualizer) {
         playerController.saveToFile("RecordingGame2_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+        return true
+    }
+    return false
 }
 
 fun runGame() {

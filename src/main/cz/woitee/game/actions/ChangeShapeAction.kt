@@ -10,7 +10,7 @@ import cz.woitee.game.undoing.IUndo
  * Created by woitee on 13/01/2017.
  */
 
-class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHoldTime: Double = 0.0): HoldButtonAction() {
+class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int): HoldButtonAction() {
     override fun isApplicableOn(gameState: GameState): Boolean {
         applyOn(gameState)
         for (collPoint in gameState.player.collPoints) {
@@ -28,7 +28,6 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int, minimumHold
         gameState.player.widthBlocks = targetWidth
         gameState.player.heightBlocks = targetHeight
     }
-
     override fun stopApplyingOn(gameState: GameState) {
         gameState.player.widthBlocks = gameState.player.defaultWidthBlocks
         gameState.player.heightBlocks = gameState.player.defaultHeightBlocks

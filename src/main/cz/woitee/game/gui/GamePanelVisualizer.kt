@@ -2,6 +2,7 @@ package cz.woitee.game.gui
 
 import cz.woitee.game.*
 import cz.woitee.game.objects.*
+import cz.woitee.geom.Vector2Double
 import java.awt.*
 import java.awt.event.KeyListener
 import java.awt.event.WindowAdapter
@@ -24,6 +25,8 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
     private var dbImage: Image? = null
 
     private var running = false
+
+    private var proportionOfUpdate = 0.0
 
     // Not a part of the game, can be used to add debug information
     val debugObjects = ArrayList<GameObject>()
@@ -115,7 +118,11 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
     }
 
     open fun drawEverything(gameState: GameState, g: Graphics) {
-        val playerX = gameState.player.x
+        val timeSinceLastUpdate = System.nanoTime() - gameState.game.updateThread.lastUpdateAt.get()
+        val updateEveryMicros = 1000000L / gameState.game.updateRate
+        proportionOfUpdate = (((timeSinceLastUpdate / 1000).toDouble() / updateEveryMicros) - 0.3).coerceIn(0.0, 1.0)
+
+        val playerX = proportionedX(gameState.player)
 
         for (gameObject in gameState.gameObjects)
             drawGameObject(gameObject, g, playerX)
@@ -126,7 +133,7 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
     }
 
     fun drawGameObject(gameObject: GameObject, g: Graphics, playerX: Double) {
-        val topLeftX = (gameObject.x - playerX + PlayerScreenX).toInt()
+        val topLeftX = (proportionedX(gameObject) - playerX + PlayerScreenX).toInt()
         val topLeftY = GameHeight - gameObject.y.toInt() - gameObject.heightPx
         drawGameObjectAt(gameObject, g, topLeftX, topLeftY)
     }
@@ -155,5 +162,30 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
         } catch (e: Exception) {
             println("Repaint error: " + e)
         }
+    }
+
+    /**
+     * These functions resolve uglyness at low update speeds.
+     *
+     * They approximate the position of objects from the updateThread's last update time (by immediate velocity).
+     */
+    protected fun proportionedX(gameObject: GameObject): Double {
+        if (gameObject !is MovingObject)
+            return gameObject.x
+
+        val updateTime = gameObject.gameState.game.updateTime
+        return gameObject.x + gameObject.xspeed * updateTime * BlockWidth * proportionOfUpdate
+    }
+
+    protected fun proportionedY(gameObject: GameObject): Double {
+        if (gameObject !is MovingObject)
+            return gameObject.y
+
+        val updateTime = gameObject.gameState.game.updateTime
+        return gameObject.y + gameObject.yspeed * updateTime * BlockWidth * proportionOfUpdate
+    }
+
+    protected fun proportionedLocation(gameObject: GameObject): Vector2Double {
+        return Vector2Double(proportionedX(gameObject), proportionedY(gameObject))
     }
 }

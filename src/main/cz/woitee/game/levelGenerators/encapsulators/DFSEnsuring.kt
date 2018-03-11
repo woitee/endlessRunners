@@ -84,6 +84,7 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: Abst
     }
 
     fun copySolidBlocksFromLastColumn(gameState: GameState): ArrayList<GameObject?> {
+        println("Copying last column")
         val column = arrayList<GameObject?>(gameState.grid.height, { null })
         for (i in 0 until gameState.grid.height) {
             if (gameState.grid[gameState.grid.width - 1, i]?.gameObjectClass == GameObjectClass.SOLIDBLOCK)

@@ -17,9 +17,9 @@ class SimpleLevelGenerator: LevelGenerator() {
 
     var probableTransfers = mapOf(
         -2 to 0.10,
-        -1 to 0.14,
-        0 to 0.54,
-        +1 to 0.22,
+        -1 to 0.13,
+        0 to 0.57,
+        +1 to 0.23,
         +2 to 0.00
     )
 //    var probableTransfers = mapOf(
@@ -30,7 +30,7 @@ class SimpleLevelGenerator: LevelGenerator() {
 //            +2 to 0.00
 //    )
 
-    var tunnelProbability = 0.0
+    var tunnelProbability = 0.02
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
         val col = generateEmptyColumn()

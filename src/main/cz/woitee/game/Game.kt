@@ -33,6 +33,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     var gameState = GameState(this, levelGenerator)
 
     protected var inited = false
+    var endedFromVisualizer = false
 
     /**
      * Runs the game synchronously - this function will not exit until the game finishes, or until given timeout.

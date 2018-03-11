@@ -24,7 +24,8 @@ fun main(args: Array<String>) {
                 println("Game 2 Start")
                 runGame2()
             }
-        )
+        ),
+        arrayOf("ReactionTest_.*log", "RecordingGame1_.*dmp", "RecordingGame2_.*dmp")
     )
     gui.show()
 }
@@ -48,7 +49,8 @@ fun runGame1(timeMinutes: Double = 5.0) {
 
     game.run((timeMinutes * 60 * 1000).toLong())
 
-    playerController.saveToFile("RecordingGame1_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+    if (!game.endedFromVisualizer)
+        playerController.saveToFile("RecordingGame1_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
 }
 
 fun runGame2(timeMinutes: Double = 5.0) {
@@ -66,7 +68,8 @@ fun runGame2(timeMinutes: Double = 5.0) {
     game.gameState.tag = "Hra 2"
     game.run((timeMinutes * 60 * 1000).toLong())
 
-    playerController.saveToFile("RecordingGame2_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+    if (!game.endedFromVisualizer)
+        playerController.saveToFile("RecordingGame2_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
 }
 
 fun runGame() {

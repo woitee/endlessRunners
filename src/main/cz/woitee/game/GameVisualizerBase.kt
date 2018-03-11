@@ -12,6 +12,7 @@ abstract class GameVisualizerBase {
     abstract fun dispose()
     fun stopGame(gameState: GameState) {
         gameState.game.updateThread.stop()
+        gameState.game.endedFromVisualizer = true
     }
     abstract fun addKeyListener(listener: KeyListener)
 }

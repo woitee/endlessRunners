@@ -5,10 +5,11 @@ import java.awt.Color
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
+import java.io.File
 
-class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Unit>) {
+class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Unit>, val generatedLogPatterns: Array<String>) {
     val frame: JFrame = createFrame()
-    lateinit var buttons: Array<Button>
+    lateinit var buttons: ArrayList<Button>
 
     private fun createFrame(): JFrame {
         val frame = JFrame("Experiment GUI")
@@ -31,6 +32,7 @@ class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array
     }
 
     private fun createButtons(panel: JPanel) {
+        buttons = ArrayList()
         for (i in buttonLabels.indices) {
             val buttonLabel = buttonLabels[i]
             val buttonCallback = buttonCallbacks[i]
@@ -39,6 +41,7 @@ class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array
                 performCallbackInNewThread(buttonCallback)
             }
             panel.add(button)
+            buttons.add(button)
         }
     }
 
@@ -53,7 +56,17 @@ class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array
     }
 
     fun show() {
+        val fileNames = File(".").listFiles().map { it.name }
+
         frame.isVisible = true
+        for (i in buttons.indices) {
+            val button = buttons[i]
+            val logPattern = generatedLogPatterns[i]
+
+            val logFileExists = fileNames.any { it.matches(Regex(logPattern)) }
+
+            button.isEnabled = !logFileExists
+        }
     }
 
     fun hide() {

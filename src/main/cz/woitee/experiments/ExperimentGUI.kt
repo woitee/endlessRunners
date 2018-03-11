@@ -1,5 +1,6 @@
 package cz.woitee.experiments
 
+import cz.woitee.utils.arrayList
 import java.awt.Button
 import java.awt.Color
 import javax.swing.JFrame
@@ -7,9 +8,10 @@ import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import java.io.File
 
-class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Unit>, val generatedLogPatterns: Array<String>) {
+class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Boolean>, val generatedLogPatterns: Array<String>) {
     val frame: JFrame = createFrame()
     lateinit var buttons: ArrayList<Button>
+    val permanentlyDone = arrayList(4, { false })
 
     private fun createFrame(): JFrame {
         val frame = JFrame("Experiment GUI")
@@ -38,17 +40,19 @@ class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array
             val buttonCallback = buttonCallbacks[i]
             val button = Button(buttonLabel)
             button.addActionListener {
-                performCallbackInNewThread(buttonCallback)
+                performCallbackInNewThread(i, buttonCallback)
             }
             panel.add(button)
             buttons.add(button)
         }
     }
 
-    private fun performCallbackInNewThread(callback: () -> Unit) {
+    private fun performCallbackInNewThread(i: Int, callback: () -> Boolean) {
         hide()
         Thread({
-            callback()
+            if (callback()) {
+                permanentlyDone[i] = true
+            }
             SwingUtilities.invokeLater {
                 show()
             }
@@ -63,9 +67,13 @@ class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array
             val button = buttons[i]
             val logPattern = generatedLogPatterns[i]
 
-            val logFileExists = fileNames.any { it.matches(Regex(logPattern)) }
+            if (permanentlyDone[i]) button.isEnabled = false
 
-            button.isEnabled = !logFileExists
+            if (logPattern != "") {
+                val logFileExists = fileNames.any { it.matches(Regex(logPattern)) }
+
+                button.isEnabled = !logFileExists
+            }
         }
     }
 

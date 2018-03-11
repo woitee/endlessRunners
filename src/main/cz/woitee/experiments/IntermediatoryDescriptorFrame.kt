@@ -7,7 +7,7 @@ import java.awt.TextArea
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-class IntermediatoryDescriptorFrame(description: String) {
+class IntermediatoryDescriptorFrame(val description: String) {
     val frame = createFrame()
     val waitLock = Object()
 
@@ -31,15 +31,7 @@ class IntermediatoryDescriptorFrame(description: String) {
     }
 
     fun addContent(panel: JPanel) {
-        val textArea = TextArea(""" Právě spouštíte první hru. Ve hře ovládáte modrou postavu (obdélník),
-která se sama pohybuje směrem vpravo. Při stisknutí klávesy "šipka nahoru" postava vyskočí,
-a při stisknutí klávesy "šipka dolů" se skrčí. Vašim cílem je nenarazit do překážek a dostat se co nejdále.
-
-Při naražení do překážky se hra restartuje a budete hrát opět od počátku - ale jinou úroveň.
-Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
-
-Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra se ihned spustí.
-        """)
+        val textArea = TextArea(description)
         textArea.preferredSize = Dimension(700, 200)
         panel.add(textArea)
 

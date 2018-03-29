@@ -4,6 +4,8 @@ import cz.woitee.game.GameButton
 import cz.woitee.game.GameState
 import cz.woitee.game.WidthBlocks
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RecordingWrapper(val innerController: PlayerController): PlayerController() {
     val recording = ArrayList<String>()
@@ -33,6 +35,8 @@ class RecordingWrapper(val innerController: PlayerController): PlayerController(
         println("Saving recording to file $filename")
         val file = File(filename)
         val writer = file.bufferedWriter()
+        writer.write(SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()))
+        writer.newLine()
         for (line in recording) {
             writer.write(line)
             writer.newLine()

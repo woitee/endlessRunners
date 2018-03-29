@@ -17,6 +17,8 @@ class ReactionAndPrecisionTest {
         val file = File(filename)
         val writer = file.bufferedWriter()
 
+        writer.write(SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()).toString())
+        writer.newLine()
         for (time in reactionTest.reactionTimes) {
             writer.write("$time")
             writer.newLine()

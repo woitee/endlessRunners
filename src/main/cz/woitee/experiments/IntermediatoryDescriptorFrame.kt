@@ -70,7 +70,7 @@ class IntermediatoryDescriptorFrame(val description: String) {
         frame.isVisible = false
     }
 
-    fun waitUntillInteraction(): Boolean {
+    fun waitUntilInteraction(): Boolean {
         show()
         synchronized(waitLock) {
             waitLock.wait()

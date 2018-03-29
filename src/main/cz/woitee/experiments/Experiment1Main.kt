@@ -5,6 +5,7 @@ import cz.woitee.game.algorithms.dfs.BasicDFS
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.game.descriptions.CrouchGameDescription
 import cz.woitee.game.gui.GamePanelVisualizer
+import cz.woitee.game.levelGenerators.LevelGenerator
 import cz.woitee.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
 import cz.woitee.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
@@ -14,6 +15,8 @@ import cz.woitee.game.playerControllers.KeyboardPlayerController
 import cz.woitee.game.playerControllers.RecordingWrapper
 import java.text.SimpleDateFormat
 import java.util.*
+
+val startsWithGame1: Boolean = Random().nextBoolean()
 
 fun main(args: Array<String>) {
     val gui = ExperimentGUI(
@@ -34,7 +37,11 @@ fun main(args: Array<String>) {
                 runGame2()
             }
         ),
-        arrayOf("ReactionTest_.*log", "", "RecordingGame1_.*dmp", "RecordingGame2_.*dmp")
+        if (startsWithGame1) {
+            arrayOf("ReactionTest_.*log", "", "RecordingGame1_.*dmp", "RecordingGame2_.*dmp")
+        } else {
+            arrayOf("ReactionTest_.*log", "", "RecordingGame2_.*dmp", "RecordingGame1_.*dmp")
+        }
     )
     gui.show()
 }
@@ -47,7 +54,7 @@ fun runDemo(timeMinutes: Double = 0.5): Boolean {
 
         Stiskněte tlačítko pokračovat.
         """.trimIndent())
-    if (!gamePreparation.waitUntillInteraction())
+    if (!gamePreparation.waitUntilInteraction())
         return false
 
     val gameDescription = CrouchGameDescription()
@@ -77,13 +84,14 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
 
         Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra se ihned spustí.
         """.trimIndent())
-    if (!gamePreparation.waitUntillInteraction())
+    if (!gamePreparation.waitUntilInteraction())
         return false
 
+    val gameNumber = if (startsWithGame1) 1 else 2
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 1 (5 minut)")
 
-    val levelGenerator = DFSEnsuring(DeterministicSeeds(SimpleLevelGenerator(), 2018031101), BasicDFS())
+    val levelGenerator = getLevelGeneratorForGame(gameNumber)
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
     val game = Game(levelGenerator, playerController, visualiser,
@@ -94,7 +102,7 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
     game.run((timeMinutes * 60 * 1000).toLong())
 
     if (!game.endedFromVisualizer) {
-        playerController.saveToFile("RecordingGame1_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+        playerController.saveToFile("RecordingGame${gameNumber}_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
         return true
     }
     return false
@@ -114,13 +122,15 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
 
         Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra 2 se ihned spustí.
         """.trimIndent())
-    if (!gamePreparation.waitUntillInteraction())
+    if (!gamePreparation.waitUntilInteraction())
         return false
+
+    val gameNumber = if (startsWithGame1) 2 else 1
 
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 2 (5 minut)")
 
-    val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, DeterministicSeeds(SimpleLevelGenerator(), 2018031102))
+    val levelGenerator = getLevelGeneratorForGame(gameNumber)
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
 //    val playerController = RecordingWrapper(DFSPlayerController(DelayedTwinDFS(0.25)))
@@ -133,10 +143,18 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
     game.run((timeMinutes * 60 * 1000).toLong())
 
     if (!game.endedFromVisualizer) {
-        playerController.saveToFile("RecordingGame2_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
+        playerController.saveToFile("RecordingGame${gameNumber}_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp")
         return true
     }
     return false
+}
+
+fun getLevelGeneratorForGame(order: Int): LevelGenerator {
+    return if (order == 1) {
+        DFSEnsuring(DeterministicSeeds(SimpleLevelGenerator(), 2018031101), BasicDFS())
+    } else {
+        DelayedTwinDFSLevelGenerator(0.25, DeterministicSeeds(SimpleLevelGenerator(), 2018031102))
+    }
 }
 
 fun runGame() {

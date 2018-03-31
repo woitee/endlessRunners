@@ -90,16 +90,21 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
 
     val gameNumber = if (startsWithGame1) 1 else 2
     val gameDescription = CrouchGameDescription()
-    val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 1 (5 minut)")
+    val visualiser = GamePanelVisualizer("Hra 1 (5 minut)")
 
     val levelGenerator = getLevelGeneratorForGame(gameNumber)
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
+    val timingAnnouncer = createTimingAnnouncer()
     val game = Game(levelGenerator, playerController, visualiser,
             mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription
+            gameDescription = gameDescription,
+            updateCallback = { game -> timingAnnouncer.onUpdate(game); }
     )
 
+
+    val originalGameOver = game.onGameOver
+    game.onGameOver = { println("Visualizer"); visualiser.announce("Hra byla restartována"); originalGameOver(); }
     game.run((timeMinutes * 60 * 1000).toLong())
 
     if (!game.endedFromVisualizer) {
@@ -129,18 +134,22 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
     val gameNumber = if (startsWithGame1) 2 else 1
 
     val gameDescription = CrouchGameDescription()
-    val visualiser: GamePanelVisualizer? = GamePanelVisualizer("Hra 2 (5 minut)")
+    val visualiser = GamePanelVisualizer("Hra 2 (5 minut)")
 
     val levelGenerator = getLevelGeneratorForGame(gameNumber)
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
 //    val playerController = RecordingWrapper(DFSPlayerController(DelayedTwinDFS(0.25)))
 
+    val timingAnnouncer = createTimingAnnouncer()
     val game = Game(levelGenerator, playerController, visualiser,
             mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription
+            gameDescription = gameDescription,
+            updateCallback = { game -> timingAnnouncer.onUpdate(game); }
     )
 
+    val originalGameOver = game.onGameOver
+    game.onGameOver = { println("Visualizer"); visualiser.announce("Hra byla restartována"); originalGameOver(); }
     game.run((timeMinutes * 60 * 1000).toLong())
 
     if (!game.endedFromVisualizer) {
@@ -148,6 +157,17 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
         return true
     }
     return false
+}
+
+fun createTimingAnnouncer(): TimingAnnouncer {
+    return TimingAnnouncer(hashMapOf(
+        Pair(60.0, "Zbývají 4 minuty"),
+        Pair(120.0, "Zbývají 3 minuty"),
+        Pair(180.0, "Zbývají 2 minuty"),
+        Pair(240.0, "Zbývá 1 minuta"),
+        Pair(270.0, "Zbývá 30 sekund"),
+        Pair(295.0, "Hra se ukončí za 5 sekund")
+    ))
 }
 
 fun getLevelGeneratorForGame(order: Int): LevelGenerator {

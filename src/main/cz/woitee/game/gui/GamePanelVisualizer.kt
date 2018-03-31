@@ -25,6 +25,7 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
     private var dbImage: Image? = null
 
     private var running = false
+    protected val announcer = GamePanelAnnouncerComponent()
 
     private var proportionOfUpdate = 0.0
 
@@ -122,14 +123,23 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
         val updateEveryMicros = 1000000L / gameState.game.updateRate
         proportionOfUpdate = (((timeSinceLastUpdate / 1000).toDouble() / updateEveryMicros) - 0.3).coerceIn(0.0, 1.0)
 
+        if (gameState.game.secondsSinceStart < gameState.game.freezeOnStartSeconds)
+            proportionOfUpdate = 0.0
+
         val playerX = proportionedX(gameState.player)
 
         for (gameObject in gameState.gameObjects)
             drawGameObject(gameObject, g, playerX)
 
+        announcer.draw(g, gameState)
+
         if (debugging)
             for (debugObject in debugObjects)
                 drawGameObject(debugObject, g, playerX)
+    }
+
+    fun announce(message: String) {
+        announcer.startAnnouncing(message)
     }
 
     fun drawGameObject(gameObject: GameObject, g: Graphics, playerX: Double) {
@@ -160,7 +170,7 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
             Toolkit.getDefaultToolkit().sync()
             g.dispose()
         } catch (e: Exception) {
-            println("Repaint error: " + e)
+            println("Repaint error: " + e + "\n" + e.stackTrace)
         }
     }
 

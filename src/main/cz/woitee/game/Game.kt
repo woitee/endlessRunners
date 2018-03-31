@@ -20,6 +20,11 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
         INTERACTIVE, SIMULATION
     }
 
+    var startTime = -1L
+    val secondsSinceStart
+        get() = (System.currentTimeMillis() - startTime).toDouble() / 1000
+    val freezeOnStartSeconds = 1.0
+
     val collHandler = GridDetectingCollisionHandler(this)
     val random = Random(seed)
     // This shows time since last update, and can be used in methods
@@ -80,6 +85,7 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     }
 
     fun init() {
+        startTime = System.currentTimeMillis()
         playerController.init(gameState)
         levelGenerator.init(gameState)
         inited = true
@@ -91,6 +97,9 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
 
     fun update(time: Double) {
         assert(inited)
+        if (secondsSinceStart < freezeOnStartSeconds) {
+            return
+        }
         // Get the action that should be performed
         val controllerAction = playerController.onUpdate(gameState)
         // Update the GameState by it

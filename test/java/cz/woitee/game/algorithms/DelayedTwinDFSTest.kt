@@ -304,7 +304,13 @@ internal class DelayedTwinDFSTest {
         val delayedTwinDFSLevelGenerator = DelayedTwinDFSLevelGenerator(0.25, FlatLevelGenerator())
         val proxyPlayerController = ExternalProxyPlayerController()
 
-        val dummyGame = Game(delayedTwinDFSLevelGenerator, proxyPlayerController, GamePanelVisualizer(), gameDescription = GameOverGameDescription())
+        val dummyGame = Game(
+                delayedTwinDFSLevelGenerator,
+                proxyPlayerController,
+                GamePanelVisualizer(),
+                gameDescription = GameOverGameDescription(),
+                freezeOnStartSeconds = 0.0
+        )
         dummyGame.init()
         var dummyState = dummyGame.gameState
 

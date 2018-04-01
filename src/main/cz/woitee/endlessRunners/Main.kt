@@ -1,4 +1,4 @@
-package cz.woitee
+package cz.woitee.endlessRunners
 
 import cz.woitee.game.gui.GamePanelVisualizer
 import cz.woitee.game.Game

@@ -1,4 +1,4 @@
-package cz.woitee.experiments
+package cz.woitee.endlessRunners.experiments
 
 import java.io.File
 import java.text.SimpleDateFormat

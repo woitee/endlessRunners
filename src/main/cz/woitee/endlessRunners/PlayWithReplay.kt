@@ -1,4 +1,4 @@
-package cz.woitee
+package cz.woitee.endlessRunners
 
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS

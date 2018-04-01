@@ -14,7 +14,7 @@ import java.util.*
 class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: GameVisualizerBase?,
            val visualizeFrameRate: Double = 75.0, val updateRate: Double = 37.5, val mode: Mode = Mode.INTERACTIVE,
            val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true,
-           val updateCallback: (Game) -> Unit = { _ -> }) {
+           val updateCallback: (Game) -> Unit = { _ -> }, var freezeOnStartSeconds: Double = 0.0) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION
@@ -23,7 +23,6 @@ class Game(val levelGenerator: LevelGenerator, val playerController: PlayerContr
     var startTime = -1L
     val secondsSinceStart
         get() = (System.currentTimeMillis() - startTime).toDouble() / 1000
-    val freezeOnStartSeconds = 1.0
 
     val collHandler = GridDetectingCollisionHandler(this)
     val random = Random(seed)

@@ -1,4 +1,4 @@
-package cz.woitee.experiments
+package cz.woitee.endlessRunners.experiments
 
 import cz.woitee.game.Game
 import cz.woitee.game.algorithms.dfs.BasicDFS
@@ -99,7 +99,8 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
     val game = Game(levelGenerator, playerController, visualiser,
             mode = Game.Mode.INTERACTIVE,
             gameDescription = gameDescription,
-            updateCallback = { game -> timingAnnouncer.onUpdate(game); }
+            updateCallback = { game -> timingAnnouncer.onUpdate(game); },
+            freezeOnStartSeconds = 1.0
     )
 
 
@@ -145,7 +146,8 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
     val game = Game(levelGenerator, playerController, visualiser,
             mode = Game.Mode.INTERACTIVE,
             gameDescription = gameDescription,
-            updateCallback = { game -> timingAnnouncer.onUpdate(game); }
+            updateCallback = { game -> timingAnnouncer.onUpdate(game); },
+            freezeOnStartSeconds = 1.0
     )
 
     val originalGameOver = game.onGameOver

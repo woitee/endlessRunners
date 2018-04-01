@@ -1,4 +1,4 @@
-package cz.woitee.experiments
+package cz.woitee.endlessRunners.experiments
 
 import cz.woitee.utils.arrayList
 import java.awt.Button

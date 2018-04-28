@@ -1,4 +1,4 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
 import java.awt.event.KeyListener
 

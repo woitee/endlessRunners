@@ -1,7 +1,7 @@
-package cz.woitee.game.descriptions
+package cz.woitee.endlessRunners.game.descriptions
 
-import cz.woitee.game.actions.GameOverAction
-import cz.woitee.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.GameOverAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
 
 class GameOverGameDescription: GameDescription() {
     override val allActions: List<GameButtonAction> = listOf(

@@ -1,14 +1,14 @@
 package cz.woitee.endlessRunners
 
-import cz.woitee.game.Game
-import cz.woitee.game.algorithms.dfs.BasicDFS
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.descriptions.BitTripGameDescription
-import cz.woitee.game.gui.DelayedTwinDFSVisualizer
-import cz.woitee.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.game.playerControllers.DFSPlayerController
-import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
+import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
+import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
 import java.lang.Thread.sleep
 
 fun main(args: Array<String>) {

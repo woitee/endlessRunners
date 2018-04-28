@@ -1,8 +1,8 @@
-package cz.woitee.game.playerControllers
+package cz.woitee.endlessRunners.game.playerControllers
 
-import cz.woitee.game.GameButton
-import cz.woitee.game.GameState
-import cz.woitee.game.WidthBlocks
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.WidthBlocks
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

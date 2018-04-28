@@ -1,4 +1,4 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
 import java.awt.Color
 

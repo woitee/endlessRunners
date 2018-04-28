@@ -1,8 +1,8 @@
-package cz.woitee.game.algorithms.dfs.delayedTwin
+package cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin
 
-import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.dfs.CachedState
-import cz.woitee.utils.MySerializable
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.algorithms.dfs.CachedState
+import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.util.*

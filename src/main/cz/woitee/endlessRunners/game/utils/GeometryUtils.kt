@@ -1,4 +1,4 @@
-package cz.woitee.game.utils
+package cz.woitee.endlessRunners.game.utils
 
 object GeometryUtils {
 }

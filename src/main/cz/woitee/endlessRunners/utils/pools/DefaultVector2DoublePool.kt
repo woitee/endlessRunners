@@ -1,6 +1,6 @@
-package cz.woitee.utils.pools
+package cz.woitee.endlessRunners.utils.pools
 
-import cz.woitee.geom.Vector2Double
+import cz.woitee.endlessRunners.geom.Vector2Double
 
 /**
  * Created by woitee on 04/06/2017.

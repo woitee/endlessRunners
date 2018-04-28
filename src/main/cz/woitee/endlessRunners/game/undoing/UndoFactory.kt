@@ -1,7 +1,7 @@
-package cz.woitee.game.undoing
+package cz.woitee.endlessRunners.game.undoing
 
-import cz.woitee.game.GameState
-import cz.woitee.utils.pools.DefaultUndoListPool
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
 import java.util.*
 
 /**

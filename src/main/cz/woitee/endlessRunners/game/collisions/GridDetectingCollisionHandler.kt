@@ -1,11 +1,11 @@
-package cz.woitee.game.collisions
+package cz.woitee.endlessRunners.game.collisions
 
-import cz.woitee.game.Game
-import cz.woitee.game.GameState
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.geom.direction4
-import cz.woitee.geom.twoNumbers2Direction4
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.geom.direction4
+import cz.woitee.endlessRunners.geom.twoNumbers2Direction4
 
 /**
  * A collision detector which uses the grid as a starting point to look for collisions.

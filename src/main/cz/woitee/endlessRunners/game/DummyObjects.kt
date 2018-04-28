@@ -1,12 +1,12 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
-import cz.woitee.game.descriptions.GameDescription
-import cz.woitee.game.levelGenerators.FlatLevelGenerator
-import cz.woitee.game.playerControllers.RandomPlayerController
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.RandomPlayerController
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 object DummyObjects {
     class MockAction: GameButtonAction() {

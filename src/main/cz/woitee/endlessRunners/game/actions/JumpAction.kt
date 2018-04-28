@@ -1,11 +1,11 @@
-package cz.woitee.game.actions
+package cz.woitee.endlessRunners.game.actions
 
-import cz.woitee.game.GameState
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
  * Created by woitee on 13/01/2017.

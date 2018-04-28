@@ -1,27 +1,27 @@
-package cz.woitee.game.collisions
+package cz.woitee.endlessRunners.game.collisions
 
 import java.util.*
 
-import cz.woitee.game.objects.*
-import cz.woitee.game.Game
-import cz.woitee.game.GameState
-import cz.woitee.game.collisions.collisionEffects.ICollisionEffect
-import cz.woitee.game.collisions.collisionEffects.IUndoableCollisionEffect
-import cz.woitee.game.collisions.collisionEffects.MoveToContact
-import cz.woitee.game.collisions.collisionEffects.ApplyGameEffect
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.effects.GameOver
+import cz.woitee.endlessRunners.game.objects.*
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.ICollisionEffect
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.IUndoableCollisionEffect
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.MoveToContact
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.ApplyGameEffect
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.effects.GameOver
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.objects.MovingObject
-import cz.woitee.geom.Direction4
-import cz.woitee.geom.Distance2D
-import cz.woitee.geom.Vector2Double
-import cz.woitee.geom.flagsToDirections
-import cz.woitee.geom.*
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.MovingObject
+import cz.woitee.endlessRunners.geom.Direction4
+import cz.woitee.endlessRunners.geom.Distance2D
+import cz.woitee.endlessRunners.geom.Vector2Double
+import cz.woitee.endlessRunners.geom.flagsToDirections
+import cz.woitee.endlessRunners.geom.*
 
 
 /**

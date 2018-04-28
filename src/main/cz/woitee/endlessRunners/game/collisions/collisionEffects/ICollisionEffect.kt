@@ -1,7 +1,7 @@
-package cz.woitee.game.collisions.collisionEffects
+package cz.woitee.endlessRunners.game.collisions.collisionEffects
 
-import cz.woitee.game.collisions.Collision
-import cz.woitee.game.objects.GameObject
+import cz.woitee.endlessRunners.game.collisions.Collision
+import cz.woitee.endlessRunners.game.objects.GameObject
 
 /**
  * Created by woitee on 23/01/2017.

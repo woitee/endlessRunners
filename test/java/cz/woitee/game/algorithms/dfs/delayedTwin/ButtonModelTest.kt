@@ -1,6 +1,6 @@
-package cz.woitee.game.algorithms.dfs.delayedTwin
+package cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin
 
-import cz.woitee.game.DummyObjects
+import cz.woitee.endlessRunners.game.DummyObjects
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*

@@ -1,6 +1,6 @@
-package cz.woitee.game.effects
+package cz.woitee.endlessRunners.game.effects
 
-import cz.woitee.game.undoing.IUndoable
+import cz.woitee.endlessRunners.game.undoing.IUndoable
 
 /**
  * Created by woitee on 09/04/2017.

@@ -1,13 +1,13 @@
-package cz.woitee.game.algorithms
+package cz.woitee.endlessRunners.game.algorithms
 
-import cz.woitee.game.Game
-import cz.woitee.game.algorithms.dfs.BasicDFS
-import cz.woitee.game.algorithms.dfs.AbstractDFS
-import cz.woitee.game.descriptions.BitTripGameDescription
-import cz.woitee.game.descriptions.GameDescription
-import cz.woitee.game.playerControllers.DFSPlayerController
-import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
+import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream

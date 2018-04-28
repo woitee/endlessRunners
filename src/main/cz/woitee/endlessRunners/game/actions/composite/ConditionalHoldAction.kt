@@ -1,10 +1,10 @@
-package cz.woitee.game.actions.composite
+package cz.woitee.endlessRunners.game.actions.composite
 
-import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.conditions.GameCondition
-import cz.woitee.game.conditions.TrueCondition
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.conditions.GameCondition
+import cz.woitee.endlessRunners.game.conditions.TrueCondition
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 class ConditionalHoldAction(
         val holdButtonAction: HoldButtonAction,

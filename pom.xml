@@ -38,6 +38,12 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics -->
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics</artifactId>
+            <version>4.1.0</version>
+        </dependency>
 
     </dependencies>
 

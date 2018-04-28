@@ -1,16 +1,16 @@
-package cz.woitee.game.descriptions
+package cz.woitee.endlessRunners.game.descriptions
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.actions.JumpAction
-import cz.woitee.game.collisions.BaseCollisionHandler.CollisionHandlerEntry
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.collisions.collisionEffects.ICollisionEffect
-import cz.woitee.game.effects.GameEffect
-import cz.woitee.game.effects.Gravity
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.Player
-import cz.woitee.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.actions.JumpAction
+import cz.woitee.endlessRunners.game.collisions.BaseCollisionHandler.CollisionHandlerEntry
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.ICollisionEffect
+import cz.woitee.endlessRunners.game.effects.GameEffect
+import cz.woitee.endlessRunners.game.effects.Gravity
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.Player
+import cz.woitee.endlessRunners.game.objects.SolidBlock
 import java.util.*
 
 /**

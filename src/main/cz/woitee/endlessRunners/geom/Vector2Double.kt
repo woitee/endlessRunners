@@ -1,4 +1,4 @@
-package cz.woitee.geom
+package cz.woitee.endlessRunners.geom
 
 import java.io.Serializable
 

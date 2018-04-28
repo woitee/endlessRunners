@@ -1,15 +1,15 @@
-package cz.woitee.game.playerControllers
+package cz.woitee.endlessRunners.game.playerControllers
 
-import cz.woitee.game.GameButton
-import cz.woitee.game.algorithms.dfs.BasicDFS
-import cz.woitee.game.algorithms.dfs.SearchStatsSummer
-import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.dfs.AbstractDFS
-import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
-import cz.woitee.game.levelGenerators.encapsulators.StateRemembering
-import cz.woitee.utils.CopyUtils
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.SearchStatsSummer
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DFSEnsuring
+import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.StateRemembering
+import cz.woitee.endlessRunners.utils.CopyUtils
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter

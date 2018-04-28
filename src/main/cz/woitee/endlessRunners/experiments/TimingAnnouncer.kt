@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.experiments
 
-import cz.woitee.game.Game
-import cz.woitee.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 
 /**
  * Creates announcements in given time-marks (time is given in seconds).

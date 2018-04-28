@@ -1,11 +1,11 @@
-package cz.woitee.game.collisions.collisionEffects.composite
+package cz.woitee.endlessRunners.game.collisions.collisionEffects.composite
 
-import cz.woitee.game.collisions.Collision
-import cz.woitee.game.collisions.collisionEffects.IUndoableCollisionEffect
-import cz.woitee.game.collisions.collisionEffects.IgnoreCollision
-import cz.woitee.game.conditions.GameCondition
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.collisions.Collision
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.IUndoableCollisionEffect
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.IgnoreCollision
+import cz.woitee.endlessRunners.game.conditions.GameCondition
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 class ConditionalCollisionEffect(
         val condition: GameCondition,

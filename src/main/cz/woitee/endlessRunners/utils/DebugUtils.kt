@@ -1,8 +1,8 @@
-package cz.woitee.utils
+package cz.woitee.endlessRunners.utils
 
-import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.gui.DelayedTwinDFSVisualizer
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
 
 object DebugUtils {
     var delayedTwinDFSVisualizer: DelayedTwinDFSVisualizer? = null

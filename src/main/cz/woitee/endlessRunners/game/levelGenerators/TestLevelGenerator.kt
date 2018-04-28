@@ -1,11 +1,11 @@
-package cz.woitee.game.levelGenerators
+package cz.woitee.endlessRunners.game.levelGenerators
 
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.GameState
-import cz.woitee.game.HeightBlocks
-import cz.woitee.game.objects.CustomBlock
-import cz.woitee.utils.arrayList
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.HeightBlocks
+import cz.woitee.endlessRunners.game.objects.CustomBlock
+import cz.woitee.endlessRunners.utils.arrayList
 import java.util.*
 
 /**

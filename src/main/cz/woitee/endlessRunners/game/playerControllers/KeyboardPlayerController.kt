@@ -1,10 +1,10 @@
-package cz.woitee.game.playerControllers
+package cz.woitee.endlessRunners.game.playerControllers
 
-import cz.woitee.game.GameButton
-import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.utils.resizeTo
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.utils.resizeTo
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.*

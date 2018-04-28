@@ -1,8 +1,8 @@
-package cz.woitee.game.actions.abstract
+package cz.woitee.endlessRunners.game.actions.abstract
 
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.NoUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.NoUndo
 
 /**
  * A class facilitating an gameAction that can be held for a duration of time.

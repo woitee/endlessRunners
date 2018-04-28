@@ -1,4 +1,4 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
 class CustomBlock(val type: Int, x:Double = 0.0, y:Double = 0.0): GameObject(x, y) {
 

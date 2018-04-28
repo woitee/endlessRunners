@@ -1,6 +1,6 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
  * Created by woitee on 09/04/2017.

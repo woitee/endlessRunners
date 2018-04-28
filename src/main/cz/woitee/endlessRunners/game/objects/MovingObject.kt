@@ -1,10 +1,10 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.geom.Vector2Double
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.geom.Vector2Double
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 

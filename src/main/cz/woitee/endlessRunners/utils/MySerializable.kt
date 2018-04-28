@@ -1,4 +1,4 @@
-package cz.woitee.utils
+package cz.woitee.endlessRunners.utils
 
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

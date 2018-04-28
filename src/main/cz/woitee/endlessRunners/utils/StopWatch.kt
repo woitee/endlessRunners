@@ -1,4 +1,4 @@
-package cz.woitee.utils
+package cz.woitee.endlessRunners.utils
 
 /**
  * Created by woitee on 09/01/2017.

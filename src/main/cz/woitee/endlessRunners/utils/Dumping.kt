@@ -1,6 +1,6 @@
-package cz.woitee.utils
+package cz.woitee.endlessRunners.utils
 
-import cz.woitee.game.GameState
+import cz.woitee.endlessRunners.game.GameState
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

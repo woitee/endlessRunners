@@ -1,6 +1,6 @@
-package cz.woitee.game.undoing
+package cz.woitee.endlessRunners.game.undoing
 
-import cz.woitee.game.GameState
+import cz.woitee.endlessRunners.game.GameState
 
 /**
  * Created by woitee on 09/04/2017.

@@ -1,13 +1,13 @@
 package utils
 
-import cz.woitee.game.*
-import cz.woitee.game.algorithms.dfs.delayedTwin.ButtonModel
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.objects.Player
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.utils.CopyUtils
+import cz.woitee.endlessRunners.game.*
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.Player
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.utils.CopyUtils
 import org.junit.jupiter.api.Assertions.*
 
 internal class CopyUtilsTest {

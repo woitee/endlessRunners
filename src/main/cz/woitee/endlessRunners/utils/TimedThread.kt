@@ -1,4 +1,4 @@
-package cz.woitee.utils
+package cz.woitee.endlessRunners.utils
 
 import java.util.concurrent.atomic.AtomicLong
 

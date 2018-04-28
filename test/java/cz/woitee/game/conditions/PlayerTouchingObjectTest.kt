@@ -1,12 +1,12 @@
-package cz.woitee.game.conditions
+package cz.woitee.endlessRunners.game.conditions
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.DummyObjects
-import cz.woitee.game.conditions.PlayerTouchingObject
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.geom.Direction4
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.DummyObjects
+import cz.woitee.endlessRunners.game.conditions.PlayerTouchingObject
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.geom.Direction4
 import org.junit.jupiter.api.Assertions.*
 
 internal class PlayerTouchingObjectTest {

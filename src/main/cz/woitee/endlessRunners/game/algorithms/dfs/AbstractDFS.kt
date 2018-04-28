@@ -1,10 +1,10 @@
-package cz.woitee.game.algorithms.dfs
+package cz.woitee.endlessRunners.game.algorithms.dfs
 
-import cz.woitee.game.GameButton
-import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import java.util.*
 
 /**

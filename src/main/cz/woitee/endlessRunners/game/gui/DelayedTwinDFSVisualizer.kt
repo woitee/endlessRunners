@@ -1,8 +1,8 @@
-package cz.woitee.game.gui
+package cz.woitee.endlessRunners.game.gui
 
-import cz.woitee.game.GameState
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.utils.TimedThread
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.utils.TimedThread
 import java.awt.Graphics
 
 class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS, val frameX: Int = 700, val frameY: Int = 0): GamePanelVisualizer() {

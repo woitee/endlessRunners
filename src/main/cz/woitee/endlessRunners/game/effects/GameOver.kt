@@ -1,7 +1,7 @@
-package cz.woitee.game.effects
+package cz.woitee.endlessRunners.game.effects
 
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
 import java.time.LocalDateTime
 
 /**

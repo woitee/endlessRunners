@@ -1,4 +1,4 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
 /**
  * Created by woitee on 15/01/2017.

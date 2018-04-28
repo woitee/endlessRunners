@@ -1,19 +1,19 @@
 package cz.woitee.endlessRunners
 
-import cz.woitee.game.gui.GamePanelVisualizer
-import cz.woitee.game.Game
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.Grid2D
-import cz.woitee.game.algorithms.dfs.BasicDFS
-import cz.woitee.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.game.descriptions.CrouchGameDescription
-import cz.woitee.game.levelGenerators.encapsulators.DFSEnsuring
-import cz.woitee.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
-import cz.woitee.game.playerControllers.DFSPlayerController
-import cz.woitee.game.playerControllers.KeyboardPlayerController
-import cz.woitee.utils.StopWatch
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.Grid2D
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DFSEnsuring
+import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
+import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
+import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
+import cz.woitee.endlessRunners.utils.StopWatch
 
 /**
  * Created by woitee on 09/01/2017.
@@ -45,7 +45,7 @@ fun testBasic() {
 
 fun test() {
     //Moving by x:1.40, y:-0.54 from (514.10, 24.52)
-//    val game = cz.woitee.createGame()
+//    val game = cz.woitee.endlessRunners.createGame()
 //    val locs = game.currentState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
 //    println(locs)
 }
@@ -80,5 +80,5 @@ fun runGame() {
 
 fun main(args: Array<String>) {
     runGame()
-//    cz.woitee.test()
+//    cz.woitee.endlessRunners.test()
 }

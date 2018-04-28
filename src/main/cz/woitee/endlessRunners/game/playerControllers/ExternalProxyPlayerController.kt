@@ -1,7 +1,7 @@
-package cz.woitee.game.playerControllers
+package cz.woitee.endlessRunners.game.playerControllers
 
-import cz.woitee.game.GameButton
-import cz.woitee.game.GameState
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.GameState
 
 class ExternalProxyPlayerController: PlayerController() {
     var desiredStateChange: GameButton.StateChange? = null

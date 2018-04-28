@@ -1,12 +1,12 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.GameState
-import cz.woitee.geom.Vector2Double
-import cz.woitee.utils.MySerializable
-import cz.woitee.utils.arrayList
-import cz.woitee.utils.resizeTo
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.geom.Vector2Double
+import cz.woitee.endlessRunners.utils.MySerializable
+import cz.woitee.endlessRunners.utils.arrayList
+import cz.woitee.endlessRunners.utils.resizeTo
 import java.io.*
 import kotlin.jvm.Transient
 import java.util.*

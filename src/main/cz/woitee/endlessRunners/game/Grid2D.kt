@@ -1,9 +1,9 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
-import cz.woitee.geom.Vector2Int
+import cz.woitee.endlessRunners.geom.Vector2Int
 import java.util.*
-import cz.woitee.utils.arrayList
-import cz.woitee.utils.shift
+import cz.woitee.endlessRunners.utils.arrayList
+import cz.woitee.endlessRunners.utils.shift
 
 /**
  * A helper grid that describes the objects as a 2D Grid.

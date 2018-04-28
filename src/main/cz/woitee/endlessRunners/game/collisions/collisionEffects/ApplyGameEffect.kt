@@ -1,9 +1,9 @@
-package cz.woitee.game.collisions.collisionEffects
+package cz.woitee.endlessRunners.game.collisions.collisionEffects
 
-import cz.woitee.game.collisions.Collision
-import cz.woitee.game.effects.UndoableGameEffect
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.collisions.Collision
+import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
  * Created by woitee on 23/01/2017.

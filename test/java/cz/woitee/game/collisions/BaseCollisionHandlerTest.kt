@@ -1,12 +1,12 @@
-package cz.woitee.game.collisions
+package cz.woitee.endlessRunners.game.collisions
 
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.geom.Direction4
-import cz.woitee.game.DummyObjects
-import cz.woitee.game.GameWidth
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.geom.Direction4
+import cz.woitee.endlessRunners.game.DummyObjects
+import cz.woitee.endlessRunners.game.GameWidth
 import org.junit.jupiter.api.Assertions.*
-import cz.woitee.game.levelGenerators.BlockLevelGenerator.Block
+import cz.woitee.endlessRunners.game.levelGenerators.Block
 
 /**
  * Created by woitee on 22/07/2017.

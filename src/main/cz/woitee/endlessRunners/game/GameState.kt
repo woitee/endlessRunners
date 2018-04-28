@@ -1,25 +1,25 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
 import java.util.*
 
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
-import cz.woitee.game.objects.Player
-import cz.woitee.game.objects.SolidBlock
-import cz.woitee.game.levelGenerators.LevelGenerator
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.objects.UndoableUpdateGameObject
-import cz.woitee.game.effects.UndoableGameEffect
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.undoing.NoUndo
-import cz.woitee.game.undoing.UndoFactory
-import cz.woitee.geom.Vector2Double
-import cz.woitee.geom.Vector2Int
-import cz.woitee.utils.MySerializable
-import cz.woitee.utils.pools.DefaultUndoListPool
-import cz.woitee.utils.reverse
+import cz.woitee.endlessRunners.game.objects.Player
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.objects.UndoableUpdateGameObject
+import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.undoing.NoUndo
+import cz.woitee.endlessRunners.game.undoing.UndoFactory
+import cz.woitee.endlessRunners.geom.Vector2Double
+import cz.woitee.endlessRunners.geom.Vector2Int
+import cz.woitee.endlessRunners.utils.MySerializable
+import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
+import cz.woitee.endlessRunners.utils.reverse
 import nl.pvdberg.hashkode.hashKode
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

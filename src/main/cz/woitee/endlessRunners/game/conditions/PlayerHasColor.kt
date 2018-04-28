@@ -1,7 +1,7 @@
-package cz.woitee.game.conditions
+package cz.woitee.endlessRunners.game.conditions
 
-import cz.woitee.game.GameState
-import cz.woitee.game.objects.GameObjectColor
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.objects.GameObjectColor
 
 class PlayerHasColor(val color: GameObjectColor): GameCondition() {
     override fun isTrue(gameState: GameState): Boolean {

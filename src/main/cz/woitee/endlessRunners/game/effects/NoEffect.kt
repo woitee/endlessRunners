@@ -1,6 +1,6 @@
-package cz.woitee.game.effects
+package cz.woitee.endlessRunners.game.effects
 
-import cz.woitee.game.GameState
+import cz.woitee.endlessRunners.game.GameState
 
 object NoEffect: GameEffect() {
     override fun applyOn(gameState: GameState) {

@@ -1,8 +1,8 @@
-package cz.woitee.game.conditions
+package cz.woitee.endlessRunners.game.conditions
 
-import cz.woitee.game.GameState
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.geom.Direction4
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.geom.Direction4
 
 class PlayerTouchingObject(val dir: Direction4, val gameObjectClass: GameObjectClass?): GameCondition() {
     override fun isTrue(gameState: GameState): Boolean {

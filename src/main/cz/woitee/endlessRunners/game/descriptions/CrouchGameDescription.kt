@@ -1,8 +1,8 @@
-package cz.woitee.game.descriptions
+package cz.woitee.endlessRunners.game.descriptions
 
-import cz.woitee.game.actions.ChangeShapeAction
-import cz.woitee.game.actions.JumpAction
-import cz.woitee.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
+import cz.woitee.endlessRunners.game.actions.JumpAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
 
 open class CrouchGameDescription: GameDescription() {
     override val allActions: List<GameButtonAction> = listOf(

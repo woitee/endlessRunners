@@ -1,8 +1,8 @@
-package cz.woitee.game.gui
+package cz.woitee.endlessRunners.game.gui
 
-import cz.woitee.game.GameHeight
-import cz.woitee.game.GameState
-import cz.woitee.game.PlayerScreenX
+import cz.woitee.endlessRunners.game.GameHeight
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.PlayerScreenX
 import java.awt.Color
 import java.awt.Graphics
 import java.util.*

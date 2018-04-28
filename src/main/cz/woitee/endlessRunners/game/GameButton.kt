@@ -1,11 +1,11 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.IUndoable
-import cz.woitee.game.undoing.NoUndo
-import cz.woitee.game.undoing.UndoFactory
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.IUndoable
+import cz.woitee.endlessRunners.game.undoing.NoUndo
+import cz.woitee.endlessRunners.game.undoing.UndoFactory
 import nl.pvdberg.hashkode.compareFields
 import nl.pvdberg.hashkode.hashKode
 

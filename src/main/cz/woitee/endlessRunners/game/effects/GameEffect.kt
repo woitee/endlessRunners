@@ -1,7 +1,7 @@
-package cz.woitee.game.effects
+package cz.woitee.endlessRunners.game.effects
 
-import cz.woitee.game.GameState
-import cz.woitee.game.objects.GameObject
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.objects.GameObject
 
 /**
  * Created by woitee on 16/01/2017.

@@ -1,10 +1,10 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
-import cz.woitee.utils.TimedThread
-import cz.woitee.game.levelGenerators.LevelGenerator
-import cz.woitee.game.playerControllers.PlayerController
-import cz.woitee.game.collisions.GridDetectingCollisionHandler
-import cz.woitee.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.utils.TimedThread
+import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.PlayerController
+import cz.woitee.endlessRunners.game.collisions.GridDetectingCollisionHandler
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import java.util.*
 
 /**

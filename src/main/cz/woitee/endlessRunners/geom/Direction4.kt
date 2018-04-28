@@ -1,4 +1,4 @@
-package cz.woitee.geom
+package cz.woitee.endlessRunners.geom
 
 /**
  * Created by woitee on 23/01/2017.

@@ -1,7 +1,7 @@
-package cz.woitee.game.actions.abstract
+package cz.woitee.endlessRunners.game.actions.abstract
 
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndoable
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndoable
 
 /**
  * Created by woitee on 13/01/2017.

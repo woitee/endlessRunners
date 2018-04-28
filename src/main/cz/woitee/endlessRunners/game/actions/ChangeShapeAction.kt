@@ -1,8 +1,8 @@
-package cz.woitee.game.actions
+package cz.woitee.endlessRunners.game.actions
 
-import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
  * An gameAction that supports changing shape for the player, e.g. crouching.

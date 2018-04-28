@@ -1,13 +1,13 @@
-package cz.woitee.game.algorithms.dfs.delayedTwin
+package cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin
 
-import cz.woitee.game.DummyObjects
-import cz.woitee.game.GameButton
-import cz.woitee.game.GameState
-import cz.woitee.game.WidthBlocks
-import cz.woitee.game.algorithms.dfs.CachedState
-import cz.woitee.game.algorithms.dfs.AbstractDFS
-import cz.woitee.geom.Vector2Double
-import cz.woitee.utils.MySerializable
+import cz.woitee.endlessRunners.game.DummyObjects
+import cz.woitee.endlessRunners.game.GameButton
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.WidthBlocks
+import cz.woitee.endlessRunners.game.algorithms.dfs.CachedState
+import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
+import cz.woitee.endlessRunners.geom.Vector2Double
+import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable

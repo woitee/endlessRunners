@@ -1,10 +1,10 @@
-//package cz.woitee.game.playerControllers
+//package cz.woitee.endlessRunners.game.playerControllers
 //
-//import cz.woitee.game.GameState
-//import cz.woitee.game.actions.abstract.GameButtonAction
-//import cz.woitee.game.actions.abstract.HoldButtonAction
-//import cz.woitee.game.undoing.IUndo
-//import cz.woitee.game.undoing.NoUndo
+//import cz.woitee.endlessRunners.game.GameState
+//import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+//import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+//import cz.woitee.endlessRunners.game.undoing.IUndo
+//import cz.woitee.endlessRunners.game.undoing.NoUndo
 //
 ///**
 // * Created by woitee on 23/07/2017.

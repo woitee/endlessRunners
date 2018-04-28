@@ -1,8 +1,8 @@
-package cz.woitee.game.collisions
+package cz.woitee.endlessRunners.game.collisions
 
-import cz.woitee.game.objects.GameObject
-import cz.woitee.geom.Direction4
-import cz.woitee.geom.Distance2D
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.geom.Direction4
+import cz.woitee.endlessRunners.geom.Distance2D
 
 data class Collision(
         val other: GameObject,

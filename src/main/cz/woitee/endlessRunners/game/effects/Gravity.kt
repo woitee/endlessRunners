@@ -1,10 +1,10 @@
-package cz.woitee.game.effects
+package cz.woitee.endlessRunners.game.effects
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.objects.MovingObject
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.NoUndo
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.objects.MovingObject
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.NoUndo
 
 /**
  * Gravity effect, defaultly targeted on player, but can also be used for other objects.

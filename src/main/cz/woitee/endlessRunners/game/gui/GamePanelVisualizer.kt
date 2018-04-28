@@ -1,8 +1,8 @@
-package cz.woitee.game.gui
+package cz.woitee.endlessRunners.game.gui
 
-import cz.woitee.game.*
-import cz.woitee.game.objects.*
-import cz.woitee.geom.Vector2Double
+import cz.woitee.endlessRunners.game.*
+import cz.woitee.endlessRunners.game.objects.*
+import cz.woitee.endlessRunners.geom.Vector2Double
 import java.awt.*
 import java.awt.event.KeyListener
 import java.awt.event.WindowAdapter

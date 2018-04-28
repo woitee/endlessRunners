@@ -1,6 +1,6 @@
 package cz.woitee.endlessRunners.experiments
 
-import cz.woitee.utils.arrayList
+import cz.woitee.endlessRunners.utils.arrayList
 import java.awt.Button
 import java.awt.Color
 import javax.swing.JFrame

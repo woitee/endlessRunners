@@ -1,9 +1,9 @@
-package cz.woitee.game.actions
+package cz.woitee.endlessRunners.game.actions
 
-import cz.woitee.game.GameState
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.effects.GameOver
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.effects.GameOver
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 class GameOverAction(): GameButtonAction() {
     val gameOver = GameOver()

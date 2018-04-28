@@ -1,6 +1,6 @@
-package cz.woitee.utils.pools
+package cz.woitee.endlessRunners.utils.pools
 
-import cz.woitee.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.IUndo
 import java.util.*
 
 /**

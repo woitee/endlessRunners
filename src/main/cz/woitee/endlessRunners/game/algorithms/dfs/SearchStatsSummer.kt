@@ -1,4 +1,4 @@
-package cz.woitee.game.algorithms.dfs
+package cz.woitee.endlessRunners.game.algorithms.dfs
 
 import kotlin.repeat
 import java.util.*

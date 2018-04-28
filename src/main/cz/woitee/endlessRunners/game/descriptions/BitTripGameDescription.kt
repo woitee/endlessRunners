@@ -1,21 +1,21 @@
-package cz.woitee.game.descriptions
+package cz.woitee.endlessRunners.game.descriptions
 
-import cz.woitee.game.collisions.BaseCollisionHandler
-import cz.woitee.game.collisions.collisionEffects.ApplyGameEffect
-import cz.woitee.game.collisions.collisionEffects.DestroyOther
-import cz.woitee.game.collisions.collisionEffects.composite.ConditionalCollisionEffect
-import cz.woitee.game.actions.ChangeColorAction
-import cz.woitee.game.actions.ChangeShapeAction
-import cz.woitee.game.actions.abstract.GameButtonAction
-import cz.woitee.game.actions.JumpAction
-import cz.woitee.game.actions.composite.ConditionalAction
-import cz.woitee.game.conditions.PlayerHasColor
-import cz.woitee.game.conditions.PlayerTouchingObject
-import cz.woitee.game.effects.GameOver
-import cz.woitee.game.objects.CustomBlock
-import cz.woitee.game.objects.GameObjectClass
-import cz.woitee.game.objects.GameObjectColor
-import cz.woitee.geom.Direction4
+import cz.woitee.endlessRunners.game.collisions.BaseCollisionHandler
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.ApplyGameEffect
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.DestroyOther
+import cz.woitee.endlessRunners.game.collisions.collisionEffects.composite.ConditionalCollisionEffect
+import cz.woitee.endlessRunners.game.actions.ChangeColorAction
+import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.JumpAction
+import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
+import cz.woitee.endlessRunners.game.conditions.PlayerHasColor
+import cz.woitee.endlessRunners.game.conditions.PlayerTouchingObject
+import cz.woitee.endlessRunners.game.effects.GameOver
+import cz.woitee.endlessRunners.game.objects.CustomBlock
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.GameObjectColor
+import cz.woitee.endlessRunners.geom.Direction4
 
 /**
  * Created by woitee on 23/07/2017.

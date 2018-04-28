@@ -1,8 +1,8 @@
-package cz.woitee.game
+package cz.woitee.endlessRunners.game
 
-import cz.woitee.game.actions.abstract.HoldButtonAction
-import cz.woitee.game.levelGenerators.FlatLevelGenerator
-import cz.woitee.game.playerControllers.NoActionPlayerController
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import org.junit.jupiter.api.Assertions.*
 
 internal class GameStateTest {

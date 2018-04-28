@@ -1,15 +1,15 @@
-package cz.woitee.game.collisions.collisionEffects
+package cz.woitee.endlessRunners.game.collisions.collisionEffects
 
-import cz.woitee.game.BlockHeight
-import cz.woitee.game.BlockWidth
-import cz.woitee.game.collisions.Collision
-import cz.woitee.game.objects.GameObject
-import cz.woitee.game.objects.MovingObject
-import cz.woitee.game.GameState
-import cz.woitee.game.undoing.IUndo
-import cz.woitee.game.undoing.NoUndo
-import cz.woitee.geom.Direction4
-import cz.woitee.geom.Vector2Double
+import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.collisions.Collision
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.MovingObject
+import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.game.undoing.NoUndo
+import cz.woitee.endlessRunners.geom.Direction4
+import cz.woitee.endlessRunners.geom.Vector2Double
 
 /**
  * Created by woitee on 23/01/2017.

@@ -1,6 +1,6 @@
-package cz.woitee.game.objects
+package cz.woitee.endlessRunners.game.objects
 
-import cz.woitee.game.BlockWidth
+import cz.woitee.endlessRunners.game.BlockWidth
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 

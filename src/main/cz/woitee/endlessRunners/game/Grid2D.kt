@@ -3,6 +3,7 @@ package cz.woitee.endlessRunners.game
 import cz.woitee.endlessRunners.geom.Vector2Int
 import java.util.*
 import cz.woitee.endlessRunners.utils.arrayList
+import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
 
 /**
@@ -11,7 +12,11 @@ import cz.woitee.endlessRunners.utils.shift
  * Created by woitee on 13/01/2017.
  */
 
-class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
+class Grid2D<T>(width: Int, height: Int, val factory: ()->T) {
+    var width: Int = width
+        protected set
+    var height: Int = height
+        protected set
     var grid = arrayList(width, { arrayList(height, factory) })
 
     operator fun get(x: Int, y: Int): T {
@@ -61,6 +66,19 @@ class Grid2D<T>(val width: Int, val height: Int, val factory: ()->T) {
         for (col in grid) {
             col.shift(amount, factory)
         }
+    }
+
+    fun resizeWidth(targetWidth: Int) {
+        grid.resizeTo(targetWidth, { arrayList(height, factory) } )
+        this.width = targetWidth
+    }
+
+    fun resizeHeight(targetHeight: Int) {
+        for (column in grid) {
+            column.resizeTo(targetHeight,
+                    factory)
+        }
+        this.height = targetHeight
     }
 
     fun clear() {

@@ -314,14 +314,14 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     fun textDump(): ArrayList<String> {
         // Convert objects to char grid
         val charGrid = Grid2D(grid.width, grid.height, { ' ' })
-        for (gameObject in gameObjects) {
-            val gridLoc = gridLocation(gameObject.x, gameObject.y)
-            for (x in gridLoc.x .. gridLoc.x + gameObject.widthBlocks - 1) {
-                for (y in gridLoc.y .. gridLoc.y + gameObject.heightBlocks - 1) {
-                    charGrid[x, y] = gameObject.dumpChar
-                }
+        for (x in 0 until grid.width) {
+            for (y in 0 until grid.height) {
+                charGrid[x, y] = grid[x, y]?.dumpChar ?: ' '
             }
         }
+        val gridLoc = gridLocation(player.x, player.y)
+        charGrid[gridLoc.x, gridLoc.y] = 'P'
+        charGrid[gridLoc.x, gridLoc.y + 1] = 'P'
 
         // Convert char grid to strings
         val strings = ArrayList<String>()

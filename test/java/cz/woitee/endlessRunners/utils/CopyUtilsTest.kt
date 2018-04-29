@@ -1,4 +1,4 @@
-package utils
+package cz.woitee.endlessRunners.utils
 
 import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel

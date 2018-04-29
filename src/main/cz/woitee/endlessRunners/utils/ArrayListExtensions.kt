@@ -63,3 +63,9 @@ fun <T> ArrayList<T>.reverse(): ArrayList<T> {
 fun <T> ArrayList<T>.pop(): T {
     return this.removeAt(this.count() - 1)
 }
+
+val _arrayListRandom = Random()
+
+fun <T> ArrayList<T>.randomElement(random: Random = _arrayListRandom): T {
+    return this[random.nextInt(this.count())]
+}

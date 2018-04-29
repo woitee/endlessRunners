@@ -1,4 +1,4 @@
-package cz.woitee.endlessRunners.game.levelGenerators
+package cz.woitee.endlessRunners.game.levelGenerators.block
 
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.HeightBlocks
@@ -54,7 +54,7 @@ class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode =
 
         val block = blocks[currentBlockIx]
         val col = arrayList<GameObject?>(HeightBlocks, { null })
-        for (y in 0 .. HeightBlocks - 1) {
+        for (y in 0 until HeightBlocks) {
             if (y < block.height)
                 col[y] = block.definition[currentBlockOffset, y]?.makeCopy()
             else

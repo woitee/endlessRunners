@@ -4,9 +4,8 @@ import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.geom.Direction4
 import cz.woitee.endlessRunners.game.DummyObjects
-import cz.woitee.endlessRunners.game.GameWidth
 import org.junit.jupiter.api.Assertions.*
-import cz.woitee.endlessRunners.game.levelGenerators.Block
+import cz.woitee.endlessRunners.game.levelGenerators.block.Block
 
 /**
  * Created by woitee on 22/07/2017.
@@ -119,13 +118,13 @@ class BaseCollisionHandlerTest {
         val game = DummyObjects.createDummyGame()
         game.gameState.gridX = 134207
         val block = Block(game.gameDescription, arrayListOf(
-            "                    #         ",
-            "                 #            ",
-            "   #    #      #    ##     ## ",
-            "             #################",
-            "        ######################",
-            "     #########################",
-            " #############################"
+                "                    #         ",
+                "                 #            ",
+                "   #    #      #    ##     ## ",
+                "             #################",
+                "        ######################",
+                "     #########################",
+                " #############################"
         ))
         for (y in 0 until block.height) {
             for (x in 0 until block.width) {

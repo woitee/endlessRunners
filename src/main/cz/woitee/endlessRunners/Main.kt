@@ -7,9 +7,13 @@ import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.Grid2D
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.descriptions.WanabaltGameDescription
+import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
+import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.utils.StopWatch
 
 /**
@@ -49,18 +53,20 @@ fun test() {
 
 fun createGame(): Game {
 //    val gameDescription = BitTripGameDescription()
-    val gameDescription = CrouchGameDescription()
+//    val gameDescription = CrouchGameDescription()
+    val gameDescription = WanabaltGameDescription()
 
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
 
 //    val levelGenerator = StateRemembering(DFSEnsuring(SimpleLevelGenerator(), BasicDFS(), doDFSAfterFail = true))
 //    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), BasicDFS())
-    val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, HeightBlockLevelGenerator(gameDescription))
-//    val levelGenerator = HeightBlockLevelGenerator(gameDescription)
+//    val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, HeightBlockLevelGenerator(gameDescription))
+//    val levelGenerator = FlatLevelGenerator()
+    val levelGenerator = HeightBlockLevelGenerator(gameDescription)
 
-    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
-//    val playerController = KeyboardPlayerController()
+//    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
+    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
     return Game(levelGenerator, playerController, visualiser,

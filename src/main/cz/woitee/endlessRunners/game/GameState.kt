@@ -10,6 +10,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.effects.GameEffect
 import cz.woitee.endlessRunners.game.objects.UndoableUpdateGameObject
 import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
@@ -43,6 +44,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         private set
     var buttons = ArrayList<GameButton>()
     var heldActions = HashMap<HoldButtonAction, Double>()
+    var timedEffects = HashMap<Double, GameEffect>()
 
     var isGameOver = false
 
@@ -148,6 +150,21 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         synchronized(gameObjects) {
             performActionsBasedOnButtons()
 
+            val it = timedEffects.iterator()
+            while (it.hasNext()) {
+                val keyValue = it.next()
+                if (gameTime >= keyValue.key) {
+                    keyValue.value.applyOn(this)
+                    it.remove()
+                }
+            }
+
+            for ((targetTime, effect) in timedEffects) {
+                if (gameTime >= targetTime) {
+                    effect.applyOn(this)
+                    timedEffects.remove(targetTime)
+                }
+            }
             for (gameObject in updateObjects) {
                 gameObject.update(time)
             }
@@ -163,6 +180,19 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             val undoList = DefaultUndoListPool.borrowObject()
             performActionsBasedOnButtonsUndoably(undoList)
 
+            val it = timedEffects.iterator()
+            while (it.hasNext()) {
+                val keyValue = it.next()
+                val targetTime = keyValue.key
+                val effect = keyValue.value
+                if (gameTime >= targetTime) {
+                    undoList.add((effect as UndoableGameEffect).applyUndoablyOn(this))
+                    it.remove()
+                    undoList.add(object : IUndo { override fun undo(gameState: GameState) {
+                        timedEffects[targetTime] = effect
+                    }})
+                }
+            }
             updateObjects.map {
                 val undo = (it as UndoableUpdateGameObject).undoableUpdate(time)
                 if (undo != NoUndo)
@@ -174,6 +204,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                     undoList.add(undo)
             }
             gameTime += time
+            undoList.add(object : IUndo { override fun undo(gameState: GameState) {
+                gameState.gameTime -= time
+            }})
             return UndoFactory.multiUndo(undoList)
         }
     }

@@ -14,6 +14,8 @@ abstract class GameEffect {
     enum class Timing { PERSISTENT, ONCE }
     open val timing: Timing = Timing.PERSISTENT
 
+    enum class Relativity { RELATIVE, ABSOLUTE }
+
     abstract fun applyOn(gameState: GameState)
     fun findTarget(gameState: GameState): GameObject? {
         if (target == Target.PLAYER)

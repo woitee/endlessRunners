@@ -8,8 +8,7 @@ import cz.woitee.endlessRunners.game.undoing.NoUndo
 class SpeedChange (
     targetedAt: Target = Target.PLAYER,
     var targetSpeed: Double = 16.0,
-    var relativity: Relativity = Relativity.ABSOLUTE,
-    var timeout: Double = -1.0): UndoableGameEffect() {
+    var relativity: Relativity = Relativity.ABSOLUTE): UndoableGameEffect() {
 
     override val target = targetedAt
     override val timing = Timing.ONCE
@@ -21,9 +20,6 @@ class SpeedChange (
         if (originalXSpeed == desiredXSpeed) return
 
         target.xspeed = desiredXSpeed
-        if (timeout > 0.0) {
-            gameState.timedEffects[gameState.gameTime + timeout] = SpeedChange(Target.PLAYER, originalXSpeed, Relativity.ABSOLUTE)
-        }
     }
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {
@@ -33,16 +29,10 @@ class SpeedChange (
         if (originalXSpeed == desiredXSpeed) return NoUndo
 
         target.xspeed = desiredXSpeed
-        if (timeout > 0.0) {
-            gameState.timedEffects[gameState.gameTime + timeout] = SpeedChange(Target.PLAYER, originalXSpeed, Relativity.ABSOLUTE)
-        }
 
         return object : IUndo {
             override fun undo(gameState: GameState) {
                 target.xspeed = originalXSpeed
-                if (timeout > 0.0) {
-                    gameState.timedEffects.remove(gameState.gameTime + timeout)
-                }
             }
         }
     }

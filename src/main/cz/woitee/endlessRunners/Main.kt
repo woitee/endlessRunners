@@ -5,8 +5,10 @@ import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.Grid2D
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.descriptions.DashingGameDescription
 import cz.woitee.endlessRunners.game.descriptions.WanabaltGameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
@@ -54,7 +56,8 @@ fun test() {
 fun createGame(): Game {
 //    val gameDescription = BitTripGameDescription()
 //    val gameDescription = CrouchGameDescription()
-    val gameDescription = WanabaltGameDescription()
+//    val gameDescription = WanabaltGameDescription()
+    val gameDescription = DashingGameDescription()
 
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 //    val visualiser: GamePanelVisualizer? = null
@@ -63,10 +66,11 @@ fun createGame(): Game {
 //    val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), BasicDFS())
 //    val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, HeightBlockLevelGenerator(gameDescription))
 //    val levelGenerator = FlatLevelGenerator()
-    val levelGenerator = HeightBlockLevelGenerator(gameDescription)
+//    val levelGenerator = HeightBlockLevelGenerator(gameDescription)
+    val levelGenerator = SimpleLevelGenerator()
 
-//    val playerController = DFSPlayerController(DelayedTwinDFS(0.25))
-    val playerController = KeyboardPlayerController()
+    val playerController = DFSPlayerController(BasicDFS())
+//    val playerController = KeyboardPlayerController()
 //    val playerController = RandomPlayerController()
 
     return Game(levelGenerator, playerController, visualiser,

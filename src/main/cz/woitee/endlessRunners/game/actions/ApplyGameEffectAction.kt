@@ -6,7 +6,7 @@ import cz.woitee.endlessRunners.game.effects.GameEffect
 import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
-class ApplyGameEffectAction(val gameEffect: UndoableGameEffect): GameButtonAction() {
+open class ApplyGameEffectAction(val gameEffect: UndoableGameEffect): GameButtonAction() {
     override fun isApplicableOn(gameState: GameState): Boolean {
         return true
     }

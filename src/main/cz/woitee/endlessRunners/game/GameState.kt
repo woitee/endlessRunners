@@ -46,6 +46,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     var heldActions = HashMap<HoldButtonAction, Double>()
     var timedEffects = HashMap<Double, GameEffect>()
 
+    var score = 0
     var isGameOver = false
 
     val lastColumnX: Int
@@ -65,6 +66,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     public var serializationVersion = 5
 
     init {
+        score = 0
         player.x = PlayerScreenX
         player.y = BlockHeight.toDouble()
         player.xspeed = game.gameDescription.playerStartingSpeed

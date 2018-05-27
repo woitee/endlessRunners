@@ -12,6 +12,7 @@ import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
 import cz.woitee.endlessRunners.game.conditions.PlayerHasColor
 import cz.woitee.endlessRunners.game.conditions.PlayerTouchingObject
 import cz.woitee.endlessRunners.game.effects.GameOver
+import cz.woitee.endlessRunners.game.effects.ScoreChange
 import cz.woitee.endlessRunners.game.objects.CustomBlock
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.game.objects.GameObjectColor
@@ -32,7 +33,7 @@ open class BitTripGameDescription: GameDescription() {
             trampolineAction,
             ChangeColorAction(GameObjectColor.YELLOW)
     )
-    override val customObjects = arrayListOf(CustomBlock(0), CustomBlock(1))
+    override val customObjects = arrayListOf(CustomBlock(0), CustomBlock(1), CustomBlock(2))
 
     override val collisionEffects = mapOf(
         Pair(
@@ -41,11 +42,19 @@ open class BitTripGameDescription: GameDescription() {
                 GameObjectClass.CUSTOM1,
                 Direction4.any()
             ),
-                ConditionalCollisionEffect(
-                        PlayerHasColor(GameObjectColor.YELLOW),
-                        DestroyOther(),
-                        ApplyGameEffect(GameOver())
-                )
+            ConditionalCollisionEffect(
+                    PlayerHasColor(GameObjectColor.YELLOW),
+                    DestroyOther(),
+                    ApplyGameEffect(GameOver())
+            )
+        ),
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM2,
+                Direction4.any()
+            ),
+            ApplyGameEffect(ScoreChange(10))
         )
     )
 }

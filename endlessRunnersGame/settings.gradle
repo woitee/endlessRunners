@@ -1,11 +1,8 @@
-rootProject.name = 'endlessRunnersBulk'
-include 'endlessRunnersGame'
-findProject(':endlessRunnersGame')?.name = 'endlessRunners'
+rootProject.name = 'endlessRunnersGame'
 
 sourceControl {
     gitRepository(uri("https://github.com/gabriel-shanahan/HashKode.git")) {
         producesModule("com.github.gabriel-shanahan:hashkode")
     }
 }
-include 'endlessRunnersEvo'
 

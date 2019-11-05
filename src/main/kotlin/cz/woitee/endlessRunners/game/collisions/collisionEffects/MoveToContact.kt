@@ -6,26 +6,20 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.collisions.Collision
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.MovingObject
+import cz.woitee.endlessRunners.game.objects.Player
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 import cz.woitee.endlessRunners.geom.Direction4
-import cz.woitee.endlessRunners.geom.Vector2Double
 
 /**
- * Created by woitee on 23/01/2017.
+ * Basic CollisionEffect for not moving through platforms - the object moves only until contact.
  */
 
 class MoveToContact : IUndoableCollisionEffect {
-    class MoveToContactUndo(val source: MovingObject, val origPos: Vector2Double, val origVel: Vector2Double) : IUndo {
-        override fun undo(gameState: GameState) {
-            source.location = origPos
-            source.velocity = origVel
-        }
-    }
-
     override fun apply(source: GameObject, collision: Collision) {
         source as MovingObject? ?: return
         val updateTime = source.gameState.lastAdvanceTime
+        if (source is Player) { source.timesJumpedSinceTouchingGround = 0 }
 
         when (collision.direction) {
             Direction4.UP, Direction4.DOWN -> {
@@ -48,8 +42,22 @@ class MoveToContact : IUndoableCollisionEffect {
 
     override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
         val movingSource = source as MovingObject? ?: return NoUndo
-        val undo = MoveToContactUndo(source, movingSource.location, movingSource.velocity)
+        val currentLocation = movingSource.location
+        val currentVelocity = movingSource.velocity
+        val currentJumpCount = (movingSource as? Player)?.timesJumpedSinceTouchingGround ?: 0
+
+        val undo = object : IUndo {
+            override fun undo(gameState: GameState) {
+                movingSource.location = currentLocation
+                movingSource.velocity = currentVelocity
+                (movingSource as? Player)?.timesJumpedSinceTouchingGround = currentJumpCount
+            }
+        }
         apply(source, collision)
         return undo
+    }
+
+    override fun toString(): String {
+        return "MoveToContact"
     }
 }

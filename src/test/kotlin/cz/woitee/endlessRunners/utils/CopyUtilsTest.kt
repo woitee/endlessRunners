@@ -3,6 +3,9 @@ package cz.woitee.endlessRunners.utils
 import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
+import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.game.objects.Player
@@ -142,5 +145,35 @@ internal class CopyUtilsTest {
 
         assertNotEquals(delayedTwinDFS, delayedTwinCopy)
         assertSimiliarButtonModel(delayedTwinDFS.buttonModel, delayedTwinCopy.buttonModel)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun copyGameDescription() {
+        innerCopyGameDescriptionTest(GameDescription())
+        innerCopyGameDescriptionTest(CrouchGameDescription())
+        innerCopyGameDescriptionTest(BitTriGameDescription())
+    }
+
+    fun innerCopyGameDescriptionTest(gameDescription: GameDescription) {
+        val copy = gameDescription.makeCopy()
+
+        assertNotSame(gameDescription, copy)
+
+        assertEquals(gameDescription.javaClass, copy.javaClass)
+        assertEquals(gameDescription.allActions.count(), copy.allActions.count())
+        for (i in 0 until gameDescription.allActions.count()) {
+            val action = gameDescription.allActions[i]
+            val copiedAction = copy.allActions[i]
+            assertEquals(action.javaClass, copiedAction.javaClass)
+            assertNotSame(action, copiedAction)
+        }
+        assertEquals(gameDescription.allObjects.count(), copy.allObjects.count())
+        for (i in 0 until gameDescription.allObjects.count()) {
+            val gameObjects = gameDescription.allObjects[i]
+            val copiedObject = copy.allObjects[i]
+            assertEquals(gameObjects.javaClass, copiedObject.javaClass)
+            assertNotSame(gameObjects, copiedObject)
+        }
+        assertEquals(gameDescription.playerStartingSpeed, copy.playerStartingSpeed)
     }
 }

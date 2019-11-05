@@ -8,6 +8,9 @@ import java.awt.Graphics
 import java.util.*
 import kotlin.math.roundToInt
 
+/**
+ * A component of a GamePanel that draws floating messages above the Player, each for a predetermined time.
+ */
 class GamePanelAnnouncerComponent {
     data class QueuedMessage(val startTime: Long, val message: String)
     /** Time of announcement in seconds. */

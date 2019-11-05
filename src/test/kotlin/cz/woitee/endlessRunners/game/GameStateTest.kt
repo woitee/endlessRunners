@@ -113,4 +113,39 @@ internal class GameStateTest {
         assertEquals(1, readButtonChange!!.gameButton.index)
         assertEquals(GameButton.InteractionType.RELEASE, readButtonChange.interactionType)
     }
+
+    @org.junit.jupiter.api.Test
+    fun outOfGridLeftTest() {
+        outOfGridTest(-10000.0, 0.0)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun outOfGridRightTest() {
+        outOfGridTest(10000.0, 0.0)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun outOfGridTopTest() {
+        outOfGridTest(0.0, 10000.0)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun outOfGridBottomTest() {
+        outOfGridTest(0.0, -10000.0)
+    }
+
+    fun outOfGridTest(xOffset: Double, yOffset: Double) {
+        val game = Game(
+                FlatLevelGenerator(),
+                NoActionPlayerController(),
+                null,
+                gameDescription = DummyObjects.MockGameDescription()
+        )
+
+        val gameState = game.gameState
+        gameState.player.x = xOffset
+        gameState.player.y = yOffset
+
+        gameState.advance(1.0)
+    }
 }

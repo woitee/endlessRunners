@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.game
 import java.awt.event.KeyListener
 
 /**
- * Created by woitee on 13/01/2017.
+ * An underlying abstraction of game visualization.
  */
 
 abstract class GameVisualizerBase {

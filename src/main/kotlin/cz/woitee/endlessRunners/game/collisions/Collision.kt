@@ -4,6 +4,16 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.geom.Direction4
 import cz.woitee.endlessRunners.geom.Distance2D
 
+/**
+ * An object representing details of a GameObject colliding with another.
+ *
+ * @param other The other object of the collision.
+ * @param locationX The x coordinate of where the collision occured in a GameState.
+ * @param locationY The y coordinate of where the collision occured in a GameState.
+ * @param myLocationX The x coordinate on my body (relative to me), where the collision occurs.
+ * @param myLocationY The y coordinate on my body (relative to me), where the collision occurs.
+ * @param direction The direction in which the collision happened.
+ */
 data class Collision(
     val other: GameObject,
     val locationX: Double,

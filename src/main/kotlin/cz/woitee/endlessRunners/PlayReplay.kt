@@ -5,7 +5,9 @@ import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FromRecordingLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.FromRecordingPlayerController
+import java.util.*
 
+/** Plays a replay from a log file (sent e.g. in the experiment) */
 fun main(args: Array<String>) {
     val replayPath: String = "RecordingGame12018_03_05-17_53_51.dmp"
     val gameDescription = CrouchGameDescription()

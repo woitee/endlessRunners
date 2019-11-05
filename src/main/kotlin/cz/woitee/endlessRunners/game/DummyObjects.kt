@@ -1,6 +1,6 @@
 package cz.woitee.endlessRunners.game
 
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
@@ -8,8 +8,11 @@ import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.RandomPlayerController
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
+/**
+ * Dummy, simple objects, for use in testing.
+ */
 object DummyObjects {
-    class MockAction : GameButtonAction() {
+    class MockAction : GameAction() {
         var timesApplied = 0
         var timesUndone = 0
 
@@ -30,7 +33,7 @@ object DummyObjects {
             }
         }
     }
-    class MockHoldButtonAction : HoldButtonAction() {
+    class MockHoldAction : HoldButtonAction() {
         var isApplicableCalled = 0
         var keptApplyingCalled = 0
         var canBeStoppedApplyingCalled = 0
@@ -81,8 +84,8 @@ object DummyObjects {
         }
     }
     class MockGameDescription : GameDescription() {
-        override val allActions: List<GameButtonAction> = listOf(
-            MockAction(), MockHoldButtonAction()
+        override val allActions: ArrayList<GameAction> = arrayListOf(
+            MockAction(), MockHoldAction()
         )
     }
 

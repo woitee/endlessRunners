@@ -1,6 +1,6 @@
 package cz.woitee.endlessRunners.game
 
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.IUndoable
@@ -8,13 +8,19 @@ import cz.woitee.endlessRunners.game.undoing.NoUndo
 import nl.pvdberg.hashkode.compareFields
 import nl.pvdberg.hashkode.hashKode
 
-data class GameButton(val action: GameButtonAction, val gameState: GameState, val index: Int) {
+/**
+ * A class representing a "virtual" button of the game (which can be mapped to real buttons by a player controller).
+ * This is a part of the GameState so we have a better idea on how is the game interacted with from a human perspective.
+ */
+data class GameButton(val action: GameAction, val gameState: GameState, val index: Int) {
     enum class InteractionType { PRESS, HOLD, RELEASE }
     data class StateChange(val gameButton: GameButton, val interactionType: InteractionType) : IUndoable {
         /**
          * Applies the buttonStateChange on a GameState. PRESS interactions are resolved immediately if applicable and
          * discarded otherwise. HOLD / RELEASE are just forwarded to the GameState which resolves them as soon
          * as they are applicable.
+         *
+         * A special case are so called "only on press" actions, which act as a press even if they are held.
          */
         fun applyOn(gameState: GameState) {
             when (interactionType) {
@@ -25,14 +31,15 @@ data class GameButton(val action: GameButtonAction, val gameState: GameState, va
                 }
                 GameButton.InteractionType.HOLD -> {
                     if (!gameButton.isPressed) {
+                        if (gameButton.action.onlyOnPress && gameButton.action.isApplicableOn(gameState)) {
+                            gameButton.action.applyOn(gameState)
+                        }
                         gameButton.isPressed = true
                         gameButton.pressedGameTime = gameState.gameTime
                     }
                 }
                 GameButton.InteractionType.RELEASE -> {
-                    if (gameButton.isPressed) {
-                        gameButton.isPressed = false
-                    }
+                    gameButton.isPressed = false
                 }
             }
         }
@@ -78,6 +85,13 @@ data class GameButton(val action: GameButtonAction, val gameState: GameState, va
         override fun toString(): String {
             return "StateChange(${gameButton.index},$interactionType)"
         }
+
+        override fun equals(other: Any?) = compareFields(other) {
+            equal = one.gameButton == two.gameButton &&
+                    one.interactionType == two.interactionType
+        }
+
+        override fun hashCode() = hashKode(gameButton, interactionType)
 
         companion object {
             fun fromString(gameState: GameState, stringRep: String): StateChange? {

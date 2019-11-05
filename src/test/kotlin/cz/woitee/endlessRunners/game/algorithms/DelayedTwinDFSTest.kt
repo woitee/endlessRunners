@@ -1,15 +1,15 @@
 package cz.woitee.endlessRunners.game.algorithms
 
 import cz.woitee.endlessRunners.game.*
-import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
+import cz.woitee.endlessRunners.game.actions.ChangeShapeHoldAction
 import cz.woitee.endlessRunners.game.actions.JumpAction
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.algorithms.dfs.CachedState
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameOverGameDescription
+import cz.woitee.endlessRunners.game.descriptions.OldBitTriGameDescription
 import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
@@ -26,13 +26,14 @@ import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.readFromFile
 import java.io.File
 import java.io.ObjectInputStream
+import java.util.*
 import org.junit.jupiter.api.Assertions.*
 
 internal class DelayedTwinDFSTest {
-    class TimedChangeShapeGameDescription : BitTripGameDescription() {
-        override val allActions: List<GameButtonAction> = listOf(
+    class TimedChangeShapeGameDescription : OldBitTriGameDescription() {
+        override val allActions: ArrayList<GameAction> = arrayListOf(
                 JumpAction(22.0),
-                ChangeShapeAction(2, 1)
+                ChangeShapeHoldAction(2, 1)
         )
     }
     class HolesLevelGenerator(val holeWidth: Int = 2) : LevelGenerator() {
@@ -70,7 +71,7 @@ internal class DelayedTwinDFSTest {
     }
 
     private fun correctCaching(delayTime: Double = 0.25, minCrouchTime: Double = 0.25) {
-        // We mainly need the min time-limit on ChangeShapeAction
+        // We mainly need the min time-limit on ChangeShapeHoldAction
         val gameDescription = TimedChangeShapeGameDescription()
         val levelGenerator = HolesLevelGenerator()
 
@@ -84,7 +85,7 @@ internal class DelayedTwinDFSTest {
         )
 
         var exceptionMessage = ""
-            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e -> exceptionMessage = e.message ?: "No Message" }
+            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exceptionMessage = e.message ?: "No Message" }
 
         game.start()
         game.updateThread.join(7000)
@@ -125,17 +126,17 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun searchBeginningsAndEnds_stillFoundAWay() {
-        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/28.dmp", 0.25, 2, BitTripGameDescription())
+        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/28.dmp", 0.25, 2, OldBitTriGameDescription())
     }
 
     @org.junit.jupiter.api.Test
     fun searchBeginningsAndEnds_stillFoundAWay2() {
-        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription())
+        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, OldBitTriGameDescription())
     }
 
     @org.junit.jupiter.api.Test
     fun testSearchInLastGeneratedStates() {
-        runTestFromFile("src/test/resources/GameStates_2017_11_26-22_02_24/31.dmp", 0.25, 4, BitTripGameDescription(), allowSearchInBeginning = true)
+        runTestFromFile("src/test/resources/GameStates_2017_11_26-22_02_24/31.dmp", 0.25, 4, OldBitTriGameDescription(), allowSearchInBeginning = true)
     }
 
     @org.junit.jupiter.api.Test
@@ -145,7 +146,7 @@ internal class DelayedTwinDFSTest {
 
         val game = Game(SimpleLevelGenerator(), NoActionPlayerController(), GamePanelVisualizer(),
                 mode = Game.Mode.INTERACTIVE,
-                gameDescription = BitTripGameDescription()
+                gameDescription = OldBitTriGameDescription()
         )
 
         val currentState = game.gameState.makeCopy()
@@ -175,7 +176,7 @@ internal class DelayedTwinDFSTest {
 //                null,
                 GamePanelVisualizer(),
                 mode = Game.Mode.INTERACTIVE,
-                gameDescription = BitTripGameDescription(),
+                gameDescription = OldBitTriGameDescription(),
                 restartOnGameOver = false
         )
         val file = File(filePath)
@@ -238,38 +239,13 @@ internal class DelayedTwinDFSTest {
         println("Both runs are ${if (firstRes) "succeeding" else "failing!"}")
     }
 
-    @org.junit.jupiter.api.Test
-    fun searchAfterFailure() {
-        val filePath = "src/test/resources/TestButtonModel_2018_01_24-00_05_11.dmp"
-        val delayedTwinDFS = readDelayedTwinDFS(filePath)
-
-        val column1: ArrayList<GameObject?> = arrayList(HeightBlocks, { null })
-        column1[0] = SolidBlock()
-        column1[1] = SolidBlock()
-        column1[2] = SolidBlock()
-        val droppedColumn = delayedTwinDFS.buttonModel.addColumn(column1)
-
-        val firstRes = performDelayedTwinDFSWith(delayedTwinDFS)
-        assertFalse(firstRes)
-
-        delayedTwinDFS.buttonModel.undoAddColumn(column1)
-        // now it should be possible
-        column1[2] = null
-        delayedTwinDFS.buttonModel.addColumn(column1)
-
-        // This is the little thing that was fucking it up
-        delayedTwinDFS.statesCache.clear()
-        val secondRes = performDelayedTwinDFSWith(delayedTwinDFS)
-        assertTrue(secondRes)
-    }
-
     fun performDFSFromButtonModel(filePath: String, readTimes: Int = 1): Boolean {
         val delayedTwinDFS = readDelayedTwinDFS(filePath, readTimes)
         return performDelayedTwinDFSWith(delayedTwinDFS)
     }
 
     fun readDelayedTwinDFS(filePath: String, readTimes: Int = 1): DelayedTwinDFS {
-        val dummyGame = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = BitTripGameDescription(), updateRate = 75.0)
+        val dummyGame = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = OldBitTriGameDescription(), updateRate = 75.0)
         val dummyState = dummyGame.gameState
 
         val delayedTwinDFS = DelayedTwinDFS(0.25)

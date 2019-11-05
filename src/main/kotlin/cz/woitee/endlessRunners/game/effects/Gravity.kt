@@ -7,25 +7,24 @@ import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 
 /**
- * Gravity effect, defaultly targeted on player, but can also be used for other objects.
+ * Gravity effect, defaultly targeted on player, but could also be used for other objects.
  * It also states that the objects collide between each other.
- *
- * Created by woitee on 16/01/2017.
  */
 
-class Gravity(
-    targetedAt: Target = Target.PLAYER,
+data class Gravity(
+    override val target: Target = Target.PLAYER,
     var strength: Double = 0.5
 ) : UndoableGameEffect() {
 
-    override val target = targetedAt
     override val timing = Timing.PERSISTENT
+    override val oppositeEffect: GameEffect
+        get() = Gravity(target, -strength)
 
     override fun applyOn(gameState: GameState) {
         val target = (findTarget(gameState) as MovingObject?) ?: return
-        if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
-            return
-        }
+//        if (strength > 0 && gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid == true) {
+//            return
+//        }
 
         target.yspeed -= strength * BlockHeight * gameState.game.updateTime
     }
@@ -33,9 +32,9 @@ class Gravity(
     override fun applyUndoablyOn(gameState: GameState): IUndo {
         // Don't fall if a block is underneath
         val target = (findTarget(gameState) as MovingObject?) ?: return NoUndo
-        if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid ?: false) {
-            return NoUndo
-        }
+//        if (gameState.atLocation(target.x + target.widthPx / 2, target.y - 1)?.isSolid == true) {
+//            return NoUndo
+//        }
 
         // Else fall
         val originalYSpeed = target.yspeed

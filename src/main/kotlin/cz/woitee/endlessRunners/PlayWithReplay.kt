@@ -8,8 +8,11 @@ import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDF
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
+/**
+ * Play a game and create a log for replay.
+ */
 fun main(args: Array<String>) {
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()

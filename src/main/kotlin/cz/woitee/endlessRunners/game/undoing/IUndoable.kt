@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.game.undoing
 import cz.woitee.endlessRunners.game.GameState
 
 /**
- * Created by woitee on 09/04/2017.
+ * An interface describing something that does effects, which can be undone afterwards.
  */
 
 interface IUndoable {

@@ -1,12 +1,14 @@
 package cz.woitee.endlessRunners.utils.pools
 
 import cz.woitee.endlessRunners.utils.pop
+import java.util.*
 
 /**
- * Created by woitee on 04/06/2017.
+ * A very simple pooling class, provide a factory and you have a pool of objects.
+ * Each thread has a separate pool, as they are ment to provide speed, and locking would remove that.
  */
 open class SimplePool<T> (val factory: SimpleFactory<T>) {
-    val poolStack = ArrayList<T>()
+    val threadPoolStack = ThreadLocal.withInitial { ArrayList<T>() }
 
     var numIdle: Int = 0
         get() = 0
@@ -14,6 +16,7 @@ open class SimplePool<T> (val factory: SimpleFactory<T>) {
         get() = 0
 
     open fun borrowObject(): T {
+        val poolStack = threadPoolStack.get()
         if (poolStack.count() == 0) {
             return factory.create()
         }
@@ -21,6 +24,7 @@ open class SimplePool<T> (val factory: SimpleFactory<T>) {
     }
 
     open fun returnObject(obj: T) {
+        val poolStack = threadPoolStack.get()
         factory.passivateObject(obj)
         poolStack.add(obj)
     }

@@ -7,10 +7,10 @@ import cz.woitee.endlessRunners.game.undoing.IUndo
 /**
  * An gameAction that supports changing shape for the player, e.g. crouching.
  *
- * Created by woitee on 13/01/2017.
+ * @param targetHeight Target height of player after changing shape, in blocks.
+ * @param targetWidth Target width of player after changing shape, in blocks.
  */
-
-class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int) : HoldButtonAction() {
+class ChangeShapeHoldAction(val targetWidth: Int, val targetHeight: Int) : HoldButtonAction() {
     override fun isApplicableOn(gameState: GameState): Boolean {
         applyOn(gameState)
         for (collPoint in gameState.player.collPoints) {
@@ -49,5 +49,9 @@ class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int) : HoldButto
                 gameState.player.heightBlocks = targetHeight
             }
         }
+    }
+
+    override fun toString(): String {
+        return "ChangeShapeHoldAction(width=$targetWidth, height=$targetHeight)"
     }
 }

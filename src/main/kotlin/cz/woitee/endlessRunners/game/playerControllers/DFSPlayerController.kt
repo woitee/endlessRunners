@@ -14,10 +14,13 @@ import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 /**
- * Created by woitee on 09/04/2017.
+ * A player controller using any of the DFS variants to play the game.
+ *
+ * @param dfs The DFS algorithm to use
+ * @param backupDFS DFS algorithm to validate the previous one - useful for debugging
  */
 class DFSPlayerController(val dfs: AbstractDFS = BasicDFS(), val backupDFS: AbstractDFS? = null) : PlayerController() {
     var readyToDie = false
@@ -81,9 +84,9 @@ class DFSPlayerController(val dfs: AbstractDFS = BasicDFS(), val backupDFS: Abst
     fun performDFS(gameState: GameState, dfs: AbstractDFS = this.dfs): GameButton.StateChange? {
         val action = dfs.searchForAction(gameState)
         if (!dfs.lastStats.success) {
-            print("Reached GameOver in depth of search: ${dfs.lastStats.reachedDepth}")
-            gameState.print()
-            dumpState(gameState)
+//            println("Reached GameOver in depth of search: ${dfs.lastStats.reachedDepth}")
+//            gameState.print()
+//            dumpState(gameState)
             readyToDie = true
         }
         logStats()

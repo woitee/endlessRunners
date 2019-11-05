@@ -9,17 +9,21 @@ import cz.woitee.endlessRunners.game.collisions.collisionEffects.ICollisionEffec
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.IUndoableCollisionEffect
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.MoveToContact
 import cz.woitee.endlessRunners.game.effects.GameOver
+import cz.woitee.endlessRunners.game.objects.*
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.game.objects.MovingObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.geom.*
 import cz.woitee.endlessRunners.geom.Direction4
 import cz.woitee.endlessRunners.geom.Distance2D
 import cz.woitee.endlessRunners.geom.Vector2Double
 import cz.woitee.endlessRunners.geom.flagsToDirections
+import java.io.Serializable
+import java.util.*
 
 /**
- * Class that deals with all collision detection related stuff.
+ * A simple implementation of a class that deals with all collision detection related stuff.
  *
  * Created by woitee on 23/01/2017.
  */
@@ -28,8 +32,12 @@ open class BaseCollisionHandler(val game: Game) {
     // How many collisions with one object should be handled at most
     val MAX_COLLISIONS = 10
 
-    data class CollisionHandlerEntry(val srcClass: GameObjectClass, val targetClass: GameObjectClass, val directionFlags: Int) {
+    data class CollisionHandlerEntry(val srcClass: GameObjectClass, val targetClass: GameObjectClass, val directionFlags: Int) : Serializable {
         constructor (srcClass: GameObjectClass, targetClass: GameObjectClass, direction4: Direction4) : this(srcClass, targetClass, direction4.value)
+
+        override fun toString(): String {
+            return "CollisionHandlerEntry(src=$srcClass, target=$targetClass, directions: ${Direction4.directionFlags2String(directionFlags)})"
+        }
     }
     val collisionHandlerMapping = HashMap<CollisionHandlerEntry, ICollisionEffect>()
     init {
@@ -137,8 +145,12 @@ open class BaseCollisionHandler(val game: Game) {
         return undoList
     }
     private fun _handleCollisions(movingObject: MovingObject, undoable: Boolean = false, undoList: MutableList<IUndo>? = null) {
+        var lastCollisionObject: GameObject? = null
         for (i in 1 .. MAX_COLLISIONS) {
             val collision = getCollision(movingObject) ?: return
+            // If the first collision handling fails, just do nothing
+            if (collision.other == lastCollisionObject) return
+            lastCollisionObject = collision.other
 
             val collEffect: ICollisionEffect? =
                     collisionHandlerMapping.get(CollisionHandlerEntry(
@@ -158,7 +170,7 @@ open class BaseCollisionHandler(val game: Game) {
 
             if (movingObject.gameState.isGameOver) return
         }
-        println("Collision limit ($MAX_COLLISIONS}) reached with object $movingObject! Maybe collision handling is done improperly?")
+//        println("Collision limit ($MAX_COLLISIONS}) reached with object ${movingObject}! Maybe collision handling is done improperly?")
     }
 
     protected fun getDefaultCollisionEffect(other: GameObject, direction: Direction4): ICollisionEffect? {

@@ -1,8 +1,8 @@
 package cz.woitee.endlessRunners.game.levelGenerators.block
 
-import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import org.junit.jupiter.api.Assertions.*
 
 internal class BlockValidatorTest {
@@ -81,8 +81,11 @@ internal class BlockValidatorTest {
     }
 
     fun runTest(stringBlock: ArrayList<String>, expectedResult: Boolean, gameDescription: GameDescription = CrouchGameDescription()) {
-        val blockValidator = BlockValidator(gameDescription, BasicDFS())
-        val result = blockValidator.validate(HeightBlock(gameDescription, stringBlock))
+        val blockValidator = BlockValidator(gameDescription, { DFSPlayerController() })
+        val block = HeightBlock(gameDescription, stringBlock)
+        val result = blockValidator.validate(block)
+        println(block.toString())
+        println("is ${if (result) "possible" else "impossible"}")
 
         assertEquals(expectedResult, result)
     }

@@ -5,16 +5,25 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.undoing.IUndo
+import cz.woitee.endlessRunners.utils.ComputationStopper
+import java.util.*
 
 /**
- * A place that you can init when creating a BasicDFS or some other search algorithm for the game. Provides useful methods,
+ * A base for creating DFS or other related search algorithms for the game. Provides useful methods,
  * measures time running, etc.
- *
- * Created by woitee on 30/04/2017.
  */
 
-abstract class AbstractDFS(val persistentCache: Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
-    data class SearchResult(val success: Boolean, val action: GameButton.StateChange? = null)
+abstract class AbstractDFS(
+    val persistentCache: Boolean = true,
+    var maxDepth: Int = 1000,
+    val actionEvery: Int = 1,
+    var debug: Boolean = false,
+    val computationStopper: ComputationStopper = ComputationStopper()
+) {
+    /**
+     * A simple data class returning whether the search was succesful, and if so, a list of action to perform to survive.
+     */
+    data class SearchResult(val success: Boolean, val actions: ArrayList<GameButton.StateChange?> = ArrayList())
     /**
      * Assistant class for notifying that the last state advance managed to only perform the gameAction, and not a state update.
      */
@@ -37,6 +46,28 @@ abstract class AbstractDFS(val persistentCache: Boolean = true, var maxDepth: In
      * Searches for an gameAction that doesn't lead to death and returns it, or null if it doesn't exist.
      */
     fun searchForAction(gameState: GameState, updateTime: Double = -1.0): GameButton.StateChange? {
+        val result = performSearch(gameState, updateTime)
+        if (result.success) {
+            return result.actions[0]
+        }
+        return null
+    }
+
+    /**
+     * Searches for a whole sequence of actions that doesn't lead to death and returns it, or null if it doesn't exist.
+     */
+    fun searchForPlan(gameState: GameState, updateTime: Double = -1.0): ArrayList<GameButton.StateChange?> {
+        val result = performSearch(gameState, updateTime)
+        if (result.success) {
+            return result.actions
+        }
+        return ArrayList()
+    }
+
+    /**
+     * Performs the search on a GameState.
+     */
+    fun performSearch(gameState: GameState, updateTime: Double = -1.0): SearchResult {
         this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
         if (persistentCache) {
             pruneUnusableCache(gameState)
@@ -60,7 +91,7 @@ abstract class AbstractDFS(val persistentCache: Boolean = true, var maxDepth: In
         lastStats.success = result.success
         lastStats.cachedStates = currentlyCachedStates
         lastStats.timeTaken = (System.nanoTime() - startTime).toDouble() / 1000000000
-        return result.action
+        return result
     }
 
     protected abstract fun searchInternal(gameState: GameState, updateTime: Double): SearchResult
@@ -68,10 +99,6 @@ abstract class AbstractDFS(val persistentCache: Boolean = true, var maxDepth: In
     open fun init(gameState: GameState) {
         updateTime = gameState.game.updateTime
         clearCache()
-    }
-
-    protected fun isPlayerAtEnd(gameState: GameState): Boolean {
-        return gameState.player.nextX(this.updateTime) + gameState.player.widthPx >= gameState.maxX
     }
 
     /**

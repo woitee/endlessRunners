@@ -4,6 +4,11 @@ import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
 import java.io.File
 
+/**
+ * A player controller that repeats the actions as they were performed by a given recording.
+ *
+ * @param recordingFilePath path to the recording
+ */
 class FromRecordingPlayerController(recordingFilePath: String) : PlayerController() {
 
     val recordingLines = File(recordingFilePath).readLines().filter { !it.startsWith("NEWCOLUMN") }

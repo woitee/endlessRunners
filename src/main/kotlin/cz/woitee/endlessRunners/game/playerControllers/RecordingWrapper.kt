@@ -5,8 +5,13 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.WidthBlocks
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
+/**
+ * A wrapper for any PlayerController that records actions into a file.
+ *
+ * @param innerController The PlayerController wrapped inside this one
+ */
 class RecordingWrapper(val innerController: PlayerController) : PlayerController() {
     val recording = ArrayList<String>()
 

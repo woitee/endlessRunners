@@ -9,7 +9,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
 /**
- * Created by woitee on 15/01/2017.
+ * A moving extension of an object. It contains velocity, and moves in each step.
  */
 abstract class MovingObject(x: Double, y: Double) : UndoableUpdateGameObject(x, y) {
     class MovingObjectUndo(val movingObject: MovingObject, val collUndos: List<IUndo>, val x: Double, val y: Double) : IUndo {

@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.game.objects
 
 /**
- * Created by woitee on 15/01/2017.
+ * The most default - solid object in the game, used as a basic platform.
  */
 
 class SolidBlock(x: Double = 0.0, y: Double = 0.0) : GameObject(x, y) {

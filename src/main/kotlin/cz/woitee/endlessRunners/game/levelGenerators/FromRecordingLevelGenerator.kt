@@ -5,6 +5,9 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import java.io.File
 import java.util.ArrayList
 
+/**
+ * After a replay is recorded, this generator can be used to construct level in the same way as it happened in it.
+ */
 class FromRecordingLevelGenerator(recordingFilePath: String) : LevelGenerator() {
     val recordingLines = File(recordingFilePath).readLines().filter { it.startsWith("NEWCOLUMN") }
     var currentIndex = 0

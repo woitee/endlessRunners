@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.game.undoing
 import cz.woitee.endlessRunners.game.GameState
 
 /**
- * Created by woitee on 04/06/2017.
+ * A singleton default value of not undoing anything, should be returned from undoable methods when nothing was changed.
  */
 object NoUndo : IUndo {
     override fun undo(gameState: GameState) {

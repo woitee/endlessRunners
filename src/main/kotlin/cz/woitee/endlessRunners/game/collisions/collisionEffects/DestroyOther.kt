@@ -5,6 +5,9 @@ import cz.woitee.endlessRunners.game.collisions.Collision
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
+/**
+ * A collision effects that results in one object destroying the one it collided with.
+ */
 class DestroyOther : IUndoableCollisionEffect {
     override fun apply(source: GameObject, collision: Collision) {
         source.gameState.remove(collision.other)
@@ -17,5 +20,9 @@ class DestroyOther : IUndoableCollisionEffect {
                 gameState.add(collision.other)
             }
         }
+    }
+
+    override fun toString(): String {
+        return "DestroyOther"
     }
 }

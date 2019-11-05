@@ -1,6 +1,6 @@
 package cz.woitee.endlessRunners.game.levelGenerators.encapsulators
 
-import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
@@ -11,11 +11,11 @@ import cz.woitee.endlessRunners.utils.arrayList
 import java.io.File
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
-import java.util.Date
-import kotlin.collections.ArrayList
+import java.util.*
 
 /**
- * Created by woitee on 22/07/2017.
+ * An encapsulator that uses DFS to ensure playability of a given column. If adding the column would create an impossible state,
+ * a copy of the last used column is returned instead (sans custom blocks), which should always be playable.
  */
 
 open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: AbstractDFS, val doDFSAfterFail: Boolean = false, val dumpErrors: Boolean = true) : LevelGenerator() {
@@ -38,8 +38,7 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: Abst
                 lastResult = DFSResult.FAIL_COPYCOLUMN
                 if (dfsProvider is DelayedTwinDFS) {
                     val buttonModel = dfsProvider.buttonModel
-                    val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()
-                    ) + ".dmp"
+                    val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
                     println("Dumping buttonModel to $logFileName")
                     val file = File(logFileName)
                     val oos = ObjectOutputStream(file.outputStream())
@@ -86,7 +85,6 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: Abst
     }
 
     fun copySolidBlocksFromLastColumn(gameState: GameState): ArrayList<GameObject?> {
-        println("Copying last column")
         val column = arrayList<GameObject?>(gameState.grid.height, { null })
         for (i in 0 until gameState.grid.height) {
             if (gameState.grid[gameState.grid.width - 1, i]?.gameObjectClass == GameObjectClass.SOLIDBLOCK)

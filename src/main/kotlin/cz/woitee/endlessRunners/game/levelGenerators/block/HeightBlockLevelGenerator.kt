@@ -11,52 +11,63 @@ import cz.woitee.endlessRunners.utils.randomElement
 import java.util.ArrayList
 
 /**
-* A class to generate level from pre-saved 2D blocks.
-* Created by woitee on 13/08/2017.
+* A class to generate level from pre-saved 2D blocks, by matching their ending and starting heights.
 */
-class HeightBlockLevelGenerator(val gameDescription: GameDescription) : LevelGenerator() {
-    var blocks = arrayListOf(
-            HeightBlock(gameDescription, arrayListOf(
-                    "P  P",
-                    "P  P",
-                    "####"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "       P",
-                    "P      P",
-                    "P   ####",
-                    "########"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "P       ",
-                    "P      P",
-                    "####   P",
-                    "########"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "P          ",
-                    "P          ",
-                    "####       ",
-                    "####      P",
-                    "####      P",
-                    "###########"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "   ###   ",
-                    "   ###   ",
-                    "P  ###  P",
-                    "P       P",
-                    "#########"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "   ###        ",
-                    "   ###        ",
-                    "P  ###       P",
-                    "P            P",
-                    "#        #####",
-                    "##############"
-            ))
-    )
+open class HeightBlockLevelGenerator(
+    val gameDescription: GameDescription,
+    val blocks: List<HeightBlock> =
+        arrayListOf(
+                HeightBlock(gameDescription, arrayListOf(
+                        "P  P",
+                        "P  P",
+                        "####"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "       P",
+                        "P      P",
+                        "P   ####",
+                        "########"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "P       ",
+                        "P      P",
+                        "####   P",
+                        "########"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "P          ",
+                        "P          ",
+                        "####       ",
+                        "####      P",
+                        "####      P",
+                        "###########"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "   ###   ",
+                        "   ###   ",
+                        "P  ###  P",
+                        "P       P",
+                        "#########"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "   ###        ",
+                        "   ###        ",
+                        "P  ###       P",
+                        "P            P",
+                        "#        #####",
+                        "##############"
+                )),
+                HeightBlock(gameDescription, arrayListOf(
+                        "      ",
+                        "P     ",
+                        "P    P",
+                        "     P",
+                        "    # ",
+                        "######"
+                ))
+        )
+) : LevelGenerator() {
+
     var currentBlockIx = -1
     var currentBlockOffset = 0
     var currentBlockY = 0
@@ -65,6 +76,9 @@ class HeightBlockLevelGenerator(val gameDescription: GameDescription) : LevelGen
 
     val maxHeight = 6
 
+    /**
+     * Selects the next block randomly from possible candidates.
+     */
     protected fun selectNextBlock(gameState: GameState) {
         // set selected block as current
         if (currentBlockIx >= 0) {

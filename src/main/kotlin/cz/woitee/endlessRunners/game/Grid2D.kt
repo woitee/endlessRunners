@@ -4,11 +4,10 @@ import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
+import java.util.*
 
 /**
  * A helper grid that describes the objects as a 2D Grid.
- *
- * Created by woitee on 13/01/2017.
  */
 
 class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
@@ -39,6 +38,14 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
         return safeGet(p.x, p.y)
     }
 
+    fun safeSet(x: Int, y: Int, obj: T): Grid2D<T> {
+        if (contains(x, y)) set(x, y, obj)
+        return this
+    }
+    fun safeSet(p: Vector2Int, obj: T): Grid2D<T> {
+        return safeSet(p.x, p.y, obj)
+    }
+
     operator fun set(x: Int, y: Int, obj: T): Grid2D<T> {
         grid[x][y] = obj
         return this
@@ -58,7 +65,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
     }
 
     fun shiftX(amount: Int) {
-        grid.shift(amount, { arrayList(height, factory) })
+        grid.shift(amount) { arrayList(height, factory) }
     }
 
     fun shiftY(amount: Int) {
@@ -96,7 +103,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
 
     fun forEach(action: (T) -> Unit, afterRow: (Int) -> Unit = {}) {
         for (y in height - 1 downTo 0) {
-            for (x in 0 until width) {
+            for (x in 0 .. width - 1) {
                 action(grid[x][y])
             }
             afterRow(y)

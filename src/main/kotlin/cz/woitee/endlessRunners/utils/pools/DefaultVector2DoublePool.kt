@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.utils.pools
 import cz.woitee.endlessRunners.geom.Vector2Double
 
 /**
- * Created by woitee on 04/06/2017.
+ * A minimalistic pool for Vector2Double. Used to alleviate GC.
  */
 object DefaultVector2DoublePool : SimplePool<Vector2Double>(DefaultVector2DoubleFactory()) {
     class DefaultVector2DoubleFactory : SimpleFactory<Vector2Double>() {

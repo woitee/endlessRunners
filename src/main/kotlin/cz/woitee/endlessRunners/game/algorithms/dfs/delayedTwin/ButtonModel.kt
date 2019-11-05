@@ -9,7 +9,17 @@ import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.util.*
 
+/**
+ * A model to encompass both states of Delayed Twin DFS, and ensure that they both press the same buttons.
+ *
+ * Essentially acts as a "larger GameState" - actions can be performed, time can advance and game over can occur.
+ *
+ * @param currentState The current (ahead of the other) state of the game
+ * @param delayedState The delayed (behind the other) state of the game
+ * @param updateTime The default update time of each step
+ */
 class ButtonModel(var currentState: GameState, var delayedState: GameState, val updateTime: Double) : MySerializable {
     enum class ThreeStateInteraction { NONE, PRESS, RELEASE }
     enum class DisabledStates { NONE, CURRENT, DELAYED, BOTH }
@@ -96,6 +106,9 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         this.delayedState = delayedState
     }
 
+    /**
+     * The whole button model is game over if either of its states are game over.
+     */
     fun isGameOver() = currentState.isGameOver || delayedState.isGameOver
 
     /**

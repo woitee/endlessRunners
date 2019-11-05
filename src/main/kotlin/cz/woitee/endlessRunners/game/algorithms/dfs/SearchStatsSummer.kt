@@ -1,9 +1,13 @@
 package cz.woitee.endlessRunners.game.algorithms.dfs
 
+import java.util.*
 import kotlin.repeat
 
 /**
- * Created by woitee on 30/04/2017.
+ * A methods that averages statistics of searches to batches and prints them once in a while.
+ *
+ * @param sumEvery Number of iterations after we perform the averaging and print.
+ * @param callback What should happen after this number of iterations - default is printing to standard output.
  */
 
 class SearchStatsSummer(val sumEvery: Int, val callback: (SearchStatsAverage) -> Unit = { average -> println(average) }) {

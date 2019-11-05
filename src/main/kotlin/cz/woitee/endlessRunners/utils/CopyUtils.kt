@@ -1,11 +1,10 @@
 package cz.woitee.endlessRunners.utils
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serializable
+import java.io.*
 
+/**
+ * Utils for copying by serialization.
+ */
 object CopyUtils {
     inline fun <reified T : MySerializable> copyBySerialization(sourceObj: T, targetObj: T): T {
         var oos: ObjectOutputStream? = null

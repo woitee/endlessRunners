@@ -2,13 +2,13 @@ package cz.woitee.endlessRunners.game.playerControllers
 
 import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import java.util.*
 
 /**
  * Class that controls the player via keyboard.
- *
- * Created by woitee on 14/01/2017.
  */
 
 class KeyboardPlayerController : PlayerController() {
@@ -17,10 +17,12 @@ class KeyboardPlayerController : PlayerController() {
      */
     class KeyboardHelper : KeyAdapter() {
         var pressedKeys = HashSet<Int>()
+        var pressedCounts = HashMap<Int, Int>()
 
         override fun keyPressed(e: KeyEvent?) {
             if (e != null) {
                 pressedKeys.add(e.keyCode)
+                pressedCounts.put(e.keyCode, pressedCounts.getOrDefault(e.keyCode, 0) + 1)
             }
         }
 
@@ -32,6 +34,14 @@ class KeyboardPlayerController : PlayerController() {
 
         fun pressedAnyOf(keys: IntArray): Boolean {
             return keys.any { pressedKeys.contains(it) }
+        }
+
+        fun totalPressesOf(keys: IntArray): Int {
+            return keys.map { pressedCounts.getOrDefault(it, 0) }.sum()
+        }
+
+        fun init() {
+            pressedCounts.clear()
         }
     }
     val keyboardHelper = KeyboardHelper()
@@ -55,6 +65,7 @@ class KeyboardPlayerController : PlayerController() {
             println("Warning! KeyboardController will only be able to control first ${keyDefaults.size} of the ${keyMapping.size} of game actions.")
         }
         keyMapping.addAll(keyDefaults)
+        keyboardHelper.init()
         inited = true
     }
 
@@ -62,10 +73,12 @@ class KeyboardPlayerController : PlayerController() {
         for (i in 0 .. gameState.buttons.lastIndex) {
             val button = gameState.buttons[i]
             val keyPressed = keyboardHelper.pressedAnyOf(keyMapping[i])
+            val toggleAction = button.action is HoldButtonAction && button.action.isToggleControlled
+            val shouldBePressed = if (!toggleAction) keyPressed else keyboardHelper.totalPressesOf(keyMapping[i]) % 2 == 1
 
-            if (!button.isPressed && keyPressed) {
+            if (!button.isPressed && shouldBePressed) {
                 return button.hold
-            } else if (button.isPressed && !keyPressed)
+            } else if (button.isPressed && !shouldBePressed)
                 return button.release
         }
         return null

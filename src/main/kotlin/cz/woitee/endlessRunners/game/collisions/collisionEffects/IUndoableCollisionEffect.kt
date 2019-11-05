@@ -5,7 +5,7 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
- * Created by woitee on 09/04/2017.
+ * A CollisionEffect that can be undone.
  */
 
 interface IUndoableCollisionEffect : ICollisionEffect {

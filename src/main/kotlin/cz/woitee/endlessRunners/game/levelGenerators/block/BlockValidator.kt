@@ -1,39 +1,89 @@
 package cz.woitee.endlessRunners.game.levelGenerators.block
 
-import cz.woitee.endlessRunners.game.BlockHeight
-import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.GameState
-import cz.woitee.endlessRunners.game.HeightBlocks
-import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.*
+import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
+import cz.woitee.endlessRunners.game.playerControllers.PlayerController
+import java.util.*
 
-class BlockValidator(val gameDescription: GameDescription, val dfs: BasicDFS) {
-    val game = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = gameDescription)
+/**
+ * A validator of HeightBlocks, checking their playability and difficulty.
+ *
+ * @param gameDescription The GameDescription in which the HeightBlocks exist.
+ * @param playerControllerFactory Provider of players to use for assessing blocks.
+ * @param seed seed for a random number generator in the game
+ */
+class BlockValidator(val gameDescription: GameDescription, val playerControllerFactory: () -> PlayerController, seed: Long = Random().nextLong()) {
+    /**
+     * Data class representing the result of a validation.
+     */
+    data class ActionPlan(val actions: ArrayList<GameButton.StateChange?>, val success: Boolean, val maxPlayerX: Double)
+    val game = Game(FlatLevelGenerator(), NoActionPlayerController(), null, gameDescription = gameDescription, seed = seed)
 
+    /**
+     * Returns whether the block is playable (by the given player)
+     */
     fun validate(block: HeightBlock): Boolean {
-        val gameState = getBlockAsGameState(block)
-
-        val result = dfs.searchForAction(gameState)
-        return dfs.lastStats.success
+        return getPlan(block).success
     }
 
-    protected fun getBlockAsGameState(block: HeightBlock): GameState {
+    /**
+     * Returns a plan of actions if the block is playable.
+     */
+    fun getPlan(block: HeightBlock): ActionPlan {
+        // If the player is DFS, get plan directly
+        val playerController = playerControllerFactory()
+        if (playerController is DFSPlayerController) {
+            return getPlanFromDFS(block, playerController.dfs)
+        }
+
+        var maxPlayerX = 0.0
+        val actionList = ArrayList<GameButton.StateChange?>()
+        val gameState = getBlockAsGameState(block)
+        while (!(gameState.isGameOver || gameState.isPlayerAtEnd())) {
+            val action = playerController.onUpdate(gameState)
+            actionList.add(action)
+            gameState.advanceUndoableByAction(action)
+            if (gameState.player.x > maxPlayerX) maxPlayerX = gameState.player.x
+        }
+
+        return ActionPlan(actionList, !gameState.isGameOver, maxPlayerX)
+    }
+
+    /**
+     * Utilizes DFS directly to get a plan, without needing of stepping by a PlayerController.
+     */
+    fun getPlanFromDFS(block: HeightBlock, dfs: AbstractDFS): ActionPlan {
+        val gameState = getBlockAsGameState(block)
+
+        dfs.init(gameState)
+        val plan = dfs.searchForPlan(gameState)
+        return ActionPlan(plan, dfs.lastStats.success, dfs.lastStats.maxPlayerX)
+    }
+
+    /**
+     * Creates a GameState from a block.
+     */
+    fun getBlockAsGameState(block: HeightBlock, game: Game = this.game): GameState {
         val gameState = GameState(game, null)
         gameState.grid.resizeWidth(block.width + 2)
+        val maxX = gameState.grid.width - 1
+        val maxY = gameState.grid.height - 1
 
         for (x in 0 until block.width) {
             for (y in 0 until block.height) {
                 gameState.addToGrid(block.definition[x, y]?.makeCopy(), x, y)
             }
+            gameState.addToGrid(SolidBlock(), x, maxY)
         }
 
         gameState.player.x = 0.0
         gameState.player.y = ((block.startHeight + 1) * BlockHeight).toDouble()
 
-        val maxX = gameState.grid.width - 1
         for (y in 0 until HeightBlocks) {
             if (y !in block.endHeight + 1 .. block.endHeight + 2) {
                 gameState.addToGrid(SolidBlock(), maxX, y)

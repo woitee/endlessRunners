@@ -10,8 +10,6 @@ import cz.woitee.endlessRunners.geom.twoNumbers2Direction4
 /**
  * A collision detector which uses the grid as a starting point to look for collisions.
  * It detects all grid locations through which the line goes and checks if there are collisions in them.
- *
- * Created by woitee on 05/06/2017.
  */
 
 class GridDetectingCollisionHandler(game: Game) : BaseCollisionHandler(game) {
@@ -70,7 +68,7 @@ class GridDetectingCollisionHandler(game: Game) : BaseCollisionHandler(game) {
         }
 
         fun autoRange(a: Int, b: Int): IntProgression {
-            return if (a <= b) a .. b else a downTo b
+            return if (a <= b) a..b else a downTo b
         }
 
         val aGridX = ax.toInt() / BlockWidth - gameState.gridX
@@ -94,7 +92,7 @@ class GridDetectingCollisionHandler(game: Game) : BaseCollisionHandler(game) {
         var prevGridX = aGridX
         var skippedFirst = false
         // we'll go by vertical
-        for (gridX in aGridX until bGridX) {
+        for (gridX in aGridX .. bGridX - 1) {
             val borderX = (gameState.gridX + gridX + 1) * BlockWidth
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()

@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.geom
 
 /**
- * Created by woitee on 22/01/2017.
+ * A vector of lengths 2 with Integer values. Provides operators for easy work.
  */
 
 data class Vector2Int(var x: Int = 0, var y: Int = 0) {

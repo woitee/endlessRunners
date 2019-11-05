@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.utils
 
 /**
- * Created by woitee on 09/01/2017.
+ * A class to quickly measure time intervals in microseconds, using nanosecond precision methods.
  */
 internal class StopWatch {
     var startTime = 0L
@@ -16,6 +16,6 @@ internal class StopWatch {
     fun stop(): Long {
         isStarted = true
         val nanos = System.nanoTime() - startTime
-        return nanos / 1000000
+        return (nanos / 1000000) + (if (nanos.rem(1000000L) >= 500000) 1 else 0)
     }
 }

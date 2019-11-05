@@ -6,10 +6,11 @@ import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.utils.arrayList
+import java.util.*
 
 /**
  * A class to generate level from pre-saved 2D blocks.
- * Created by woitee on 13/08/2017.
+ * Useful for replaying chunks that showed to be problematic.
  */
 class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode = Mode.REPEAT) : LevelGenerator() {
     enum class Mode {

@@ -3,8 +3,8 @@ package cz.woitee.endlessRunners.game.algorithms
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
-import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.descriptions.OldBitTriGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
@@ -30,7 +30,7 @@ internal class BasicDFSTest {
 
     @org.junit.jupiter.api.Test
     fun pertainingTest() {
-        runTestFromFile("src/test/resources/GameState_2017_09_28-16_07_19.dmp", 1)
+        runTestFromFile("src/test/resources/GameState_2017_09_28-16_07_19.dmp", 1, expectGameOver = true)
     }
 
     internal fun runTestFromFile(
@@ -39,7 +39,7 @@ internal class BasicDFSTest {
         expectGameOver: Boolean = false,
         time: Double = 2.0,
         dfsProvider: AbstractDFS = BasicDFS(),
-        gameDescription: GameDescription = BitTripGameDescription()
+        gameDescription: GameDescription = OldBitTriGameDescription()
     ) {
         val game = Game(
                 FlatLevelGenerator(),
@@ -75,7 +75,7 @@ internal class BasicDFSTest {
 //        DebugUtils.printDebugInfo(game.gameState)
 
         var exception: Throwable? = null
-            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e -> exception = e }
+            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exception = e }
 
         game.start()
 

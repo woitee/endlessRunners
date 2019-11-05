@@ -3,9 +3,11 @@ package cz.woitee.endlessRunners.game.levelGenerators
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.SolidBlock
+import java.util.*
 
 /**
- * Created by woitee on 04/03/2017.
+ * A very simple LevelGenerator using predefined probability to increase or decrease the height of the level by a
+ * specific amount.
  */
 
 class SimpleLevelGenerator : LevelGenerator() {
@@ -15,9 +17,20 @@ class SimpleLevelGenerator : LevelGenerator() {
         -2 to 0.10,
         -1 to 0.13,
         0 to 0.57,
-        +1 to 0.23,
+        +1 to 0.20,
         +2 to 0.00
     )
+
+    // The variant used for the first experiment
+//    var probableTransfers = mapOf(
+//        -2 to 0.10,
+//        -1 to 0.13,
+//        0 to 0.57,
+//        +1 to 0.20,
+//        +2 to 0.00
+//    )
+
+    // An easy version of the game
 //    var probableTransfers = mapOf(
 //            -2 to 0.10,
 //            -1 to 0.10,

@@ -6,7 +6,7 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
- * Created by woitee on 23/01/2017.
+ * A collision effect that simply applies a GameEffect.
  */
 
 class ApplyGameEffect(val gameEffect: UndoableGameEffect) : IUndoableCollisionEffect {
@@ -16,5 +16,9 @@ class ApplyGameEffect(val gameEffect: UndoableGameEffect) : IUndoableCollisionEf
 
     override fun applyUndoable(source: GameObject, collision: Collision): IUndo {
         return gameEffect.applyUndoablyOn(source.gameState)
+    }
+
+    override fun toString(): String {
+        return "ApplyGameEffect($gameEffect)"
     }
 }

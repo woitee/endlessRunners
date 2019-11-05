@@ -7,6 +7,7 @@ import cz.woitee.endlessRunners.game.WidthBlocks
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.CachedState
 import cz.woitee.endlessRunners.geom.Vector2Double
+import cz.woitee.endlessRunners.utils.ComputationStopper
 import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -14,7 +15,6 @@ import java.io.Serializable
 import java.lang.Thread.sleep
 import java.security.InvalidParameterException
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * A special BasicDFS that creates a "delayed twin" state - a currentState that is several frames delayed. This delayed currentState then
@@ -24,9 +24,11 @@ import kotlin.collections.ArrayList
 class DelayedTwinDFS(
     val delayTime: Double,
     maxDepth: Int = 1000,
+    actionEvery: Int = 1,
     debug: Boolean = false,
-    val allowSearchInBeginning: Boolean = false
-) : AbstractDFS(true, maxDepth, debug), MySerializable {
+    val allowSearchInBeginning: Boolean = false,
+    computationStopper: ComputationStopper = ComputationStopper()
+) : AbstractDFS(true, maxDepth, actionEvery, debug, computationStopper = computationStopper), MySerializable {
 
     data class StackData(
         var statesUndo: ButtonModel.ButtonUndo,
@@ -96,11 +98,9 @@ class DelayedTwinDFS(
                 dfsStack.pollLast()
             }
             if (gameState.player.x != dfsStack.peekLast().cachedState.playerX ||
-                gameState.player.y != dfsStack.peekLast().cachedState.playerY ||
-                gameState.player.yspeed != dfsStack.peekLast().cachedState.playerYSpeed
-            ) {
-                throw InvalidParameterException(
-                    "Fast forwarding of previously saved state to the one passed as argument failed! " +
+                    gameState.player.y != dfsStack.peekLast().cachedState.playerY ||
+                    gameState.player.yspeed != dfsStack.peekLast().cachedState.playerYSpeed) {
+                throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed! " +
                         "(ExpectedX: ${dfsStack.peekLast().cachedState.playerX} ActualX: ${gameState.player.x}) " +
                         "(ExpectedY: ${dfsStack.peekLast().cachedState.playerY} ActualY: ${gameState.player.y}) " +
                         "(ExpectedYSpeed: ${dfsStack.peekLast().cachedState.playerYSpeed} ActualYSpeed: ${gameState.player.yspeed}) "
@@ -148,7 +148,7 @@ class DelayedTwinDFS(
     }
 
     protected fun disableCorrectStates() {
-        if (isPlayerAtEnd(buttonModel.currentState)) {
+        if (buttonModel.currentState.isPlayerAtEnd(updateTime)) {
             buttonModel.disabledStates = ButtonModel.DisabledStates.CURRENT
         } else if (currentlyFramesDelayed < delayFrames) {
             buttonModel.disabledStates = ButtonModel.DisabledStates.DELAYED
@@ -161,10 +161,7 @@ class DelayedTwinDFS(
      * Override function to force advancing both states - delayed and current.
      * Useful when we want to state that the whole model has updated.
      */
-    protected fun advanceBothStates(
-        buttonIx: Int = -1,
-        interaction: GameButton.InteractionType? = null
-    ): ButtonModel.ButtonUndo {
+    protected fun advanceBothStates(buttonIx: Int = -1, interaction: GameButton.InteractionType? = null): ButtonModel.ButtonUndo {
         var currentAction: GameButton.StateChange? = null
         var delayedAction: GameButton.StateChange? = null
 
@@ -174,9 +171,9 @@ class DelayedTwinDFS(
         }
 
         return ButtonModel.ButtonUndo(
-            buttonModel.currentState.advanceUndoableByAction(currentAction, buttonModel.updateTime),
-            buttonModel.delayedState.advanceUndoableByAction(delayedAction, buttonModel.updateTime),
-            buttonModel.disabledStates
+                buttonModel.currentState.advanceUndoableByAction(currentAction, buttonModel.updateTime),
+                buttonModel.delayedState.advanceUndoableByAction(delayedAction, buttonModel.updateTime),
+                buttonModel.disabledStates
         )
     }
 
@@ -194,21 +191,28 @@ class DelayedTwinDFS(
         val debugPrints = false
 
         disableCorrectStates()
-        while (dfsStack.size < maxDepth && !isPlayerAtEnd(buttonModel.delayedState)) {
-            val currentActions: List<ButtonModel.ButtonAction?> = buttonModel.orderedApplicableButtonActions()
+        while (dfsStack.size < maxDepth && !buttonModel.delayedState.isPlayerAtEnd(updateTime)) {
+            if (computationStopper.shouldStop) { return SearchResult(false) }
+            val currentActions: List<ButtonModel.ButtonAction?> =
+                    if (dfsStack.size % actionEvery == 0) buttonModel.orderedApplicableButtonActions()
+                    else arrayListOf(null)
             var stackData = StackData(
-                buttonModel.noUndo(),
-                0,
-                currentActions,
-                CachedState(buttonModel.delayedState)
+                    buttonModel.noUndo(),
+                    0,
+                    currentActions,
+                    CachedState(buttonModel.delayedState)
             )
             if (sleepTime > 0) sleep(sleepTime)
             stackData.statesUndo = advanceCorrectStates(currentActions[0])
             ++lastStats.searchedStates
             dfsStack.push(stackData)
+
             if (dfsStack.count() > lastStats.reachedDepth) lastStats.reachedDepth = dfsStack.count()
+            if (buttonModel.delayedState.player.x > lastStats.maxPlayerX) lastStats.maxPlayerX = buttonModel.delayedState.player.x
+
             if (buttonModel.isGameOver() || statesCache.contains(buttonModel)) {
                 // backtrack
+                if (computationStopper.shouldStop) { return SearchResult(false) }
                 var finishedBacktrack = false
                 while (!finishedBacktrack) {
                     if (dfsStack.isEmpty()) {
@@ -240,15 +244,22 @@ class DelayedTwinDFS(
             }
         }
 
+        if (dfsStack.isEmpty()) {
+            return SearchResult(false)
+        }
         // Remove states at beginning where we create the delay between the two states
         while (dfsStack.peekLast().statesUndo.disabledStates == ButtonModel.DisabledStates.DELAYED)
             dfsStack.pollLast()
 
-        val btnAction = dfsStack.peekLast().action
-        val resultAction = when {
-            btnAction == null -> null
-            btnAction.isPress -> gameState.buttons[btnAction.button].hold
-            else -> gameState.buttons[btnAction.button].release
+        val actions = ArrayList<GameButton.StateChange?>()
+        for (dfsElem in dfsStack.reversed()) {
+            val btnAction = dfsElem.action
+            val resultAction = when {
+                btnAction == null -> null
+                btnAction.isPress -> gameState.buttons[btnAction.button].hold
+                else -> gameState.buttons[btnAction.button].release
+            }
+            actions.add(resultAction)
         }
 
         val listOfPositions = ArrayList<Vector2Double>()
@@ -264,15 +275,13 @@ class DelayedTwinDFS(
         }
 
         if (debugPrints) {
-            println(
-                "From current positions ${buttonModel.delayedState.player.location} ${buttonModel.currentState.player.location}\n" +
-                "Next should be ${listOfPositions[listOfPositions.size - 2]} ${listOfPositions[listOfPositions.size - 1]} achieved by $resultAction\n"
-            )
+            println("From current positions ${buttonModel.delayedState.player.location} ${buttonModel.currentState.player.location}\n" +
+                    "Next should be ${listOfPositions[listOfPositions.size - 2]} ${listOfPositions[listOfPositions.size - 1]} achieved by ${actions[0]}\n")
         }
 
         assert(dfsStack.size == 0)
 
-        return SearchResult(true, resultAction)
+        return SearchResult(true, actions)
     }
 
     override fun onUpdate(updateTime: Double, buttonStateChange: GameButton.StateChange?, gameState: GameState) {
@@ -280,11 +289,7 @@ class DelayedTwinDFS(
         synchronizeEndWithGameState(gameState)
     }
 
-    protected fun updateByAction(
-        buttonStateChange: GameButton.StateChange?,
-        releasesOfNonHoldAction: Boolean,
-        gameState: GameState
-    ) {
+    protected fun updateByAction(buttonStateChange: GameButton.StateChange?, releasesOfNonHoldAction: Boolean, gameState: GameState) {
 //        println("Updating by action $buttonStateChange")
         if (buttonStateChange == null) {
             advanceBothStates()
@@ -295,7 +300,7 @@ class DelayedTwinDFS(
         }
 
         if (buttonModel.currentState.isGameOver) {
-            println("GameOver ${gameState.gridX} $currentlyFramesDelayed")
+//            println("GameOver ${gameState.gridX} $currentlyFramesDelayed")
             val delayedState = buttonModel.delayedState
             init(delayedState)
         }
@@ -314,9 +319,6 @@ class DelayedTwinDFS(
 
         // dfsstack and dfscache is considered internal state and is not serialized
 
-        // copy dfscache
-//        statesCache.writeObject(oos)
-
         oos.writeLong(timesCalled)
         oos.writeLong(sleepTime)
 
@@ -332,9 +334,6 @@ class DelayedTwinDFS(
         buttonModel.readObject(ois)
 
         // dfsstack and dfscache is considered internal state and is not serialized
-
-        // read dfscache
-//        statesCache.readObject(ois)
 
         timesCalled = ois.readLong()
         sleepTime = ois.readLong()

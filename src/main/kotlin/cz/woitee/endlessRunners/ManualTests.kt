@@ -2,20 +2,26 @@ package cz.woitee.endlessRunners
 
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 
+/**
+ * Manually launching test, to see if they still behave correctly.
+ */
 fun main(args: Array<String>) {
     visualizeDelayedTwinDFS()
 }
 
+/**
+ * A visualization of Delayed Twin DFS.
+ */
 fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
     // Recommended breakpoint in DelayedTwinDFS::searchInternal
-    val gameDescription = BitTripGameDescription()
+    val gameDescription = BitTriGameDescription()
 
     val levelGenerator = DelayedTwinDFSLevelGenerator(delayTime, SimpleLevelGenerator())
     val dfsOfPlayer = DelayedTwinDFS(delayTime)

@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.game
 
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.effects.GameOver
 import cz.woitee.endlessRunners.game.effects.TimedEffect
 import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
@@ -19,42 +20,60 @@ import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
 import cz.woitee.endlessRunners.utils.reverse
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.util.*
 import nl.pvdberg.hashkode.hashKode
 
 /**
  * A state of the game, contains objects in the game, other statuses and provides methods to advance the game
  * and manipulate it's inner workings.
  *
- * Created by woitee on 13/01/2017.
  */
 
 class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: String = "") : MySerializable {
+    /** Reference to this state's player object */
     var player = Player(0.0, 0.0)
+    /** List of all the objects in this state */
     var gameObjects = arrayListOf<GameObject>(player)
+    /** List of all the objects that are updated in this state */
     var updateObjects = arrayListOf<GameObject>(player)
+    /** 2D grid of the place of objects */
     var grid = Grid2D<GameObject?>(WidthBlocks, HeightBlocks, { null })
+    /** Offset of the grid with respect to the beginning of the level (how far have we scrolled) */
     var gridX = 0
+    /** Last game time when we advanced the state */
     var lastAdvanceTime = game.updateTime
         private set
+    /** Time from the game's perspective */
     var gameTime = 0.0
         private set
+    /** Button states in this state */
     var buttons = ArrayList<GameButton>()
+    /** Currently held actions in this state, with time of press */
     var heldActions = HashMap<HoldButtonAction, Double>()
+    /** Timeouts waiting to happen in this state */
     var timedEffects = HashMap<Double, TimedEffect>()
 
+    /** current score */
     var score = 0
+    /** Whether a gameover has already occured in this state */
     var isGameOver = false
 
+    /** logical X coordinate of the last column */
     val lastColumnX: Int
         get() = gridX + WidthBlocks
+    /** pixel X coordinate of the last column */
     val lastColumnXpx: Double
         get() = (lastColumnX * BlockWidth).toDouble()
+    /** All actions in a description this state belongs to */
     val allActions
         get() = game.gameDescription.allActions
 
     /** Maximum x of an object that is still in the state. */
     val maxX: Int
         get() = (gridX + grid.width) * BlockWidth
+
+    /** What happens when the player gets below ground */
+    val belowGroundEffect = GameOver()
 
     /**
      * Version of serialization - if changed, can load GameStates saved with lower version (if object implement this)
@@ -74,6 +93,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             buttons.add(GameButton(allActions[i], this, i))
     }
 
+    /**
+     * Adds an object to grid, which should not be done directly from the outside.
+     */
     internal fun addToGrid(gameObject: GameObject?, x: Int, y: Int) {
         gameObject ?: return
 
@@ -81,6 +103,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         gameObject.y = (y * BlockHeight).toDouble()
         add(gameObject)
     }
+    /**
+     * Adds an object to a GameState.
+     */
     internal fun add(gameObject: GameObject) {
         gameObjects.add(gameObject)
         if (gameObject.isUpdated)
@@ -92,6 +117,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 (gameObject.y / BlockHeight).toInt()
                 ] = gameObject
     }
+    /**
+     * Removes an object from a GameState.
+     */
     internal fun remove(gameObject: GameObject?) {
         gameObject ?: return
         gameObjects.remove(gameObject)
@@ -103,9 +131,17 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 (gameObject.y / BlockHeight).toInt()
                 ] = null
     }
+
+    /**
+     * Adds a new column to the GameState.
+     */
     internal fun addColumn(column: ArrayList<GameObject?>): ArrayList<GameObject?> {
         return _addColumn(column)
     }
+
+    /**
+     * Undoes the adding of a column.
+     */
     internal fun undoAddColumn(column: ArrayList<GameObject?>): ArrayList<GameObject?> {
         return _addColumn(column, false)
     }
@@ -116,14 +152,14 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         val oldColumn = shiftGrid(toRight)
         val newColumn = column
         val newColumnX = if (toRight) WidthBlocks - 1 else 0
-        for (y in 0 .. newColumn.lastIndex) {
+        for (y in 0..newColumn.lastIndex) {
             addToGrid(newColumn[y], newColumnX, y)
         }
         return oldColumn
     }
 
     /**
-     * Advances the grid one square towards one of the direction, and returns the leftest column, that has fallen out of grid.
+     * Advances the grid one squared towards one of the direction, and returns the leftest column, that has fallen out of grid.
      */
     internal fun shiftGrid(towardsRight: Boolean = true): ArrayList<GameObject?> {
         val gridXDiff = if (towardsRight) 1 else -1
@@ -131,17 +167,20 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
         gridX += gridXDiff
         val column = grid.getColumn(dropX)
-        for (y in 0 .. grid.height - 1) {
+        for (y in 0 until grid.height) {
             val gameObject = grid[dropX, y]
             gameObject ?: continue
             gameObjects.remove(gameObject)
             if (gameObject.isUpdated)
                 updateObjects.remove(gameObject)
         }
-        grid.shiftX(gridXDiff)
+        grid.shiftX(-gridXDiff)
         return column
     }
 
+    /**
+     * Advances everything one state forward.
+     */
     fun advance(time: Double) {
         lastAdvanceTime = time
 
@@ -166,10 +205,16 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             for (timedEffect in timedEffects.values) {
                 timedEffect.runningEffect.applyOn(this)
             }
+            if (player.y < -player.heightPx) {
+                belowGroundEffect.applyOn(this)
+            }
             gameTime += time
         }
     }
 
+    /**
+     * Advances everything one frame forward and returns a reverting object (IUndo).
+     */
     fun advanceUndoable(time: Double): IUndo {
         synchronized(gameObjects) {
             val undoList = DefaultUndoListPool.borrowObject()
@@ -183,11 +228,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 if (gameTime >= targetTime) {
                     undoList.add(effect.stopEffect.applyUndoablyOn(this))
                     it.remove()
-                    undoList.add(object : IUndo {
-                        override fun undo(gameState: GameState) {
-                            timedEffects[targetTime] = effect
-                        }
-                    })
+                    undoList.add(object : IUndo { override fun undo(gameState: GameState) {
+                        timedEffects[targetTime] = effect
+                    } })
                 }
             }
             updateObjects.map {
@@ -205,6 +248,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 if (undo != NoUndo)
                     undoList.add(undo)
             }
+            if (player.y < -player.heightPx) {
+                undoList.add(belowGroundEffect.applyUndoablyOn(this))
+            }
             gameTime += time
             undoList.add(object : IUndo { override fun undo(gameState: GameState) {
                 gameState.gameTime -= time
@@ -213,12 +259,12 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         }
     }
 
-    fun performActionsBasedOnButtons() {
+    protected fun performActionsBasedOnButtons() {
         for (button in buttons) {
             val action = button.action
             if (action !is HoldButtonAction) {
                 // press actions whose buttons are held
-                if (button.isPressed && action.isApplicableOn(this))
+                if (button.isPressed && action.isApplicableOn(this) && !action.onlyOnPress)
                     button.action.applyOn(this)
             } else {
                 // button is HoldButtonAction
@@ -235,7 +281,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         }
     }
 
-    fun performActionsBasedOnButtonsUndoably(undoList: ArrayList<IUndo>) {
+    protected fun performActionsBasedOnButtonsUndoably(undoList: ArrayList<IUndo>) {
         for (button in buttons) {
             val action = button.action
             if (action !is HoldButtonAction) {
@@ -276,23 +322,28 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         this.advance(time)
     }
 
-    fun advanceUndoableByAction(action: GameButton.StateChange?, time: Double): IUndo {
+    /**
+     * Advances the gameState when using a specific action, and returns an IUndo to revert.
+     */
+    fun advanceUndoableByAction(action: GameButton.StateChange?, time: Double = game.updateTime): IUndo {
         return UndoFactory.DoubleUndo(
             action?.applyUndoablyOn(this) ?: NoUndo,
             this.advanceUndoable(time)
         )
     }
 
-    @Suppress("UNUSED_PARAMETER")
+    /**
+     * Scrolls the game by one column to the right.
+     */
     fun scroll(time: Double) {
         synchronized(gameObjects) {
             if (levelGenerator == null) {
-                println("Level Generator should be set when scrolling!")
+//                println("Level Generator should be set when scrolling!")
             } else {
                 val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
                 val blockOffset = (offset / BlockWidth).toInt()
 
-                for (i in 1 .. blockOffset) {
+                for (i in 1..blockOffset) {
                     //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
                     val column = levelGenerator.generateNextColumn(this)
                     this.addColumn(column)
@@ -301,15 +352,27 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         }
     }
 
+    /**
+     * Converts a location in pixels to location on the grid.
+     */
     fun gridLocation(x: Double, y: Double): Vector2Int {
         return Vector2Int((x / BlockWidth - gridX).toInt(), (y / BlockHeight).toInt())
     }
+    /**
+     * Converts a location in pixels to location on the grid.
+     */
     fun gridLocation(point: Vector2Double): Vector2Int {
         return gridLocation(point.x, point.y)
     }
+    /**
+     * Gets all the grid locations on a direct line between two points in a GameState.
+     */
     fun gridLocationsBetween(a: Vector2Double, b: Vector2Double): ArrayList<Vector2Int> {
         return gridLocationsBetween(a.x, a.y, b.x, b.y)
     }
+    /**
+     * Gets all the grid locations on a direct line between two points in a GameState.
+     */
     fun gridLocationsBetween(ax: Double, ay: Double, bx: Double, by: Double): ArrayList<Vector2Int> {
         // assume a is lefter than b (has less Y)
         if (bx < ax) {
@@ -318,7 +381,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         val epsilon = 0.00000
 
         fun autoRange(a: Int, b: Int): IntProgression {
-            return if (a <= b) a .. b else a downTo b
+            return if (a <= b) a..b else a downTo b
         }
 
         val aGrid = gridLocation(ax, ay)
@@ -328,7 +391,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
         var lastGridY = aGrid.y
         // we'll go by vertical
-        for (gridX in aGrid.x until bGrid.x) {
+        for (gridX in aGrid.x .. bGrid.x - 1) {
             val borderX = (gridX + 1) * BlockWidth
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()
@@ -343,10 +406,16 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return res
     }
 
+    /**
+     * Returns the object at given (pixel) coordinates.
+     */
     fun atLocation(x: Double, y: Double): GameObject? {
-        return grid[gridLocation(x, y)]
+        return grid.safeGet(gridLocation(x, y))
     }
 
+    /**
+     * Dumps the state in a recognizable format for printing.
+     */
     fun textDump(): ArrayList<String> {
         // Convert objects to char grid
         val charGrid = Grid2D(grid.width, grid.height, { ' ' })
@@ -356,14 +425,14 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             }
         }
         val gridLoc = gridLocation(player.x, player.y)
-        charGrid[gridLoc.x, gridLoc.y] = 'P'
-        charGrid[gridLoc.x, gridLoc.y + 1] = 'P'
+        charGrid.safeSet(gridLoc, 'P')
+        charGrid.safeSet(gridLoc.x, gridLoc.y + 1, 'P')
 
         // Convert char grid to strings
         val strings = ArrayList<String>()
         for (y in (grid.height - 1).downTo(0)) {
             val sb = StringBuilder(grid.width)
-            for (x in 0 until grid.width) {
+            for (x in 0.. grid.width - 1) {
                 sb.append(charGrid[x, y])
             }
             strings.add(sb.toString())
@@ -401,6 +470,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     }
 
     /**
+     * Checks whether the player has reached the right edge of the screen.
+     */
+    fun isPlayerAtEnd(updateTime: Double = game.updateTime): Boolean {
+        return player.nextX(updateTime) + player.widthPx >= maxX
+    }
+
+    /**
      * This makes a deep copy of the state, effectively creating a new state that does not depend on the original.
      */
     fun makeCopy(): GameState {
@@ -427,6 +503,8 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             else
                 stateCopy.grid[gridLocation(objectCopy.location)] = objectCopy
         }
+        stateCopy.grid.resizeHeight(grid.height)
+        stateCopy.grid.resizeWidth(grid.width)
 
         stateCopy.lastAdvanceTime = lastAdvanceTime
         stateCopy.isGameOver = isGameOver

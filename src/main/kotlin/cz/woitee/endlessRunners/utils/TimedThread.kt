@@ -3,7 +3,14 @@ package cz.woitee.endlessRunners.utils
 import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Created by woitee on 14/01/2017.
+ * A looping thread to perform tasks as close as possible as to a given FPS value.
+ *
+ * Meant for use in visualization and game updating.
+ * Passes the actual length of update since last to the executing task.
+ *
+ * @param task The task to perform in each update.
+ * @param targetFrameRate Number of updates desired to perform each second.
+ * @param useRealTime Whether to actually wait, or just keep making updates as fast as possible.
  */
 
 class TimedThread(val task: (Double) -> Unit, var targetFrameRate: Double, val useRealTime: Boolean = false) : Runnable {

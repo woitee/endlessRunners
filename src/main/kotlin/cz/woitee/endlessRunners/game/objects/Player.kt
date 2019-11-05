@@ -5,10 +5,10 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
 /**
- * Created by woitee on 13/01/2017.
+ * The player in the game.
  */
 
-class Player(x: Double, y: Double) : MovingObject(x, y) {
+class Player(x: Double = 0.0, y: Double = 0.0) : MovingObject(x, y) {
     override val gameObjectClass = GameObjectClass.PLAYER
 
     override val defaultHeightBlocks = 2
@@ -19,8 +19,17 @@ class Player(x: Double, y: Double) : MovingObject(x, y) {
     val defaultColor = GameObjectColor.BLUE
     override var color = GameObjectColor.BLUE
 
+    val minXspeed = 12.0
+    val maxXspeed = 36.0
+
+    var timesJumpedSinceTouchingGround = 0
+
     fun positionOnScreen(): Double {
         return this.x - (gameState.gridX * BlockWidth)
+    }
+
+    fun assertXSpeed() {
+        xspeed = xspeed.coerceIn(minXspeed, maxXspeed)
     }
 
     override fun makeCopy(): Player {
@@ -48,5 +57,9 @@ class Player(x: Double, y: Double) : MovingObject(x, y) {
         oos.writeInt(widthBlocks)
         oos.writeInt(color.ord)
         return this
+    }
+
+    override fun toString(): String {
+        return "Player(x=$x, y=$y, xspeed=$xspeed, yspeed=$yspeed, width=$widthBlocks, height=$heightBlocks)"
     }
 }

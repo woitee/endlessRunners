@@ -6,11 +6,19 @@ import cz.woitee.endlessRunners.game.conditions.GameCondition
 import cz.woitee.endlessRunners.game.conditions.TrueCondition
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
+/**
+ * A HoldAction that can be applied only if specific conditions are met.
+ *
+ * @param holdButtonAction The conditioned HoldAction
+ * @param applicableCondition The condition that determines whether the hold action can be applied in a GameState
+ * @param keptApplyingCondition The condition that determines whether the hold action can be kept applying in a GameState
+ * @param stopApplyingCondition The condition that determines whether the hold action can be stopped applying in a GameState
+ */
 class ConditionalHoldAction(
     val holdButtonAction: HoldButtonAction,
-    val applicableCondition: GameCondition,
-    val keptApplyingCondition: GameCondition = TrueCondition(),
-    val stopApplyingCondition: GameCondition = TrueCondition()
+    var applicableCondition: GameCondition,
+    var keptApplyingCondition: GameCondition = TrueCondition(),
+    var stopApplyingCondition: GameCondition = TrueCondition()
 ) : HoldButtonAction() {
 
     override fun isApplicableOn(gameState: GameState): Boolean {

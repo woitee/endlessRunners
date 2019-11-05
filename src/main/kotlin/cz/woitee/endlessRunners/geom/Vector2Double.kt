@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.geom
 import java.io.Serializable
 
 /**
- * Created by woitee on 22/01/2017.
+ * A vector of lengths 2 with Double values. Provides operators and basic useful functions.
  */
 
 data class Vector2Double(var x: Double = 0.0, var y: Double = 0.0) : Serializable {

@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.game.objects
 
 /**
- * Created by woitee on 23/01/2017.
+ * An enumaration class representing the type of the object.
  */
 
 enum class GameObjectClass(val ord: Int) {

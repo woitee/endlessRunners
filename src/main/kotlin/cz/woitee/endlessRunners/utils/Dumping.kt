@@ -5,8 +5,11 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
+/**
+ * Dumps a whole gameState into a file.
+ */
 fun GameState.dumpToFile(logPrefix: String = "GameStateDump", logPath: String = "out/states") {
     val logFileName = "$logPath/${logPrefix}_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss_SSS").format(Date()) + ".dmp"
     val file = File(logFileName)
@@ -16,6 +19,9 @@ fun GameState.dumpToFile(logPrefix: String = "GameStateDump", logPath: String = 
     oos.close()
 }
 
+/**
+ * Reads a GameState from a file.
+ */
 fun GameState.readFromFile(filePath: String) {
     val ois2 = ObjectInputStream(File(filePath).inputStream())
     this.readObject(ois2)

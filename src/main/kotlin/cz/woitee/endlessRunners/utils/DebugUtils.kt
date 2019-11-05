@@ -3,7 +3,12 @@ package cz.woitee.endlessRunners.utils
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
+import java.text.SimpleDateFormat
+import java.util.*
 
+/**
+ * Debugging utils, mainly for Delayed Twin DFS.
+ */
 object DebugUtils {
     var delayedTwinDFSVisualizer: DelayedTwinDFSVisualizer? = null
 
@@ -24,4 +29,7 @@ object DebugUtils {
         println("HeldActionsAsFlags:${gameState.heldButtonsAsFlags()}")
         gameState.print()
     }
+
+    val currentDateTimeString: String
+        get() = SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date())
 }

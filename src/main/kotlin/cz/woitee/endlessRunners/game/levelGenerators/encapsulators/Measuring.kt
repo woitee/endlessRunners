@@ -4,7 +4,11 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import java.text.DecimalFormat
+import java.util.*
 
+/**
+ * An encapsulator that measures the average time of level generation.
+ */
 class Measuring(val innerGenerator: LevelGenerator, val sumEvery: Int = 10) : LevelGenerator() {
     var timeSum = 0.0
     var runCount = 0

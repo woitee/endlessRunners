@@ -3,26 +3,34 @@ package cz.woitee.endlessRunners.game.actions
 import cz.woitee.endlessRunners.game.BlockHeight
 import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.GameState
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
-import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
- * Created by woitee on 13/01/2017.
+ * The most common action in endless runners - the jump action.
+ *
+ * @param power Power of the jump, as the immediate vertical speed after jumping.
  */
 
-class JumpAction(val power: Double) : GameButtonAction() {
-    override fun isApplicableOn(gameState: GameState): Boolean {
-        val x = gameState.player.x
-        val y = gameState.player.y - 1
-        val gridX = (x / BlockWidth).toInt() - gameState.gridX
-        val gridY = (y / BlockHeight).toInt()
+open class JumpAction(val power: Double) : GameAction() {
+    override val onlyOnPress = false
 
-        return gameState.grid[gridX, gridY] is SolidBlock
+    companion object {
+        fun isPlayerTouchingGround(gameState: GameState): Boolean {
+            val x = gameState.player.x
+            val y = gameState.player.y - 1
+            val gridX = (x / BlockWidth).toInt() - gameState.gridX
+            val gridY = (y / BlockHeight).toInt()
+
+            return gameState.grid.contains(gridX, gridY) && gameState.grid[gridX, gridY]?.isSolid == true
+        }
+    }
+
+    override fun isApplicableOn(gameState: GameState): Boolean {
+        return isPlayerTouchingGround(gameState)
     }
 
     override fun applyOn(gameState: GameState) {
-        if (gameState.tag != "delayed") gameState.gameTime else gameState.gameTime + 0.24000000000003752
         gameState.player.yspeed = power
     }
 
@@ -35,5 +43,9 @@ class JumpAction(val power: Double) : GameButtonAction() {
                 gameState.player.yspeed = originalYSpeed
             }
         }
+    }
+
+    override fun toString(): String {
+        return "JumpAction(power=$power)"
     }
 }

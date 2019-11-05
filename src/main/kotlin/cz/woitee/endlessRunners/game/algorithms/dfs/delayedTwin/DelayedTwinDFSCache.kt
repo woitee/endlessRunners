@@ -6,7 +6,11 @@ import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.util.*
 
+/**
+ * The delayed twin dfs algorithm requires a special cache - caching positions of both of its states simultaneously.
+ */
 class DelayedTwinDFSCache : MySerializable {
     data class TwinCachedState(val currentCached: CachedState, val delayedCached: CachedState) : Serializable {
         constructor(currentState: GameState, delayedState: GameState) : this(CachedState(currentState), CachedState(delayedState))

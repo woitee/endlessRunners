@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("io.jenetics:jenetics:4.1.0")
 
     // HashKode has been forked by Gabriel Shanahan to add Gradle and thus work around the invalid JAR bug
     implementation("com.github.gabriel-shanahan:hashkode:latest.integration")

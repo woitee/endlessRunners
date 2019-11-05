@@ -14,8 +14,9 @@ object JavaSerializationUtils {
         return serialize(obj).joinToString(":")
     }
 
-    fun unserializeFromString(str: String): Any {
-        return unserialize(str.split(":").map { s -> s.toByte() }.toByteArray())
+    fun <T> unserializeFromString(str: String): T? {
+        @Suppress("UNCHECKED_CAST")
+        return unserialize(str.split(":").map { s -> s.toByte() }.toByteArray()) as T?
     }
 
     fun serialize(sourceObj: Serializable): ByteArray {

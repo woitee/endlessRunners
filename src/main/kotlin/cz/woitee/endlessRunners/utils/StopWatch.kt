@@ -3,7 +3,7 @@ package cz.woitee.endlessRunners.utils
 /**
  * A class to quickly measure time intervals in microseconds, using nanosecond precision methods.
  */
-internal class StopWatch {
+class StopWatch {
     var startTime = 0L
     var isStarted = false
         private set

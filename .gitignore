@@ -1,6 +1,14 @@
+# Gradle project-specific cache directory
+.gradle
+
+# Gradle build output directory
+build
+
+# IDEA specific files
 .idea
 endlessRunnersGame.iml
 
+# Output, logs and artifacts
 out
 log
 target

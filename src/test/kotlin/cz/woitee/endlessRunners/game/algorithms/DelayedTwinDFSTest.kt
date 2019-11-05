@@ -98,7 +98,7 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun multipleActionsOnStackForDelayedState() {
-        runTestFromFile("test/data/GameStates_2017_10_02-00_45_4417.dmp", 0.2, 1)
+        runTestFromFile("src/test/resources/GameStates_2017_10_02-00_45_4417.dmp", 0.2, 1)
     }
 
     private fun runTestFromFile(
@@ -127,23 +127,23 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun searchBeginningsAndEnds_stillFoundAWay() {
-        runTestFromFile("test/data/GameStates_2017_10_29-18_17_44/28.dmp", 0.25, 2, BitTripGameDescription())
+        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/28.dmp", 0.25, 2, BitTripGameDescription())
     }
 
     @org.junit.jupiter.api.Test
     fun searchBeginningsAndEnds_stillFoundAWay2() {
-        runTestFromFile("test/data/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription())
+        runTestFromFile("src/test/resources/GameStates_2017_10_29-18_17_44/29.dmp", 0.25, 2, BitTripGameDescription())
     }
 
     @org.junit.jupiter.api.Test
     fun testSearchInLastGeneratedStates() {
-        runTestFromFile("test/data/GameStates_2017_11_26-22_02_24/31.dmp", 0.25, 4, BitTripGameDescription(), allowSearchInBeginning = true)
+        runTestFromFile("src/test/resources/GameStates_2017_11_26-22_02_24/31.dmp", 0.25, 4, BitTripGameDescription(), allowSearchInBeginning = true)
     }
 
     @org.junit.jupiter.api.Test
     fun bugShrinkingGapAfterSearch() {
-        val currentStatePath = "test/data/WrongCurrent_2017_12_03-18_32_26_255.dmp"
-        val delayedStatePath = "test/data/WrongDelayed_2017_12_03-18_32_26_261.dmp"
+        val currentStatePath = "src/test/resources/WrongCurrent_2017_12_03-18_32_26_255.dmp"
+        val delayedStatePath = "src/test/resources/WrongDelayed_2017_12_03-18_32_26_261.dmp"
 
         val game = Game(SimpleLevelGenerator(), NoActionPlayerController(), GamePanelVisualizer(),
                 mode = Game.Mode.INTERACTIVE,
@@ -230,7 +230,7 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun consistentSearchExample() {
-        consistentSearchInSubsequentSteps("test/data/ButtonModel_2018_01_21-15_37_41.dmp")
+        consistentSearchInSubsequentSteps("src/test/resources/ButtonModel_2018_01_21-15_37_41.dmp")
     }
 
     fun consistentSearchInSubsequentSteps(filePath: String) {
@@ -242,7 +242,7 @@ internal class DelayedTwinDFSTest {
 
     @org.junit.jupiter.api.Test
     fun searchAfterFailure() {
-        val filePath = "test/data/TestButtonModel_2018_01_24-00_05_11.dmp"
+        val filePath = "src/test/resources/TestButtonModel_2018_01_24-00_05_11.dmp"
         val delayedTwinDFS = readDelayedTwinDFS(filePath)
 
         val column1: ArrayList<GameObject?> = arrayList(HeightBlocks, { null })

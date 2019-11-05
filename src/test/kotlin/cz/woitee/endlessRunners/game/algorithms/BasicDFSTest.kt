@@ -15,22 +15,22 @@ import java.io.ObjectInputStream
 internal class BasicDFSTest {
     @org.junit.jupiter.api.Test
     fun bugWrongCollisionWhenFarIntoTheGame() {
-        runTestFromFile("test/data/GameState_2017_09_03-14_52_43.dmp", 1, expectGameOver = true)
+        runTestFromFile("src/test/resources/GameState_2017_09_03-14_52_43.dmp", 1, expectGameOver = true)
     }
 
     @org.junit.jupiter.api.Test
     fun bugAfterAddingCustomBlocks() {
-        runTestFromFile("test/data/GameState_2017_09_21-22_11_14.dmp", 1, expectGameOver = true)
+        runTestFromFile("src/test/resources/GameState_2017_09_21-22_11_14.dmp", 1, expectGameOver = true)
     }
 
     @org.junit.jupiter.api.Test
     fun bugOfSimultaneousActions() {
-        runTestFromFile("test/data/GameState_2017_09_23-17_40_36.dmp", 1)
+        runTestFromFile("src/test/resources/GameState_2017_09_23-17_40_36.dmp", 1)
     }
 
     @org.junit.jupiter.api.Test
     fun pertainingTest() {
-        runTestFromFile("test/data/GameState_2017_09_28-16_07_19.dmp", 1)
+        runTestFromFile("src/test/resources/GameState_2017_09_28-16_07_19.dmp", 1)
     }
 
     internal fun runTestFromFile(filePath: String, serializationVersion: Int, expectGameOver: Boolean = false, time: Double = 2.0,

@@ -14,7 +14,8 @@ import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Random
 
 val startsWithGame1: Boolean = Random().nextBoolean()
 
@@ -102,7 +103,6 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
             updateCallback = { game -> timingAnnouncer.onUpdate(game); },
             freezeOnStartSeconds = 1.0
     )
-
 
     val originalGameOver = game.onGameOver
     game.onGameOver = { println("Visualizer"); visualiser.announce("Hra byla restartována"); originalGameOver(); }

@@ -1,15 +1,13 @@
 package cz.woitee.endlessRunners
 
 import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
 import cz.woitee.endlessRunners.game.gui.DelayedTwinDFSVisualizer
-import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
-import java.lang.Thread.sleep
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 
 fun main(args: Array<String>) {
     visualizeDelayedTwinDFS()

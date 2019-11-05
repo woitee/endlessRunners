@@ -5,13 +5,11 @@ import java.awt.Color
 import java.awt.TextArea
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.File
 import javax.swing.JFrame
+import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JSlider
-import java.io.File
-import javax.swing.JLabel
 
 class HitPrecisionTest {
     val defaultText = """
@@ -132,8 +130,6 @@ class HitPrecisionTest {
 
         button.isEnabled = false
         textArea.text = inGameText
-
-        val random = Random()
 
         Thread.sleep(3000)
         for (i in 1 .. 10) {

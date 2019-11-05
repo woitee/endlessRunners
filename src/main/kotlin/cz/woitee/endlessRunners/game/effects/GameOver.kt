@@ -8,8 +8,8 @@ import java.time.LocalDateTime
  * Created by woitee on 23/01/2017.
  */
 
-class GameOver: UndoableGameEffect() {
-    class GameOverUndo: IUndo {
+class GameOver : UndoableGameEffect() {
+    class GameOverUndo : IUndo {
         override fun undo(gameState: GameState) {
             gameState.isGameOver = false
         }

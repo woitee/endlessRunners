@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong
  * Created by woitee on 14/01/2017.
  */
 
-class TimedThread(val task: (Double)->Unit, var targetFrameRate: Double, val useRealTime:Boolean = false): Runnable {
+class TimedThread(val task: (Double) -> Unit, var targetFrameRate: Double, val useRealTime: Boolean = false) : Runnable {
     var running = false
     val thread = Thread(this)
     val cycleTimeMillis = (1000 / targetFrameRate).toLong()

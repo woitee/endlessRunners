@@ -5,10 +5,10 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 fun GameState.dumpToFile(logPrefix: String = "GameStateDump", logPath: String = "out/states") {
-    val logFileName = "${logPath}/${logPrefix}_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss_SSS").format(Date()) + ".dmp"
+    val logFileName = "$logPath/${logPrefix}_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss_SSS").format(Date()) + ".dmp"
     val file = File(logFileName)
     val oos = ObjectOutputStream(file.outputStream())
     this.writeObject(oos)

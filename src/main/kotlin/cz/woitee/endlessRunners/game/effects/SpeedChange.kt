@@ -5,10 +5,11 @@ import cz.woitee.endlessRunners.game.objects.MovingObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 
-class SpeedChange (
+class SpeedChange(
     targetedAt: Target = Target.PLAYER,
     var targetSpeed: Double = 16.0,
-    var relativity: Relativity = Relativity.ABSOLUTE): UndoableGameEffect() {
+    var relativity: Relativity = Relativity.ABSOLUTE
+) : UndoableGameEffect() {
 
     override val target = targetedAt
     override val timing = Timing.ONCE

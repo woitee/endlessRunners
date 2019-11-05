@@ -2,14 +2,13 @@ package cz.woitee.endlessRunners.game.undoing
 
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
-import java.util.*
 
 /**
  * UndoFactory contain
  * Created by woitee on 04/06/2017.
  */
 object UndoFactory {
-    class MultiUndo(val undoList: ArrayList<IUndo>): IUndo {
+    class MultiUndo(val undoList: ArrayList<IUndo>) : IUndo {
         override fun undo(gameState: GameState) {
             for (undo in undoList.asReversed())
                 undo.undo(gameState)
@@ -17,7 +16,7 @@ object UndoFactory {
         }
     }
 
-    class DoubleUndo(val firstUndo: IUndo, val secondUndo: IUndo): IUndo {
+    class DoubleUndo(val firstUndo: IUndo, val secondUndo: IUndo) : IUndo {
         override fun undo(gameState: GameState) {
             secondUndo.undo(gameState)
             firstUndo.undo(gameState)

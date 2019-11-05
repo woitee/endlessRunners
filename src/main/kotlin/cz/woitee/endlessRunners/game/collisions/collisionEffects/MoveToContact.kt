@@ -2,10 +2,10 @@ package cz.woitee.endlessRunners.game.collisions.collisionEffects
 
 import cz.woitee.endlessRunners.game.BlockHeight
 import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.collisions.Collision
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.MovingObject
-import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 import cz.woitee.endlessRunners.geom.Direction4
@@ -15,8 +15,8 @@ import cz.woitee.endlessRunners.geom.Vector2Double
  * Created by woitee on 23/01/2017.
  */
 
-class MoveToContact: IUndoableCollisionEffect {
-    class MoveToContactUndo(val source: MovingObject, val origPos: Vector2Double, val origVel: Vector2Double): IUndo {
+class MoveToContact : IUndoableCollisionEffect {
+    class MoveToContactUndo(val source: MovingObject, val origPos: Vector2Double, val origVel: Vector2Double) : IUndo {
         override fun undo(gameState: GameState) {
             source.location = origPos
             source.velocity = origVel

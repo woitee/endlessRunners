@@ -5,12 +5,11 @@ import cz.woitee.endlessRunners.game.actions.JumpAction
 import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
 import cz.woitee.endlessRunners.game.effects.GameEffect
 import cz.woitee.endlessRunners.game.effects.SpeedChange
-import cz.woitee.endlessRunners.game.objects.CustomBlock
 
 /**
  * Created by woitee on 23/07/2017.
  */
-open class WanabaltGameDescription: GameDescription() {
+open class WanabaltGameDescription : GameDescription() {
     val boostEffect = SpeedChange(GameEffect.Target.PLAYER, 20.0)
 
     override val allActions: List<GameButtonAction> = listOf(

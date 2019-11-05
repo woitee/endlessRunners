@@ -1,20 +1,15 @@
 package cz.woitee.endlessRunners.game
 
-import java.util.*
-
-import cz.woitee.endlessRunners.game.undoing.IUndo
-
-import cz.woitee.endlessRunners.game.objects.Player
-import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.effects.TimedEffect
+import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
-import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
-import cz.woitee.endlessRunners.game.effects.GameEffect
-import cz.woitee.endlessRunners.game.effects.TimedEffect
-import cz.woitee.endlessRunners.game.objects.UndoableUpdateGameObject
-import cz.woitee.endlessRunners.game.effects.UndoableGameEffect
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.Player
+import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.objects.UndoableUpdateGameObject
+import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 import cz.woitee.endlessRunners.game.undoing.UndoFactory
 import cz.woitee.endlessRunners.geom.Vector2Double
@@ -22,9 +17,9 @@ import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.MySerializable
 import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
 import cz.woitee.endlessRunners.utils.reverse
-import nl.pvdberg.hashkode.hashKode
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import nl.pvdberg.hashkode.hashKode
 
 /**
  * A state of the game, contains objects in the game, other statuses and provides methods to advance the game
@@ -79,7 +74,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             buttons.add(GameButton(allActions[i], this, i))
     }
 
-    internal fun addToGrid(gameObject: GameObject?, x: Int, y:Int) {
+    internal fun addToGrid(gameObject: GameObject?, x: Int, y: Int) {
         gameObject ?: return
 
         gameObject.x = ((gridX + x) * BlockWidth).toDouble()
@@ -121,7 +116,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         val oldColumn = shiftGrid(toRight)
         val newColumn = column
         val newColumnX = if (toRight) WidthBlocks - 1 else 0
-        for (y in 0..newColumn.lastIndex) {
+        for (y in 0 .. newColumn.lastIndex) {
             addToGrid(newColumn[y], newColumnX, y)
         }
         return oldColumn
@@ -188,9 +183,11 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 if (gameTime >= targetTime) {
                     undoList.add(effect.stopEffect.applyUndoablyOn(this))
                     it.remove()
-                    undoList.add(object : IUndo { override fun undo(gameState: GameState) {
-                        timedEffects[targetTime] = effect
-                    }})
+                    undoList.add(object : IUndo {
+                        override fun undo(gameState: GameState) {
+                            timedEffects[targetTime] = effect
+                        }
+                    })
                 }
             }
             updateObjects.map {
@@ -211,7 +208,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             gameTime += time
             undoList.add(object : IUndo { override fun undo(gameState: GameState) {
                 gameState.gameTime -= time
-            }})
+            } })
             return UndoFactory.multiUndo(undoList)
         }
     }
@@ -294,7 +291,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 val offset = player.x - PlayerScreenX - (gridX * BlockWidth)
                 val blockOffset = (offset / BlockWidth).toInt()
 
-                for (i in 1..blockOffset) {
+                for (i in 1 .. blockOffset) {
                     //                        println("GridChange $gridX #GameObjects ${gameObjects.size}")
                     val column = levelGenerator.generateNextColumn(this)
                     this.addColumn(column)
@@ -310,7 +307,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return gridLocation(point.x, point.y)
     }
     fun gridLocationsBetween(a: Vector2Double, b: Vector2Double): ArrayList<Vector2Int> {
-        return gridLocationsBetween(a.x, a.y, b.x, b.y);
+        return gridLocationsBetween(a.x, a.y, b.x, b.y)
     }
     fun gridLocationsBetween(ax: Double, ay: Double, bx: Double, by: Double): ArrayList<Vector2Int> {
         // assume a is lefter than b (has less Y)
@@ -320,7 +317,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         val epsilon = 0.00000
 
         fun autoRange(a: Int, b: Int): IntProgression {
-            return if (a <= b) a..b else a downTo b
+            return if (a <= b) a .. b else a downTo b
         }
 
         val aGrid = gridLocation(ax, ay)
@@ -330,7 +327,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
         var lastGridY = aGrid.y
         // we'll go by vertical
-        for (gridX in aGrid.x .. bGrid.x - 1) {
+        for (gridX in aGrid.x until bGrid.x) {
             val borderX = (gridX + 1) * BlockWidth
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()
@@ -345,7 +342,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         return res
     }
 
-    fun atLocation(x: Double, y:Double): GameObject? {
+    fun atLocation(x: Double, y: Double): GameObject? {
         return grid[gridLocation(x, y)]
     }
 
@@ -365,7 +362,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         val strings = ArrayList<String>()
         for (y in (grid.height - 1).downTo(0)) {
             val sb = StringBuilder(grid.width)
-            for (x in 0.. grid.width - 1) {
+            for (x in 0 until grid.width) {
                 sb.append(charGrid[x, y])
             }
             strings.add(sb.toString())

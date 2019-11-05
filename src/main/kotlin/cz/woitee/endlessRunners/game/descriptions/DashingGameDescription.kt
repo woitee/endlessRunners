@@ -1,17 +1,15 @@
 package cz.woitee.endlessRunners.game.descriptions
 
 import cz.woitee.endlessRunners.game.actions.ApplyGameEffectAction
-import cz.woitee.endlessRunners.game.actions.ChangeColorAction
 import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
 import cz.woitee.endlessRunners.game.actions.JumpAction
 import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
 import cz.woitee.endlessRunners.game.effects.GameEffect
 import cz.woitee.endlessRunners.game.effects.SpeedChange
 import cz.woitee.endlessRunners.game.effects.TimedEffect
-import cz.woitee.endlessRunners.game.objects.GameObjectColor
 
-class DashingGameDescription: GameDescription() {
-    class DashingAction(amount: Double, val time: Double): ApplyGameEffectAction(TimedEffect(
+class DashingGameDescription : GameDescription() {
+    class DashingAction(amount: Double, val time: Double) : ApplyGameEffectAction(TimedEffect(
         time,
         SpeedChange(GameEffect.Target.PLAYER, amount),
         SpeedChange(GameEffect.Target.PLAYER, GameDescription().playerStartingSpeed)

@@ -14,7 +14,7 @@ import java.util.ArrayList
 * A class to generate level from pre-saved 2D blocks.
 * Created by woitee on 13/08/2017.
 */
-class HeightBlockLevelGenerator (val gameDescription: GameDescription): LevelGenerator() {
+class HeightBlockLevelGenerator(val gameDescription: GameDescription) : LevelGenerator() {
     var blocks = arrayListOf(
             HeightBlock(gameDescription, arrayListOf(
                     "P  P",

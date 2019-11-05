@@ -6,4 +6,4 @@ import cz.woitee.endlessRunners.game.undoing.IUndoable
  * Created by woitee on 09/04/2017.
  */
 
-abstract class UndoableGameEffect: GameEffect(), IUndoable
+abstract class UndoableGameEffect : GameEffect(), IUndoable

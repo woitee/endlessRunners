@@ -1,13 +1,14 @@
 package cz.woitee.endlessRunners.game.gui
 
 import cz.woitee.endlessRunners.game.*
-import cz.woitee.endlessRunners.game.objects.*
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.MovingObject
 import cz.woitee.endlessRunners.geom.Vector2Double
 import java.awt.*
 import java.awt.event.KeyListener
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-import java.util.*
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
@@ -16,7 +17,7 @@ import javax.swing.SwingUtilities
  * Created by woitee on 15/01/2017.
  */
 
-open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", var shouldEndGameOnStop: Boolean = true, val debugging:Boolean = false): GameVisualizerBase() {
+open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", var shouldEndGameOnStop: Boolean = true, val debugging: Boolean = false) : GameVisualizerBase() {
     lateinit var frame: JFrame
         private set
     var panel: JPanel = JPanel(BorderLayout())
@@ -90,7 +91,7 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
             }
             return
         }
-        SwingUtilities.invokeAndWait swingThread@ {
+        SwingUtilities.invokeAndWait swingThread@{
             if (dbImage == null) {
                 dbImage = panel.createImage(GameWidth, GameHeight)
                 if (dbImage == null) {
@@ -114,7 +115,7 @@ open class GamePanelVisualizer(val panelName: String = "Endless Runners GUI", va
         }
     }
 
-    override final fun addKeyListener(listener: KeyListener) {
+    final override fun addKeyListener(listener: KeyListener) {
         panel.addKeyListener(listener)
     }
 

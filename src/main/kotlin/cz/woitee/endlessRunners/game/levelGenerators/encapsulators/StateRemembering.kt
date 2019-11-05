@@ -7,13 +7,15 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import java.io.File
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayDeque
+import java.util.Date
+import kotlin.collections.ArrayList
 
 /**
  * A LevelGenerator encapsulator that saves copies of states from which it was called, useful for debugging.
  * Set number of states to remember, defaults to one screen.
  */
-class StateRemembering(val innerGenerator: LevelGenerator, val rememberCount: Int = WidthBlocks): LevelGenerator() {
+class StateRemembering(val innerGenerator: LevelGenerator, val rememberCount: Int = WidthBlocks) : LevelGenerator() {
     val states = ArrayDeque<GameState>()
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {

@@ -1,20 +1,29 @@
 package cz.woitee.endlessRunners.game
 
-import cz.woitee.endlessRunners.utils.TimedThread
-import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
-import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import cz.woitee.endlessRunners.game.collisions.GridDetectingCollisionHandler
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
-import java.util.*
+import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.PlayerController
+import cz.woitee.endlessRunners.utils.TimedThread
+import java.util.Random
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
-class Game(val levelGenerator: LevelGenerator, val playerController: PlayerController, val visualizer: GameVisualizerBase?,
-           val visualizeFrameRate: Double = 75.0, val updateRate: Double = 37.5, val mode: Mode = Mode.INTERACTIVE,
-           val gameDescription: GameDescription = GameDescription(), seed: Long = Random().nextLong(), val restartOnGameOver: Boolean = true,
-           val updateCallback: (Game) -> Unit = { _ -> }, var freezeOnStartSeconds: Double = 0.0) {
+class Game(
+    val levelGenerator: LevelGenerator,
+    val playerController: PlayerController,
+    val visualizer: GameVisualizerBase?,
+    val visualizeFrameRate: Double = 75.0,
+    val updateRate: Double = 37.5,
+    val mode: Mode = Mode.INTERACTIVE,
+    val gameDescription: GameDescription = GameDescription(),
+    seed: Long = Random().nextLong(),
+    val restartOnGameOver: Boolean = true,
+    val updateCallback: (Game) -> Unit = { _ -> },
+    var freezeOnStartSeconds: Double = 0.0
+) {
 
     enum class Mode {
         INTERACTIVE, SIMULATION

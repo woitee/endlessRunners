@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.3.50"
 
     id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jmailen.kotlinter") version "2.1.1"
 }
 
 group = "cz.woitee.endlessRunners"
@@ -13,7 +14,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    api("io.jenetics:jenetics:4.1.0")
+    implementation("io.jenetics:jenetics:4.1.0")
 
     // HashKode has been forked by Gabriel Shanahan to add Gradle and thus work around the invalid JAR bug
     implementation("com.github.gabriel-shanahan:hashkode:latest.integration")

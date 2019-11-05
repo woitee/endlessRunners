@@ -1,13 +1,12 @@
 package cz.woitee.endlessRunners.game.algorithms.dfs
 
 import kotlin.repeat
-import java.util.*
 
 /**
  * Created by woitee on 30/04/2017.
  */
 
-class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Unit = { average -> println(average) }) {
+class SearchStatsSummer(val sumEvery: Int, val callback: (SearchStatsAverage) -> Unit = { average -> println(average) }) {
     data class SearchStatsAverage(
         var count: Int = 0,
         var searchedStates: Double = 0.0,
@@ -15,7 +14,8 @@ class SearchStatsSummer(val sumEvery:Int, val callback:(SearchStatsAverage)->Uni
         var reachedDepth: Double = 0.0,
         var success: Double = 0.0,
         var cachedStates: Double = 0.0,
-        var timeTaken: Double = 0.0) {
+        var timeTaken: Double = 0.0
+    ) {
 
         override fun toString(): String {
             fun roundDouble(x: Double, precision: Int = 2): Double {

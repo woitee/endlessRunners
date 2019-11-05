@@ -2,11 +2,10 @@ package cz.woitee.endlessRunners.game.levelGenerators
 
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.objects.GameObject
-import cz.woitee.endlessRunners.utils.arrayList
 import java.io.File
 import java.util.ArrayList
 
-class FromRecordingLevelGenerator(recordingFilePath: String): LevelGenerator() {
+class FromRecordingLevelGenerator(recordingFilePath: String) : LevelGenerator() {
     val recordingLines = File(recordingFilePath).readLines().filter { it.startsWith("NEWCOLUMN") }
     var currentIndex = 0
     val currentLine

@@ -1,11 +1,10 @@
 package cz.woitee.endlessRunners.game.algorithms.dfs
 
 import cz.woitee.endlessRunners.game.GameButton
-import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.GameState
-import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
-import java.util.*
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
+import cz.woitee.endlessRunners.game.undoing.IUndo
 
 /**
  * A place that you can init when creating a BasicDFS or some other search algorithm for the game. Provides useful methods,
@@ -14,12 +13,12 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-abstract class AbstractDFS(val persistentCache:Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
+abstract class AbstractDFS(val persistentCache: Boolean = true, var maxDepth: Int = 1000, var debug: Boolean = false) {
     data class SearchResult(val success: Boolean, val action: GameButton.StateChange? = null)
     /**
      * Assistant class for notifying that the last state advance managed to only perform the gameAction, and not a state update.
      */
-    class NoStateAdvanceUndo(val undo: IUndo): IUndo {
+    class NoStateAdvanceUndo(val undo: IUndo) : IUndo {
         override fun undo(gameState: GameState) {
             undo.undo(gameState)
         }
@@ -37,7 +36,7 @@ abstract class AbstractDFS(val persistentCache:Boolean = true, var maxDepth: Int
     /**
      * Searches for an gameAction that doesn't lead to death and returns it, or null if it doesn't exist.
      */
-    fun searchForAction (gameState: GameState, updateTime: Double = -1.0): GameButton.StateChange? {
+    fun searchForAction(gameState: GameState, updateTime: Double = -1.0): GameButton.StateChange? {
         this.updateTime = if (updateTime < 0) gameState.game.updateTime else updateTime
         if (persistentCache) {
             pruneUnusableCache(gameState)
@@ -64,7 +63,7 @@ abstract class AbstractDFS(val persistentCache:Boolean = true, var maxDepth: Int
         return result.action
     }
 
-    abstract protected fun searchInternal(gameState: GameState, updateTime: Double): SearchResult
+    protected abstract fun searchInternal(gameState: GameState, updateTime: Double): SearchResult
 
     open fun init(gameState: GameState) {
         updateTime = gameState.game.updateTime
@@ -132,11 +131,10 @@ abstract class AbstractDFS(val persistentCache:Boolean = true, var maxDepth: Int
         return gameState.advanceUndoableByAction(buttonStateChange, updateTime)
     }
 
-
     /**
      * This function is called whenever the state we are helping to simulate changes. It can be useful to update
      * internal structures based on it.
      */
-    open internal fun onUpdate(updateTime: Double, buttonStateChange: GameButton.StateChange?, gameState: GameState) {
+    internal open fun onUpdate(updateTime: Double, buttonStateChange: GameButton.StateChange?, gameState: GameState) {
     }
 }

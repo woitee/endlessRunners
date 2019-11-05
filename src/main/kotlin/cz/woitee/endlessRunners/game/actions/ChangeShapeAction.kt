@@ -10,7 +10,7 @@ import cz.woitee.endlessRunners.game.undoing.IUndo
  * Created by woitee on 13/01/2017.
  */
 
-class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int): HoldButtonAction() {
+class ChangeShapeAction(val targetWidth: Int, val targetHeight: Int) : HoldButtonAction() {
     override fun isApplicableOn(gameState: GameState): Boolean {
         applyOn(gameState)
         for (collPoint in gameState.player.collPoints) {

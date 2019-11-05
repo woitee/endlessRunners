@@ -7,7 +7,6 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.game.objects.Player
 import cz.woitee.endlessRunners.game.objects.SolidBlock
-import cz.woitee.endlessRunners.utils.CopyUtils
 import org.junit.jupiter.api.Assertions.*
 
 internal class CopyUtilsTest {

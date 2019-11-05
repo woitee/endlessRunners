@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 class GamePanelAnnouncerComponent {
-    data class QueuedMessage(val startTime: Long, val message:String)
+    data class QueuedMessage(val startTime: Long, val message: String)
     /** Time of announcement in seconds. */
     var announceTime = 1.5
     val announceTimeMillis
@@ -31,7 +31,7 @@ class GamePanelAnnouncerComponent {
     /**
      * Draws all messages on screen.
      */
-    fun draw(g: Graphics, gameState:GameState) {
+    fun draw(g: Graphics, gameState: GameState) {
         val playerY = GameHeight - gameState.player.y.toInt() - gameState.player.heightPx
         val currentTime = System.currentTimeMillis()
 

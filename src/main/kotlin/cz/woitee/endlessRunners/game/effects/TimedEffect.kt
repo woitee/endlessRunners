@@ -4,10 +4,11 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 open class TimedEffect(
-        val timeout: Double,
-        val startEffect: UndoableGameEffect,
-        val stopEffect: UndoableGameEffect,
-        val runningEffect: UndoableGameEffect = NoEffect): UndoableGameEffect() {
+    val timeout: Double,
+    val startEffect: UndoableGameEffect,
+    val stopEffect: UndoableGameEffect,
+    val runningEffect: UndoableGameEffect = NoEffect
+) : UndoableGameEffect() {
 
     override fun applyOn(gameState: GameState) {
         startEffect.applyOn(gameState)

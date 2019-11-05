@@ -4,7 +4,7 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 
-object NoEffect: UndoableGameEffect() {
+object NoEffect : UndoableGameEffect() {
     override fun applyOn(gameState: GameState) {
         // do nothing
     }

@@ -1,7 +1,6 @@
 package cz.woitee.endlessRunners.game
 
 import cz.woitee.endlessRunners.geom.Vector2Int
-import java.util.*
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
@@ -12,7 +11,7 @@ import cz.woitee.endlessRunners.utils.shift
  * Created by woitee on 13/01/2017.
  */
 
-class Grid2D<T>(width: Int, height: Int, val factory: ()->T) {
+class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
     var width: Int = width
         protected set
     var height: Int = height
@@ -69,7 +68,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: ()->T) {
     }
 
     fun resizeWidth(targetWidth: Int) {
-        grid.resizeTo(targetWidth, { arrayList(height, factory) } )
+        grid.resizeTo(targetWidth, { arrayList(height, factory) })
         this.width = targetWidth
     }
 
@@ -97,7 +96,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: ()->T) {
 
     fun forEach(action: (T) -> Unit, afterRow: (Int) -> Unit = {}) {
         for (y in height - 1 downTo 0) {
-            for (x in 0 .. width - 1) {
+            for (x in 0 until width) {
                 action(grid[x][y])
             }
             afterRow(y)
@@ -108,7 +107,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: ()->T) {
         forEach({
             gameObject -> print(if (gameObject == null) " " else "#")
         }, {
-            i -> println()
+            _ -> println()
         })
     }
 }

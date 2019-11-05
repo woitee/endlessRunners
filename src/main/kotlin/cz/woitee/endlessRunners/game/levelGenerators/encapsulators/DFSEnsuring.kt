@@ -1,23 +1,24 @@
 package cz.woitee.endlessRunners.game.levelGenerators.encapsulators
 
-import cz.woitee.endlessRunners.game.*
-import cz.woitee.endlessRunners.game.objects.GameObject
-import cz.woitee.endlessRunners.game.objects.GameObjectClass
-import cz.woitee.endlessRunners.game.objects.SolidBlock
+import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.GameObjectClass
+import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.utils.arrayList
 import java.io.File
 import java.io.ObjectOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import kotlin.collections.ArrayList
 
 /**
  * Created by woitee on 22/07/2017.
  */
 
-open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: AbstractDFS, val doDFSAfterFail: Boolean = false, val dumpErrors: Boolean = true): LevelGenerator() {
+open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: AbstractDFS, val doDFSAfterFail: Boolean = false, val dumpErrors: Boolean = true) : LevelGenerator() {
     enum class DFSResult { NONE, SUCCESS, FAIL, FAIL_COPYCOLUMN }
     var lastGameState: GameState? = null
     var lastResult: DFSResult = DFSResult.NONE
@@ -37,7 +38,8 @@ open class DFSEnsuring(val innerGenerator: LevelGenerator, val dfsProvider: Abst
                 lastResult = DFSResult.FAIL_COPYCOLUMN
                 if (dfsProvider is DelayedTwinDFS) {
                     val buttonModel = dfsProvider.buttonModel
-                    val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()) + ".dmp"
+                    val logFileName = "out/buttonModels/LevelGenButtonModel_" + SimpleDateFormat("yyyy_MM_dd-HH_mm_ss").format(Date()
+                    ) + ".dmp"
                     println("Dumping buttonModel to $logFileName")
                     val file = File(logFileName)
                     val oos = ObjectOutputStream(file.outputStream())

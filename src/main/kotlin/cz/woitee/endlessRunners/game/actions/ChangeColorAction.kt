@@ -5,7 +5,7 @@ import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import cz.woitee.endlessRunners.game.objects.GameObjectColor
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
-class ChangeColorAction(val targetColor: GameObjectColor): HoldButtonAction() {
+class ChangeColorAction(val targetColor: GameObjectColor) : HoldButtonAction() {
     override fun isApplicableOn(gameState: GameState): Boolean {
         return true
     }

@@ -1,10 +1,6 @@
 package cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin
 
-import cz.woitee.endlessRunners.game.DummyObjects
-import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
-import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
 import cz.woitee.endlessRunners.game.levelGenerators.ColumnCopyingLevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
@@ -13,14 +9,12 @@ import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.util.*
 
-
-class ButtonModel(var currentState: GameState, var delayedState: GameState, val updateTime: Double): MySerializable {
+class ButtonModel(var currentState: GameState, var delayedState: GameState, val updateTime: Double) : MySerializable {
     enum class ThreeStateInteraction { NONE, PRESS, RELEASE }
     enum class DisabledStates { NONE, CURRENT, DELAYED, BOTH }
     data class ButtonAction(val button: Int, val isPress: Boolean)
-    open class ButtonUndo(val currentStateUndo: IUndo, val delayedStateUndo: IUndo, val disabledStates: DisabledStates): Serializable {
+    open class ButtonUndo(val currentStateUndo: IUndo, val delayedStateUndo: IUndo, val disabledStates: DisabledStates) : Serializable {
         constructor(buttonUndo: ButtonUndo) : this(buttonUndo.currentStateUndo, buttonUndo.delayedStateUndo, buttonUndo.disabledStates)
         open fun undo(currentState: GameState, delayedState: GameState) {
             currentStateUndo.undo(currentState)
@@ -31,7 +25,7 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         }
     }
     var disabledStates: DisabledStates
-        get () =
+        get() =
             if (currentStateDisabled) {
                 if (delayedStateDisabled)
                     DisabledStates.BOTH
@@ -45,10 +39,10 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
             }
         set(value) {
             when (value) {
-                DisabledStates.NONE    -> { currentStateDisabled = false; delayedStateDisabled = false }
+                DisabledStates.NONE -> { currentStateDisabled = false; delayedStateDisabled = false }
                 DisabledStates.DELAYED -> { currentStateDisabled = false; delayedStateDisabled = true }
-                DisabledStates.CURRENT -> { currentStateDisabled = true;  delayedStateDisabled = false }
-                DisabledStates.BOTH    -> { currentStateDisabled = true;  delayedStateDisabled = true }
+                DisabledStates.CURRENT -> { currentStateDisabled = true; delayedStateDisabled = false }
+                DisabledStates.BOTH -> { currentStateDisabled = true; delayedStateDisabled = true }
             }
         }
 
@@ -129,13 +123,13 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
     }
 
     fun isReleasable(button: Int): Boolean {
-        return (!currentStateDisabled && currentState.buttons[button].makesSenseToRelease)
-                || (!delayedStateDisabled && delayedState.buttons[button].makesSenseToRelease)
+        return (!currentStateDisabled && currentState.buttons[button].makesSenseToRelease) ||
+                (!delayedStateDisabled && delayedState.buttons[button].makesSenseToRelease)
     }
 
     fun isPressable(button: Int): Boolean {
-        return (!currentStateDisabled && currentState.buttons[button].makesSenseToPress)
-                || (!delayedStateDisabled && delayedState.buttons[button].makesSenseToPress)
+        return (!currentStateDisabled && currentState.buttons[button].makesSenseToPress) ||
+                (!delayedStateDisabled && delayedState.buttons[button].makesSenseToPress)
     }
 
     fun orderedApplicableButtonActions(): ArrayList<ButtonAction?> {
@@ -187,7 +181,6 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
     fun heldButtonsAsFlags(): Int {
         return currentState.heldButtonsAsFlags()
     }
-
 
     // ======================
     //      SERIALIZATION

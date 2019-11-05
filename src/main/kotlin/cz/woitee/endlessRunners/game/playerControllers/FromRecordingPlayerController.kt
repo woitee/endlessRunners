@@ -4,7 +4,7 @@ import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
 import java.io.File
 
-class FromRecordingPlayerController(recordingFilePath: String): PlayerController() {
+class FromRecordingPlayerController(recordingFilePath: String) : PlayerController() {
 
     val recordingLines = File(recordingFilePath).readLines().filter { !it.startsWith("NEWCOLUMN") }
     var currentIndex = 0

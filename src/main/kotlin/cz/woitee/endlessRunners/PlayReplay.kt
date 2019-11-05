@@ -4,13 +4,7 @@ import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FromRecordingLevelGenerator
-import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.FromRecordingPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
-import java.text.SimpleDateFormat
-import java.util.*
 
 fun main(args: Array<String>) {
     val replayPath: String = "RecordingGame12018_03_05-17_53_51.dmp"

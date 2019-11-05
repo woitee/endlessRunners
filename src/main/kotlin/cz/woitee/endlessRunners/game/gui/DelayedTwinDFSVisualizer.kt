@@ -5,7 +5,7 @@ import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.utils.TimedThread
 import java.awt.Graphics
 
-class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS, val frameX: Int = 700, val frameY: Int = 0): GamePanelVisualizer() {
+class DelayedTwinDFSVisualizer(val delayedTwinDFS: DelayedTwinDFS, val frameX: Int = 700, val frameY: Int = 0) : GamePanelVisualizer() {
     val visualizeThread: TimedThread = TimedThread({
             this.update(delayedTwinDFS.buttonModel.currentState)
         },

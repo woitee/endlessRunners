@@ -4,7 +4,6 @@ import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.utils.pop
-import java.util.*
 
 /**
  * A basic BasicDFS implementation for the game. It caches the states to prevent exploring from the same state multiple times.
@@ -14,8 +13,8 @@ import java.util.*
  * Created by woitee on 30/04/2017.
  */
 
-open class BasicDFS(persistentCache:Boolean = true, maxDepth: Int = 1000, debug: Boolean = false): AbstractDFS(persistentCache, maxDepth, debug) {
-    constructor(dfs: BasicDFS): this(dfs.persistentCache, dfs.maxDepth, dfs.debug) {
+open class BasicDFS(persistentCache: Boolean = true, maxDepth: Int = 1000, debug: Boolean = false) : AbstractDFS(persistentCache, maxDepth, debug) {
+    constructor(dfs: BasicDFS) : this(dfs.persistentCache, dfs.maxDepth, dfs.debug) {
         cachedStates.addAll(dfs.cachedStates)
     }
 
@@ -33,7 +32,7 @@ open class BasicDFS(persistentCache:Boolean = true, maxDepth: Int = 1000, debug:
             actionList.add(0)
             possibleActionsList.add(currentActions)
             if (gameState.isGameOver || isInCache(gameState)) {
-                //backtrack
+                // backtrack
                 var finishedBacktrack = false
                 while (!finishedBacktrack) {
                     if (undoList.isEmpty()) {

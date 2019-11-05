@@ -2,16 +2,14 @@ package cz.woitee.endlessRunners.game.descriptions
 
 import cz.woitee.endlessRunners.game.BlockHeight
 import cz.woitee.endlessRunners.game.actions.JumpAction
-import cz.woitee.endlessRunners.game.collisions.BaseCollisionHandler.CollisionHandlerEntry
 import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
-import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
+import cz.woitee.endlessRunners.game.collisions.BaseCollisionHandler.CollisionHandlerEntry
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.ICollisionEffect
 import cz.woitee.endlessRunners.game.effects.GameEffect
 import cz.woitee.endlessRunners.game.effects.Gravity
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.Player
 import cz.woitee.endlessRunners.game.objects.SolidBlock
-import java.util.*
 
 /**
  * This class contains the "Genotype" or "Settings" of the game. It contains all the possible blocks, actions and effects,

@@ -1,14 +1,14 @@
 package cz.woitee.endlessRunners.game.descriptions
 
+import cz.woitee.endlessRunners.game.actions.ChangeColorAction
+import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
+import cz.woitee.endlessRunners.game.actions.JumpAction
+import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
+import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
 import cz.woitee.endlessRunners.game.collisions.BaseCollisionHandler
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.ApplyGameEffect
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.DestroyOther
 import cz.woitee.endlessRunners.game.collisions.collisionEffects.composite.ConditionalCollisionEffect
-import cz.woitee.endlessRunners.game.actions.ChangeColorAction
-import cz.woitee.endlessRunners.game.actions.ChangeShapeAction
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
-import cz.woitee.endlessRunners.game.actions.JumpAction
-import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
 import cz.woitee.endlessRunners.game.conditions.PlayerHasColor
 import cz.woitee.endlessRunners.game.conditions.PlayerTouchingObject
 import cz.woitee.endlessRunners.game.effects.GameOver
@@ -21,7 +21,7 @@ import cz.woitee.endlessRunners.geom.Direction4
 /**
  * Created by woitee on 23/07/2017.
  */
-open class BitTripGameDescription: GameDescription() {
+open class BitTripGameDescription : GameDescription() {
     val trampolineAction = ConditionalAction(
             PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
             JumpAction(30.0)

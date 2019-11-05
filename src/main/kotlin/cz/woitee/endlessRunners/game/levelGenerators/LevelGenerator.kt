@@ -1,17 +1,16 @@
 package cz.woitee.endlessRunners.game.levelGenerators
 
 import cz.woitee.endlessRunners.game.GameButton
-import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.HeightBlocks
+import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.utils.arrayList
-import java.util.*
 
 /**
  * Created by woitee on 14/01/2017.
  */
 
-abstract class LevelGenerator{
+abstract class LevelGenerator {
     abstract fun generateNextColumn(gameState: GameState): ArrayList<GameObject?>
     abstract fun init(gameState: GameState)
     /**

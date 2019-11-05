@@ -1,6 +1,6 @@
 package cz.woitee.endlessRunners.utils
 
-import java.util.*
+import java.util.ArrayDeque
 
 fun <T> ArrayDeque<T>.findFromBeginning(n: Int): T {
     val it = this.iterator()

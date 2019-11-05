@@ -1,10 +1,9 @@
 package cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin
 
 import cz.woitee.endlessRunners.game.DummyObjects
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 internal class ButtonModelTest {
     var game = DummyObjects.createDummyGame()
@@ -45,9 +44,9 @@ internal class ButtonModelTest {
     fun pressableWhenPressingAndReleasing() {
         buttonModel.press(0)
         assertFalse(buttonModel.isPressable(0))
-        assertTrue (buttonModel.isReleasable(0))
+        assertTrue(buttonModel.isReleasable(0))
         buttonModel.release(0)
-        assertTrue (buttonModel.isPressable(0))
+        assertTrue(buttonModel.isPressable(0))
         assertFalse(buttonModel.isReleasable(0))
 
         val mockAction = currentState.game.gameDescription.allActions[0] as DummyObjects.MockAction
@@ -58,9 +57,9 @@ internal class ButtonModelTest {
     fun pressableAndReleasableAgainAfterUndoing() {
         val undo = buttonModel.press(0)
         assertFalse(buttonModel.isPressable(0))
-        assertTrue (buttonModel.isReleasable(0))
+        assertTrue(buttonModel.isReleasable(0))
         undo.undo(buttonModel)
-        assertTrue (buttonModel.isPressable(0))
+        assertTrue(buttonModel.isPressable(0))
         assertFalse(buttonModel.isReleasable(0))
 
         val mockAction = currentState.game.gameDescription.allActions[0] as DummyObjects.MockAction

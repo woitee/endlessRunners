@@ -5,7 +5,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import java.util.ArrayList
 
-class DeterministicSeeds(val innerGenerator: LevelGenerator, startSeed: Long, val seedStep: Long = 6337): LevelGenerator() {
+class DeterministicSeeds(val innerGenerator: LevelGenerator, startSeed: Long, val seedStep: Long = 6337) : LevelGenerator() {
     var currentSeed = startSeed
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {

@@ -2,7 +2,7 @@ package cz.woitee.endlessRunners.experiments
 
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class ReactionAndPrecisionTest {
     fun run() {

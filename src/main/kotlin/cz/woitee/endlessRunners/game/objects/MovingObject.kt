@@ -11,8 +11,8 @@ import java.io.ObjectOutputStream
 /**
  * Created by woitee on 15/01/2017.
  */
-abstract class MovingObject(x: Double, y: Double): UndoableUpdateGameObject(x, y) {
-    class MovingObjectUndo(val movingObject: MovingObject, val collUndos: List<IUndo>, val x: Double, val y: Double): IUndo {
+abstract class MovingObject(x: Double, y: Double) : UndoableUpdateGameObject(x, y) {
+    class MovingObjectUndo(val movingObject: MovingObject, val collUndos: List<IUndo>, val x: Double, val y: Double) : IUndo {
         override fun undo(gameState: GameState) {
             movingObject.x = x
             movingObject.y = y
@@ -29,7 +29,7 @@ abstract class MovingObject(x: Double, y: Double): UndoableUpdateGameObject(x, y
 
     var velocity: Vector2Double
         get() = Vector2Double(xspeed, yspeed)
-        set(value) {xspeed = value.x; yspeed = value.y}
+        set(value) { xspeed = value.x; yspeed = value.y }
 
     override fun update(time: Double) {
         gameState.game.collHandler.handleCollisions(this)

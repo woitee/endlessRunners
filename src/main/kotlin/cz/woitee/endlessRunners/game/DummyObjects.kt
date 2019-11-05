@@ -9,7 +9,7 @@ import cz.woitee.endlessRunners.game.playerControllers.RandomPlayerController
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 object DummyObjects {
-    class MockAction: GameButtonAction() {
+    class MockAction : GameButtonAction() {
         var timesApplied = 0
         var timesUndone = 0
 
@@ -23,7 +23,7 @@ object DummyObjects {
 
         override fun applyUndoablyOn(gameState: GameState): IUndo {
             ++timesApplied
-            return object: IUndo {
+            return object : IUndo {
                 override fun undo(gameState: GameState) {
                     ++timesUndone
                 }
@@ -80,7 +80,7 @@ object DummyObjects {
             }
         }
     }
-    class MockGameDescription: GameDescription() {
+    class MockGameDescription : GameDescription() {
         override val allActions: List<GameButtonAction> = listOf(
             MockAction(), MockHoldButtonAction()
         )

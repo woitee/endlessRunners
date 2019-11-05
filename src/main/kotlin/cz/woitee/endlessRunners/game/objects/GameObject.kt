@@ -7,15 +7,15 @@ import cz.woitee.endlessRunners.geom.Vector2Double
 import cz.woitee.endlessRunners.utils.MySerializable
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
-import java.io.*
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import kotlin.jvm.Transient
-import java.util.*
 
 /**
  * Created by woitee on 13/01/2017.
  */
 
-abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializable {
+abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) : MySerializable {
     abstract val gameObjectClass: GameObjectClass
 
     open var isUpdated: Boolean = false
@@ -30,7 +30,7 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializa
 
     var location: Vector2Double
         get() = Vector2Double(x, y)
-        set(value) {x = value.x; y = value.y}
+        set(value) { x = value.x; y = value.y }
 
     @Transient lateinit var gameState: GameState
 
@@ -63,7 +63,7 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializa
     val collPoints: ArrayList<Vector2Double> = arrayList(collPointsNumber, { Vector2Double() })
         get() {
             if (field.count() != collPointsNumber) {
-                field.resizeTo(collPointsNumber, { Vector2Double() } )
+                field.resizeTo(collPointsNumber, { Vector2Double() })
             }
 
             var i = 0
@@ -98,4 +98,3 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0): MySerializa
         return this
     }
 }
-

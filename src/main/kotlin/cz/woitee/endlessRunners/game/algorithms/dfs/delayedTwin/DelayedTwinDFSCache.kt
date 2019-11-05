@@ -5,11 +5,10 @@ import cz.woitee.endlessRunners.game.algorithms.dfs.CachedState
 import cz.woitee.endlessRunners.utils.MySerializable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.util.*
 import java.io.Serializable
 
-class DelayedTwinDFSCache: MySerializable {
-    data class TwinCachedState(val currentCached: CachedState, val delayedCached: CachedState): Serializable {
+class DelayedTwinDFSCache : MySerializable {
+    data class TwinCachedState(val currentCached: CachedState, val delayedCached: CachedState) : Serializable {
         constructor(currentState: GameState, delayedState: GameState) : this(CachedState(currentState), CachedState(delayedState))
         // Button model does not need to worry which gameAction are used in which states, merely the buttons pressed
         constructor(buttonModel: ButtonModel) : this(buttonModel.currentState, buttonModel.delayedState) {
@@ -54,7 +53,7 @@ class DelayedTwinDFSCache: MySerializable {
 
     fun clearAddedSince(gameTime: Double) {
         cachedStates
-                .filter { it.value >= gameTime}
+                .filter { it.value >= gameTime }
                 .forEach { cachedStates.remove(it.key) }
     }
 

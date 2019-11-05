@@ -1,21 +1,14 @@
 package cz.woitee.endlessRunners
 
-import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.objects.GameObject
-import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.Grid2D
 import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
-import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
-import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.descriptions.DashingGameDescription
-import cz.woitee.endlessRunners.game.descriptions.WanabaltGameDescription
-import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
-import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
-import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
+import cz.woitee.endlessRunners.game.objects.GameObject
+import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.utils.StopWatch
 
 /**
@@ -47,7 +40,7 @@ fun testBasic() {
 }
 
 fun test() {
-    //Moving by x:1.40, y:-0.54 from (514.10, 24.52)
+    // Moving by x:1.40, y:-0.54 from (514.10, 24.52)
 //    val game = cz.woitee.endlessRunners.createGame()
 //    val locs = game.currentState.gridLocationsBetween(514.10, 24.52, 514.10 + 1.40, 24.52 - 0.54)
 //    println(locs)

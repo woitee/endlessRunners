@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 
     val result = engine.stream()
             .limit(100)
-            .peek({result -> val best = result.bestPhenotype; println(best)})
+            .peek({ result -> val best = result.bestPhenotype; println(best) })
             .peek(statistics)
             .collect(collector)
 

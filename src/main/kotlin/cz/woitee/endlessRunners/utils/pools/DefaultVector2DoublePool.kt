@@ -5,8 +5,8 @@ import cz.woitee.endlessRunners.geom.Vector2Double
 /**
  * Created by woitee on 04/06/2017.
  */
-object DefaultVector2DoublePool: SimplePool<Vector2Double>(DefaultVector2DoubleFactory()) {
-    class DefaultVector2DoubleFactory: SimpleFactory<Vector2Double>() {
+object DefaultVector2DoublePool : SimplePool<Vector2Double>(DefaultVector2DoubleFactory()) {
+    class DefaultVector2DoubleFactory : SimpleFactory<Vector2Double>() {
         override fun create(): Vector2Double {
             println("Creating object")
             return Vector2Double()

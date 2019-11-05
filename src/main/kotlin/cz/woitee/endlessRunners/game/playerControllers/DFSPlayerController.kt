@@ -1,10 +1,10 @@
 package cz.woitee.endlessRunners.game.playerControllers
 
 import cz.woitee.endlessRunners.game.GameButton
-import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
-import cz.woitee.endlessRunners.game.algorithms.dfs.SearchStatsSummer
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.SearchStatsSummer
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.ButtonModel
 import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DFSEnsuring
@@ -14,12 +14,12 @@ import java.io.File
 import java.io.ObjectOutputStream
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * Created by woitee on 09/04/2017.
  */
-class DFSPlayerController(val dfs: AbstractDFS = BasicDFS(), val backupDFS: AbstractDFS? = null): PlayerController() {
+class DFSPlayerController(val dfs: AbstractDFS = BasicDFS(), val backupDFS: AbstractDFS? = null) : PlayerController() {
     var readyToDie = false
     var logFile: PrintWriter? = null
     val statsSummer = SearchStatsSummer(sumEvery = 10000)

@@ -1,16 +1,16 @@
 package cz.woitee.endlessRunners.game.algorithms
 
 import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
+import cz.woitee.endlessRunners.game.algorithms.dfs.BasicDFS
 import cz.woitee.endlessRunners.game.descriptions.BitTripGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
-import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
-import org.junit.jupiter.api.Assertions.*
+import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import java.io.File
 import java.io.ObjectInputStream
+import org.junit.jupiter.api.Assertions.*
 
 internal class BasicDFSTest {
     @org.junit.jupiter.api.Test
@@ -33,8 +33,14 @@ internal class BasicDFSTest {
         runTestFromFile("src/test/resources/GameState_2017_09_28-16_07_19.dmp", 1)
     }
 
-    internal fun runTestFromFile(filePath: String, serializationVersion: Int, expectGameOver: Boolean = false, time: Double = 2.0,
-                                 dfsProvider: AbstractDFS = BasicDFS(), gameDescription: GameDescription = BitTripGameDescription()) {
+    internal fun runTestFromFile(
+        filePath: String,
+        serializationVersion: Int,
+        expectGameOver: Boolean = false,
+        time: Double = 2.0,
+        dfsProvider: AbstractDFS = BasicDFS(),
+        gameDescription: GameDescription = BitTripGameDescription()
+    ) {
         val game = Game(
                 FlatLevelGenerator(),
                 DFSPlayerController(dfsProvider),
@@ -52,7 +58,7 @@ internal class BasicDFSTest {
         val ois = ObjectInputStream(file.inputStream())
         game.gameState.readObject(ois)
 
-        //TODO remove this
+        // TODO remove this
 //        // UNCOMMENT to remove removable blocks
 //        val toRemove = ArrayList<GameObject>()
 //        for (gameObject in game.gameState.gameObjects) {

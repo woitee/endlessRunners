@@ -1,7 +1,6 @@
 package cz.woitee.endlessRunners.utils.pools
 
 import cz.woitee.endlessRunners.utils.pop
-import java.util.*
 
 /**
  * Created by woitee on 04/06/2017.

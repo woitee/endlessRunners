@@ -7,8 +7,7 @@ import java.awt.TextArea
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Random
 import javax.swing.JFrame
 import javax.swing.JPanel
 

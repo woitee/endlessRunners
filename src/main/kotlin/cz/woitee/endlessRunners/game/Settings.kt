@@ -4,7 +4,6 @@ package cz.woitee.endlessRunners.game
  * Created by woitee on 09/01/2017.
  */
 
-
 val GameWidth = 700
 val GameHeight = 400
 val BlockWidth = 24

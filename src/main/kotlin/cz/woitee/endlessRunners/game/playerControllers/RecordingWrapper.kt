@@ -5,9 +5,9 @@ import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.WidthBlocks
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
-class RecordingWrapper(val innerController: PlayerController): PlayerController() {
+class RecordingWrapper(val innerController: PlayerController) : PlayerController() {
     val recording = ArrayList<String>()
 
     var lastGridX = 0

@@ -5,10 +5,10 @@ package cz.woitee.endlessRunners.game.algorithms.dfs
  */
 
 data class SearchStats(
-    var searchedStates:Int = 0,
-    var backtrackedStates:Int = 0,
-    var reachedDepth:Int = 0,
-    var success:Boolean = false,
-    var cachedStates:Int = 0,
-    var timeTaken:Double = 0.0) {
-}
+    var searchedStates: Int = 0,
+    var backtrackedStates: Int = 0,
+    var reachedDepth: Int = 0,
+    var success: Boolean = false,
+    var cachedStates: Int = 0,
+    var timeTaken: Double = 0.0
+)

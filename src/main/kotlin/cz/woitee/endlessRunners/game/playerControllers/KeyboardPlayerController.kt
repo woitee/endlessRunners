@@ -2,12 +2,8 @@ package cz.woitee.endlessRunners.game.playerControllers
 
 import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
-import cz.woitee.endlessRunners.game.actions.abstract.GameButtonAction
-import cz.woitee.endlessRunners.game.actions.abstract.HoldButtonAction
-import cz.woitee.endlessRunners.utils.resizeTo
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
-import java.util.*
 
 /**
  * Class that controls the player via keyboard.
@@ -15,11 +11,11 @@ import java.util.*
  * Created by woitee on 14/01/2017.
  */
 
-class KeyboardPlayerController: PlayerController() {
+class KeyboardPlayerController : PlayerController() {
     /**
      * Keyboard helper that detects all keys pressed, and even those that were pressed too shortly for us to notice.
      */
-    class KeyboardHelper: KeyAdapter() {
+    class KeyboardHelper : KeyAdapter() {
         var pressedKeys = HashSet<Int>()
 
         override fun keyPressed(e: KeyEvent?) {

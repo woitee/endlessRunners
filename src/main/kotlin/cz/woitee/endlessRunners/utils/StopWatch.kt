@@ -16,6 +16,6 @@ internal class StopWatch {
     fun stop(): Long {
         isStarted = true
         val nanos = System.nanoTime() - startTime
-        return nanos/1000000
+        return nanos / 1000000
     }
 }

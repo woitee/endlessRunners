@@ -1,9 +1,9 @@
 package cz.woitee.endlessRunners.game.collisions
 
-import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.BlockHeight
 import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.geom.direction4
 import cz.woitee.endlessRunners.geom.twoNumbers2Direction4
 
@@ -14,7 +14,7 @@ import cz.woitee.endlessRunners.geom.twoNumbers2Direction4
  * Created by woitee on 05/06/2017.
  */
 
-class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
+class GridDetectingCollisionHandler(game: Game) : BaseCollisionHandler(game) {
     override fun nearestCollision(gameState: GameState, ax: Double, ay: Double, bx: Double, by: Double): Collision? {
         return nearestByGridLocations(gameState, ax, ay, bx, by)
     }
@@ -40,7 +40,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
             if (gameState.grid.safeGet(gridLoc)?.isSolid == true) {
                 // We found collision
                 // Direction is given by difference from last block
-                val dir = gridLoc - gridsBetween[i-1]
+                val dir = gridLoc - gridsBetween[i - 1]
                 val colX: Double
                 val colY: Double
                 if (dir.y == 0) {
@@ -70,7 +70,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         }
 
         fun autoRange(a: Int, b: Int): IntProgression {
-            return if (a <= b) a..b else a downTo b
+            return if (a <= b) a .. b else a downTo b
         }
 
         val aGridX = ax.toInt() / BlockWidth - gameState.gridX
@@ -94,7 +94,7 @@ class GridDetectingCollisionHandler(game: Game): BaseCollisionHandler(game) {
         var prevGridX = aGridX
         var skippedFirst = false
         // we'll go by vertical
-        for (gridX in aGridX .. bGridX - 1) {
+        for (gridX in aGridX until bGridX) {
             val borderX = (gameState.gridX + gridX + 1) * BlockWidth
             val contactY = ay + (borderX - ax) * dirY
             val curGridY = (contactY / BlockHeight).toInt()

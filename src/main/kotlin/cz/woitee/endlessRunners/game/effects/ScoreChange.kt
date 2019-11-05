@@ -10,7 +10,7 @@ class ScoreChange(val amount: Int) : UndoableGameEffect() {
 
     override fun applyUndoablyOn(gameState: GameState): IUndo {
         gameState.score += amount
-        return object: IUndo {
+        return object : IUndo {
             override fun undo(gameState: GameState) {
                 gameState.score -= amount
             }

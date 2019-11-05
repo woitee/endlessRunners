@@ -5,7 +5,7 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 
-class IgnoreCollision: IUndoableCollisionEffect {
+class IgnoreCollision : IUndoableCollisionEffect {
     override fun apply(source: GameObject, collision: Collision) {
         // do nothing
     }

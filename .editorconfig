@@ -1,0 +1,3 @@
+[*.{kt,kts}]
+# KtLint directive to allow wildcard imports
+disabled_rules=no-wildcard-imports,range-spacing

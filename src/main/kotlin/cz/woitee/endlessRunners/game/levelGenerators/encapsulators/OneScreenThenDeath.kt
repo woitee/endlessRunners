@@ -7,9 +7,8 @@ import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.utils.arrayList
-import java.util.*
 
-class OneScreenThenDeath(val innerGenerator: LevelGenerator): LevelGenerator() {
+class OneScreenThenDeath(val innerGenerator: LevelGenerator) : LevelGenerator() {
     var numCalled = 0
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {

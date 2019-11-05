@@ -3,7 +3,6 @@ package cz.woitee.endlessRunners.game.conditions
 import cz.woitee.endlessRunners.game.BlockHeight
 import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.DummyObjects
-import cz.woitee.endlessRunners.game.conditions.PlayerTouchingObject
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.geom.Direction4

@@ -1,8 +1,8 @@
 package cz.woitee.endlessRunners.game.effects
 
 import cz.woitee.endlessRunners.game.BlockHeight
-import cz.woitee.endlessRunners.game.objects.MovingObject
 import cz.woitee.endlessRunners.game.GameState
+import cz.woitee.endlessRunners.game.objects.MovingObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 import cz.woitee.endlessRunners.game.undoing.NoUndo
 
@@ -14,8 +14,9 @@ import cz.woitee.endlessRunners.game.undoing.NoUndo
  */
 
 class Gravity(
-        targetedAt: Target = Target.PLAYER,
-        var strength: Double = 0.5): UndoableGameEffect() {
+    targetedAt: Target = Target.PLAYER,
+    var strength: Double = 0.5
+) : UndoableGameEffect() {
 
     override val target = targetedAt
     override val timing = Timing.PERSISTENT

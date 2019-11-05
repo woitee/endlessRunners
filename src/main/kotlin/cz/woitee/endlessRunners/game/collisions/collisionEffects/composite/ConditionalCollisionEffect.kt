@@ -8,10 +8,10 @@ import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 class ConditionalCollisionEffect(
-        val condition: GameCondition,
-        val trueEffect: IUndoableCollisionEffect,
-        val falseEffect: IUndoableCollisionEffect = IgnoreCollision()
-    ): IUndoableCollisionEffect {
+    val condition: GameCondition,
+    val trueEffect: IUndoableCollisionEffect,
+    val falseEffect: IUndoableCollisionEffect = IgnoreCollision()
+) : IUndoableCollisionEffect {
 
     override fun apply(source: GameObject, collision: Collision) {
         if (condition.isTrue(source.gameState)) {

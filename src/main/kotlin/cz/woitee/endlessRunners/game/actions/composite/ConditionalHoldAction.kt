@@ -7,10 +7,11 @@ import cz.woitee.endlessRunners.game.conditions.TrueCondition
 import cz.woitee.endlessRunners.game.undoing.IUndo
 
 class ConditionalHoldAction(
-        val holdButtonAction: HoldButtonAction,
-        val applicableCondition: GameCondition,
-        val keptApplyingCondition: GameCondition = TrueCondition(),
-        val stopApplyingCondition: GameCondition = TrueCondition()): HoldButtonAction() {
+    val holdButtonAction: HoldButtonAction,
+    val applicableCondition: GameCondition,
+    val keptApplyingCondition: GameCondition = TrueCondition(),
+    val stopApplyingCondition: GameCondition = TrueCondition()
+) : HoldButtonAction() {
 
     override fun isApplicableOn(gameState: GameState): Boolean {
         return applicableCondition.isTrue(gameState)

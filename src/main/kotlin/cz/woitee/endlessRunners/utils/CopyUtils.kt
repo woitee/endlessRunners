@@ -1,9 +1,13 @@
 package cz.woitee.endlessRunners.utils
 
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 object CopyUtils {
-    inline fun <reified T: MySerializable> copyBySerialization(sourceObj: T, targetObj: T): T {
+    inline fun <reified T : MySerializable> copyBySerialization(sourceObj: T, targetObj: T): T {
         var oos: ObjectOutputStream? = null
         var ois: ObjectInputStream? = null
         try {
@@ -24,7 +28,7 @@ object CopyUtils {
         }
     }
 
-    inline fun <reified T: Serializable> copyByJavaSerialization(sourceObj: T): T {
+    inline fun <reified T : Serializable> copyByJavaSerialization(sourceObj: T): T {
         var oos: ObjectOutputStream? = null
         var ois: ObjectInputStream? = null
         try {

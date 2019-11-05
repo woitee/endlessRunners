@@ -3,12 +3,12 @@ package cz.woitee.endlessRunners.experiments
 import cz.woitee.endlessRunners.utils.arrayList
 import java.awt.Button
 import java.awt.Color
+import java.io.File
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import java.io.File
 
-class ExperimentGUI (val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Boolean>, val generatedLogPatterns: Array<String>) {
+class ExperimentGUI(val buttonLabels: Array<String>, val buttonCallbacks: Array<() -> Boolean>, val generatedLogPatterns: Array<String>) {
     val frame: JFrame = createFrame()
     lateinit var buttons: ArrayList<Button>
     val permanentlyDone = arrayList(4, { false })

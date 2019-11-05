@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream
  * Created by woitee on 13/01/2017.
  */
 
-class Player(x: Double, y: Double): MovingObject(x, y) {
+class Player(x: Double, y: Double) : MovingObject(x, y) {
     override val gameObjectClass = GameObjectClass.PLAYER
 
     override val defaultHeightBlocks = 2

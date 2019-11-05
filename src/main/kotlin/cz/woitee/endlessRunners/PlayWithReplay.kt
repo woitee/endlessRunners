@@ -1,16 +1,14 @@
 package cz.woitee.endlessRunners
 
 import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.algorithms.dfs.delayedTwin.DelayedTwinDFS
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
-import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 fun main(args: Array<String>) {
     val gameDescription = CrouchGameDescription()

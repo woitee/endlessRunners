@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.utils
 
-import java.util.*
+import java.util.Random
+import kotlin.math.abs
 
 /**
  * Created by woitee on 15/01/2017.
@@ -28,31 +29,31 @@ fun <T> ArrayList<T>.resizeTo(size: Int, factory: () -> T): ArrayList<T> {
     Shifts all the elements either left (for positive amount) or right (for negative amount), filling the blank space
     with results from given factory.
  */
-fun <T> ArrayList<T>.shift(amount: Int, factory: ()->T) {
-    if (Math.abs(amount) > this.size) {
+fun <T> ArrayList<T>.shift(amount: Int, factory: () -> T) {
+    if (abs(amount) > this.size) {
         for (i in 0 .. this.lastIndex)
             this[i] = factory()
         return
     }
     if (amount > 0) {
-        for (i in 0 .. this.size - amount - 1) {
+        for (i in 0 until this.size - amount) {
             this[i] = this[i + amount]
         }
-        for (i in this.size - amount .. this.lastIndex) {
+        for (i in this.size - amount until this.size) {
             this[i] = factory()
         }
     } else {
         for (i in this.lastIndex downTo -amount) {
             this[i] = this[i + amount]
         }
-        for (i in 0 .. -amount - 1) {
+        for (i in 0 until -amount) {
             this[i] = factory()
         }
     }
 }
 
 fun <T> ArrayList<T>.reverse(): ArrayList<T> {
-    for (i in 0 .. (this.size / 2) - 1) {
+    for (i in 0 until this.size / 2) {
         val tmp = this[i]
         this[i] = this[this.lastIndex - i]
         this[this.lastIndex - i] = tmp
@@ -64,8 +65,8 @@ fun <T> ArrayList<T>.pop(): T {
     return this.removeAt(this.count() - 1)
 }
 
-val _arrayListRandom = Random()
+internal val arrayListRandom = Random()
 
-fun <T> ArrayList<T>.randomElement(random: Random = _arrayListRandom): T {
+fun <T> ArrayList<T>.randomElement(random: Random = arrayListRandom): T {
     return this[random.nextInt(this.count())]
 }

@@ -88,9 +88,8 @@ class HeightBlockLevelGenerator(val gameDescription: GameDescription) : LevelGen
             selectNextBlock(gameState)
         }
 
-        val col = arrayList<GameObject?>(HeightBlocks, { null })
+        val col = arrayList<GameObject?>(HeightBlocks) { null }
 
-        val blockHeight = currentBlockY - currentBlock.startHeight
         for (y in 0 until currentBlockY) {
             col[y] = SolidBlock()
         }

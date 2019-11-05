@@ -283,6 +283,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
         )
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun scroll(time: Double) {
         synchronized(gameObjects) {
             if (levelGenerator == null) {

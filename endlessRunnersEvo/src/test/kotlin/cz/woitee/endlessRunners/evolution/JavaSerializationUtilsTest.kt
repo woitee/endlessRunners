@@ -1,5 +1,6 @@
-package cz.woitee.endlessRunners.utils
+package cz.woitee.endlessRunners.evolution
 
+import cz.woitee.endlessRunners.utils.JavaSerializationUtils
 import io.jenetics.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -20,7 +21,7 @@ class JavaSerializationUtilsTest {
         val genotype = Genotype.of(BitChromosome.of(2, 1.0))
 
         var serialized = JavaSerializationUtils.serializeToString(genotype)
-        val unserialized = JavaSerializationUtils.unserializeFromString(serialized) as Genotype<BitGene>
+        val unserialized = JavaSerializationUtils.unserializeFromString<Genotype<BitGene>>(serialized) as Genotype<BitGene>
 
         assertTrue(unserialized[0, 0].bit)
         assertTrue(unserialized[0, 1].bit)

@@ -27,7 +27,7 @@ dependencies {
     // This is needed due to a known issue with KotlinTest: https://github.com/kotlintest/kotlintest/issues/639
     testCompile("org.slf4j", "slf4j-simple", "1.7.26")
 
-    implementation(project(":endlessRunners"))
+    implementation(project(":endlessRunnersGame"))
 
     implementation("io.jenetics:jenetics:4.4.0")
     implementation("io.jenetics:prngine:1.0.2")

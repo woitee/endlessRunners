@@ -12,7 +12,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDF
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DeterministicSeeds
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
+import cz.woitee.endlessRunners.game.playerControllers.wrappers.RecordingWrapper
 import java.text.SimpleDateFormat
 import java.util.*
 

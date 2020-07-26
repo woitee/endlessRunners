@@ -1,23 +1,27 @@
 package cz.woitee.endlessRunners
 
 import cz.woitee.endlessRunners.game.Game
+import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.ChameleonGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
+import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
+import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
 import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
 
 fun main(args: Array<String>) {
     // Just select the components! There is a lot of them prepared, but you can also make your own!
 
     // Choose how the game will be controlled
-    val playerController = KeyboardPlayerController()
+    val playerController = DisplayingWrapper(KeyboardPlayerController())
 
     // Choose what game do you want to play
-    val gameDescription = ChameleonGameDescription()
+    val gameDescription = BitTriGameDescription()
 
     // Select how the levels will be generated
-    val levelGenerator = HeightBlockLevelGenerator(gameDescription, chameleonGameDefaultBlocks(gameDescription))
+    val levelGenerator = HeightBlockLevelGenerator(gameDescription, bitTriGameDefaultBlocks(gameDescription))
 
     // All set! Now create the Game object and run your game!
 

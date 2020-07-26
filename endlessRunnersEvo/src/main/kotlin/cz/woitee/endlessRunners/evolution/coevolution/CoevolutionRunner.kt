@@ -13,6 +13,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
+import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
 import cz.woitee.endlessRunners.utils.addOrPut
 import cz.woitee.endlessRunners.utils.except
 import io.jenetics.DoubleGene
@@ -268,8 +269,9 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @triple the result to run
      * @seconds time to run for. If negative, the game runs endlessly.
      */
-    fun runGame(triple: CoevolvedTriple, seconds: Double = -1.0) {
-        runGame(triple.description, triple.blocks, triple.controller, seconds)
+    fun runGame(triple: CoevolvedTriple, seconds: Double = -1.0, visualizeActions: Boolean = true) {
+        val controller = if (visualizeActions) DisplayingWrapper(triple.controller) else triple.controller
+        runGame(triple.description, triple.blocks, controller, seconds)
     }
 
     /**

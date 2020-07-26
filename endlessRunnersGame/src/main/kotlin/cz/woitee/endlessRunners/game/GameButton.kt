@@ -24,12 +24,12 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
          */
         fun applyOn(gameState: GameState) {
             when (interactionType) {
-                GameButton.InteractionType.PRESS -> {
+                InteractionType.PRESS -> {
                     if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
                         gameButton.action.applyOn(gameState)
                     }
                 }
-                GameButton.InteractionType.HOLD -> {
+                InteractionType.HOLD -> {
                     if (!gameButton.isPressed) {
                         if (gameButton.action.onlyOnPress && gameButton.action.isApplicableOn(gameState)) {
                             gameButton.action.applyOn(gameState)
@@ -38,7 +38,7 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
                         gameButton.pressedGameTime = gameState.gameTime
                     }
                 }
-                GameButton.InteractionType.RELEASE -> {
+                InteractionType.RELEASE -> {
                     gameButton.isPressed = false
                 }
             }
@@ -49,12 +49,12 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
          */
         override fun applyUndoablyOn(gameState: GameState): IUndo {
             when (interactionType) {
-                GameButton.InteractionType.PRESS -> {
+                InteractionType.PRESS -> {
                     if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
                         return gameButton.action.applyUndoablyOn(gameState)
                     }
                 }
-                GameButton.InteractionType.HOLD -> {
+                InteractionType.HOLD -> {
                     if (!gameButton.isPressed) {
                         gameButton.isPressed = true
                         val previousPressedGameTime = gameButton.pressedGameTime
@@ -68,7 +68,7 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
                         }
                     }
                 }
-                GameButton.InteractionType.RELEASE -> {
+                InteractionType.RELEASE -> {
                     if (gameButton.isPressed) {
                         gameButton.isPressed = false
                         return object : IUndo {
@@ -118,9 +118,9 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
 
     fun interact(interactionType: InteractionType): StateChange {
         return when (interactionType) {
-            GameButton.InteractionType.PRESS -> press
-            GameButton.InteractionType.HOLD -> hold
-            GameButton.InteractionType.RELEASE -> release
+            InteractionType.PRESS -> press
+            InteractionType.HOLD -> hold
+            InteractionType.RELEASE -> release
         }
     }
 

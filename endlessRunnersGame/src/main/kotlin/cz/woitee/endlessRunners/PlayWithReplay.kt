@@ -6,7 +6,7 @@ import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.SimpleLevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.encapsulators.DelayedTwinDFSLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.RecordingWrapper
+import cz.woitee.endlessRunners.game.playerControllers.wrappers.RecordingWrapper
 import java.text.SimpleDateFormat
 import java.util.*
 

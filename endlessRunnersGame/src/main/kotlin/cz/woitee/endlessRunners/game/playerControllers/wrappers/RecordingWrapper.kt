@@ -1,8 +1,9 @@
-package cz.woitee.endlessRunners.game.playerControllers
+package cz.woitee.endlessRunners.game.playerControllers.wrappers
 
 import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.GameState
 import cz.woitee.endlessRunners.game.WidthBlocks
+import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,6 +23,7 @@ class RecordingWrapper(val innerController: PlayerController) : PlayerController
         lastGridX = 0
         innerController.init(gameState)
     }
+
     override fun onUpdate(gameState: GameState): GameButton.StateChange? {
         if (gameState.gridX > lastGridX) {
             lastGridX = gameState.gridX

@@ -45,6 +45,7 @@ open class GamePanelVisualizer(
 
     private var running = false
     protected val announcer = GamePanelAnnouncerComponent()
+    val debugText = DebugTextComponent()
 
     private var proportionOfUpdate = 0.0
 
@@ -152,6 +153,7 @@ open class GamePanelVisualizer(
             drawGameObject(gameObject, g, playerX)
 
         announcer.draw(g, gameState)
+        debugText.draw(g)
 
         if (debugging)
             for (debugObject in debugObjects)

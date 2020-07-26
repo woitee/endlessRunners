@@ -2,6 +2,7 @@ package cz.woitee.endlessRunners.evolution.evoGame
 
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
+import cz.woitee.endlessRunners.evolution.utils.DateUtils
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
@@ -22,7 +23,6 @@ import io.jenetics.engine.EvolutionResult
 import io.jenetics.engine.EvolutionStatistics
 import io.jenetics.internal.util.Concurrency
 import java.io.FileWriter
-import java.sql.Timestamp
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ForkJoinPool
@@ -287,7 +287,7 @@ class EvoGameRunner(
                 .peek { result ->
                     val best = result.bestPhenotype
 //                    println(EvolvedGameDescription(best.genotype))
-                    println("${Timestamp(System.currentTimeMillis())} Generation ${result.generation}: The fitness is ${best.fitness}")
+                    println("${DateUtils.timestampString()} Generation ${result.generation}: The fitness is ${best.fitness}")
                 }
                 .peek(csvPeeker)
                 .peek(statistics)

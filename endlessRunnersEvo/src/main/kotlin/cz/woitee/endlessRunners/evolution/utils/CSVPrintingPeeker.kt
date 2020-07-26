@@ -4,8 +4,6 @@ import cz.woitee.endlessRunners.utils.JavaSerializationUtils
 import cz.woitee.endlessRunners.utils.fileWithCreatedPath
 import io.jenetics.engine.EvolutionResult
 import java.io.FileWriter
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.function.Consumer
 import org.apache.commons.csv.CSVFormat
@@ -21,7 +19,7 @@ import org.apache.commons.csv.CSVPrinter
 class CSVPrintingPeeker<C> (val filepathBase: String, val serializeWholePopulation: Boolean = false) : Consumer<EvolutionResult<*, C>>
         where C : Comparable<C> {
 
-    val file = fileWithCreatedPath("${filepathBase}_${SimpleDateFormat("yyyy_MM_dd-HH_mm_ss_SSS").format(Date())}.csv")
+    val file = fileWithCreatedPath("${filepathBase}_${DateUtils.timestampString()}.csv")
     val fileWriter = FileWriter(file)
     val csvPrinter: CSVPrinter
     val header = arrayListOf("timestamp", "generation", "fitnesses", "bestindividual", "bestindividual_serialized", "bestfitness")
@@ -40,7 +38,7 @@ class CSVPrintingPeeker<C> (val filepathBase: String, val serializeWholePopulati
     override fun accept(result: EvolutionResult<*, C>) {
         val best = result.getBestPhenotype()
         val values = arrayListOf(
-                Timestamp(System.currentTimeMillis()).time,
+                DateUtils.timestampString(),
                 result.getGeneration(),
                 result.getPopulation().map { it.getFitness() },
                 best.getGenotype(),

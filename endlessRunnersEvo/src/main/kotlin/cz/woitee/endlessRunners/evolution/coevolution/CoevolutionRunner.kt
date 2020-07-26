@@ -5,6 +5,7 @@ import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
+import cz.woitee.endlessRunners.evolution.utils.DateUtils
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
@@ -17,7 +18,6 @@ import cz.woitee.endlessRunners.utils.except
 import io.jenetics.DoubleGene
 import io.jenetics.IntegerGene
 import io.jenetics.engine.EvolutionResult
-import java.sql.Timestamp
 import java.util.*
 
 /**
@@ -36,7 +36,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param gameDescription GameDescription to phase-evolve for
      * */
     fun phaseEvolveBlocksAndController(gameDescription: GameDescription) {
-        val timeStamp = Timestamp(System.currentTimeMillis()).toString()
+        val timeStamp = DateUtils.timestampString()
         // Coevolution is about evolving in phases - so we will cycle between evolving blocks and controller
 
         var controller = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
@@ -60,7 +60,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param gameDescription GameDescription to coevolve for
      * */
     fun coevolveBlocksAndController(gameDescription: GameDescription) {
-        val timeStamp = Timestamp(System.currentTimeMillis()).toString()
+        val timeStamp = DateUtils.timestampString()
         val numBlocks = 7
 
         val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
@@ -126,7 +126,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
         of resetting each population to a random one in each iteration.
      */
     fun phaseEvolveDescriptionBlocksAndController(): CoevolvedTriple {
-        val timeStamp = Timestamp(System.currentTimeMillis()).toString()
+        val timeStamp = DateUtils.timestampString()
 
         val bestBlocks = ArrayList<HeightBlock>()
         var bestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
@@ -160,7 +160,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * */
     fun coevolveDescriptionBlocksAndController(): CoevolvedTriple {
         val random = Random(seed)
-        val timeStamp = Timestamp(System.currentTimeMillis()).toString()
+        val timeStamp = DateUtils.timestampString()
         val numBlocks = 7
 
         val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
@@ -174,6 +174,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
         var bestGameDescription = EvolvedGameDescription(EvolvedGameDescription.sampleGenotype())
 
         for (i in 1..numIterations) {
+
             println("ITERATION $i")
 
             // =============== //

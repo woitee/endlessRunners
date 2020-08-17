@@ -4,13 +4,14 @@ import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
+import java.io.Serializable
 import java.util.*
 
 /**
  * A helper grid that describes the objects as a 2D Grid.
  */
 
-class Grid2D<T>(width: Int, height: Int, val factory: () -> T) {
+class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
     var width: Int = width
         protected set
     var height: Int = height

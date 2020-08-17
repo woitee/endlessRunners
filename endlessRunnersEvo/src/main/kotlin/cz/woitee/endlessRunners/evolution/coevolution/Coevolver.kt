@@ -8,16 +8,23 @@ import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.evolution.utils.DateUtils
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
+import cz.woitee.endlessRunners.utils.MySerializable
+import cz.woitee.endlessRunners.utils.SerializableRandom
 import cz.woitee.endlessRunners.utils.addOrPut
 import cz.woitee.endlessRunners.utils.except
 import io.jenetics.DoubleGene
+import io.jenetics.Genotype
 import io.jenetics.IntegerGene
 import io.jenetics.engine.EvolutionResult
+import io.jenetics.prngine.LCG64ShiftRandom
+import io.jenetics.util.RandomRegistry
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import kotlin.random.Random
 
-class Coevolver (val seed: Long? = null) {
+class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
     val timestamp = DateUtils.timestampString()
-    val random = if (seed == null) Random.Default else Random(seed)
+    private var random = SerializableRandom(seed)
 
     val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
     var controllerPopulation: EvolutionResult<DoubleGene, Double>? = null
@@ -27,14 +34,21 @@ class Coevolver (val seed: Long? = null) {
     val evolvedBlocks = ArrayList<HeightBlock>()
     // Evolved blocks plus the default ones
     val currentBestBlocks = ArrayList<HeightBlock>()
-    var currentBestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
-    var currentBestGameDescription = EvolvedGameDescription(EvolvedGameDescription.sampleGenotype())
+    var currentBestController: EvolvedPlayerController
+    var currentBestGameDescription: EvolvedGameDescription
 
-    fun evolveBlocks(numGenerations: Long, numBlocks: Int, printStats: Boolean = false): List<HeightBlock> {
+    init {
+        RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
+        currentBestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
+        currentBestGameDescription = EvolvedGameDescription(EvolvedGameDescription.sampleGenotype())
+    }
+
+    fun evolveBlocks(numGenerations: Long, populationSize: Int, numBlocks: Int, printStats: Boolean = false): List<HeightBlock> {
         val evoBlockRunner = EvoBlockRunner(
             currentBestGameDescription,
             { EvolvedPlayerController(currentBestController.genotype) },
             numGenerations,
+            populationSize,
             false,
             csvLoggingPrefix = "coevo_$timestamp/",
             seed = random.nextLong()
@@ -69,12 +83,13 @@ class Coevolver (val seed: Long? = null) {
 
         return evolvedBlocks
     }
-    fun evolveController(numGenerations: Long) {
+    fun evolveController(numGenerations: Long, populationSize: Int) {
         val evoControllerRunner = EvoControllerRunner(
                 currentBestGameDescription,
                 { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
                 csvLoggingPrefix = "coevo_$timestamp/",
                 numGenerations = numGenerations,
+                populationSize = populationSize,
                 seed = random.nextLong()
         )
 
@@ -85,12 +100,13 @@ class Coevolver (val seed: Long? = null) {
 
         currentBestController = EvolvedPlayerController(controllerPopulation!!.bestPhenotype.genotype)
     }
-    fun evolveDescription(numGenerations: Long) {
+    fun evolveDescription(numGenerations: Long, populationSize: Int) {
         val evoGameRunner = EvoGameRunner(
                 { EvolvedPlayerController(currentBestController.genotype) },
                 { EvolvedPlayerController(currentBestController.genotype) },
                 currentBestBlocks,
                 numGenerations = numGenerations,
+                populationSize = populationSize,
                 csvLoggingPrefix = "coevo_$timestamp/",
                 seed = random.nextLong()
         )
@@ -101,5 +117,52 @@ class Coevolver (val seed: Long? = null) {
 
     fun getBestTriple(): CoevolvedTriple {
         return CoevolvedTriple(currentBestBlocks, currentBestController, currentBestGameDescription)
+    }
+
+    override fun writeObject(oos: ObjectOutputStream): Coevolver {
+        oos.writeObject(random)
+
+        oos.writeInt(blockPopulations.size)
+        for (populations in blockPopulations) {
+            oos.writeObject(populations)
+        }
+        oos.writeObject(controllerPopulation)
+        oos.writeObject(gameDescriptionPopulation)
+
+        for (block in evolvedBlocks) {
+            oos.writeObject(block)
+        }
+        oos.writeObject(currentBestController.genotype)
+        oos.writeObject(currentBestGameDescription.genotype)
+
+        return this
+    }
+    override fun readObject(ois: ObjectInputStream): Coevolver {
+        random = ois.readObject() as SerializableRandom
+
+        val numBlocks = ois.readInt()
+
+        blockPopulations.clear()
+        repeat(numBlocks) {
+            blockPopulations.add(ois.readObject() as EvolutionResult<IntegerGene, Int>)
+        }
+        controllerPopulation = ois.readObject() as EvolutionResult<DoubleGene, Double>?
+        gameDescriptionPopulation = ois.readObject() as EvolutionResult<DoubleGene, Double>
+
+        evolvedBlocks.clear()
+        repeat(numBlocks) {
+            evolvedBlocks.add(ois.readObject() as HeightBlock)
+        }
+
+        currentBestController = EvolvedPlayerController(ois.readObject() as Genotype<DoubleGene>)
+        currentBestGameDescription = EvolvedGameDescription(ois.readObject() as Genotype<DoubleGene>)
+
+        currentBestBlocks.clear()
+        currentBestBlocks.addAll(
+                EvoBlockRunner(currentBestGameDescription, { EvolvedPlayerController(currentBestController.genotype) }).defaultBlocks
+        )
+        currentBestBlocks.addAll(evolvedBlocks)
+
+        return this
     }
 }

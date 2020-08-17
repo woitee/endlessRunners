@@ -28,7 +28,7 @@ import kotlin.math.roundToLong
  * @param levelGeneratorFactory A provider of level generators we will use
  * @param debugPrints Whether to print statistics on screen during our run
  * @param numGenerations The limit of generations to run for
- * @param numIndividuals The number of individuals to use
+ * @param populationSize The number of individuals to use
  * @param csvLoggingPrefix Prefix of the file for storing CSV logs
  * @param seed Seed for the random number generator (usable for reproducibility)
  */
@@ -37,7 +37,7 @@ class EvoControllerRunner(
     val levelGeneratorFactory: () -> LevelGenerator,
     var debugPrints: Boolean = false,
     val numGenerations: Long = 200L,
-    val numIndividuals: Int = 50,
+    val populationSize: Int = 50,
     val csvLoggingPrefix: String = "",
     val seed: Long = Random().nextLong()
 ) {
@@ -76,7 +76,7 @@ class EvoControllerRunner(
                 .executor(Concurrency.SERIAL_EXECUTOR)
                 .evaluator(myEvaluator)
                 .optimize(Optimize.MINIMUM)
-                .populationSize(numIndividuals)
+                .populationSize(populationSize)
                 .offspringFraction(0.8)
                 .maximalPhenotypeAge(1000)
                 .survivorsSelector(EliteSelector(5, TournamentSelector()))

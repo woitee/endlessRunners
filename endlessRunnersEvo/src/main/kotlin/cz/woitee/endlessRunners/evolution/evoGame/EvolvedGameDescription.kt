@@ -264,7 +264,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      * The first gene is unused (it should be >=0.75 and the second gene describes which effect to use).
      */
     fun getTimedEffectFromGenes(gene1: Double, gene2: Double): TimedEffect {
-        assert(gene1 >= 0.75)
+        assert(isTimedEffect(gene1))
         val otherEffects = allEffects.filter { it != NoEffect && it != NoTimedEffect }
         if (otherEffects.isEmpty()) return NoTimedEffect
 

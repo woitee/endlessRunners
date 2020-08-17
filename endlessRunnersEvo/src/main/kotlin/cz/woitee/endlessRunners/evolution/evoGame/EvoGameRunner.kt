@@ -22,11 +22,14 @@ import io.jenetics.engine.Engine
 import io.jenetics.engine.EvolutionResult
 import io.jenetics.engine.EvolutionStatistics
 import io.jenetics.internal.util.Concurrency
+import io.jenetics.prngine.LCG64ShiftRandom
+import io.jenetics.util.RandomRegistry
 import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ForkJoinPool
 import java.util.function.Function
+import kotlin.random.Random
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 
@@ -50,7 +53,7 @@ class EvoGameRunner(
     val numGenerations: Long = 50,
     val populationSize: Int = 50,
     val csvLoggingPrefix: String = "",
-    val seed: Long = Random().nextLong()
+    val seed: Long = Random.Default.nextLong()
 ) {
 
     /**
@@ -61,12 +64,14 @@ class EvoGameRunner(
         val playerControllerFactoryForBlocks: (ComputationStopper) -> PlayerController,
         val playerControllerFactoryForGameRun: (ComputationStopper) -> PlayerController,
         val blocks: ArrayList<HeightBlock>? = null,
-        val computationStopper: ComputationStopper = ComputationStopper()
+        val computationStopper: ComputationStopper = ComputationStopper(),
+        val seed: Long = Random.Default.nextLong()
     ) {
         val evolvedBlocks = ArrayList<HeightBlock>()
         var averageBlockFitness = 0.0
         val gameplayUpdates = 1000
         val gameplayStats = GameStateTracking()
+        val rng = Random(seed)
         lateinit var gameDescriptionTracking: GameDescriptionTracking
 
         init {
@@ -79,7 +84,7 @@ class EvoGameRunner(
          */
         protected fun evolveBlocks() {
             // Evolve blocks and count their average fitness
-            val runner = EvoBlockRunner(gameDescription, { playerControllerFactoryForBlocks(computationStopper) })
+            val runner = EvoBlockRunner(gameDescription, { playerControllerFactoryForBlocks(computationStopper) }, seed = rng.nextLong())
 
             val blocks = blocks ?: runner.evolveMultipleBlocks()
             evolvedBlocks.addAll(blocks)
@@ -101,7 +106,8 @@ class EvoGameRunner(
                     levelGenerator = HeightBlockLevelGenerator(gameDescription, evolvedBlocks),
                     visualizer = null,
                     playerController = playerController,
-                    mode = Game.Mode.SIMULATION
+                    mode = Game.Mode.SIMULATION,
+                    seed = rng.nextLong()
             )
 
             game.init()
@@ -136,6 +142,7 @@ class EvoGameRunner(
     val csvPrinter = CSVPrinter(fileWriter, CSVFormat.DEFAULT)
 
     init {
+        RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
         runMonitoringThread()
     }
 
@@ -185,10 +192,18 @@ class EvoGameRunner(
         val threadId = Thread.currentThread().id
         val computationStopper = ComputationStopper()
         runningFitnessComputations[threadId] = ThreadComputationStopper(System.currentTimeMillis(), computationStopper)
-        val fitnessValues = FitnessValues(gameDescription, playerControllerFactoryForBlocks, playerControllerFactoryForGameRun, blocks = blocks, computationStopper = computationStopper)
+        val fitnessValues = FitnessValues(
+                gameDescription,
+                playerControllerFactoryForBlocks,
+                playerControllerFactoryForGameRun,
+                blocks = blocks,
+                computationStopper = computationStopper,
+                seed = seed
+        )
+
         runningFitnessComputations.remove(threadId)
 
-//        println()
+//        println(gameDescription.toString())
 //        println(fitnessValues.gameDescriptionTracking)
 //        println(fitnessValues.gameplayStats)
 
@@ -228,10 +243,7 @@ class EvoGameRunner(
             }
         }
 
-//        println()
-//        println("${Thread.currentThread().id} Fitness (%.2f) decomposition".format(fitness))
-//        print(fitnessReasoning.toString())
-//        println()
+//        println(fitnessReasoning)
 
         return fitness
     }
@@ -268,7 +280,7 @@ class EvoGameRunner(
                 .survivorsSelector(EliteSelector(1, TournamentSelector()))
                 .offspringSelector(TournamentSelector())
                 .alterers(
-                        MultiPointCrossover(0.3),
+                        SinglePointCrossover(0.3),
                         GaussianMutator<DoubleGene, Double>(0.05)
                 )
                 .build()

@@ -151,7 +151,7 @@ class Game(
      */
     fun update(time: Double = this.updateTime) {
         assert(inited)
-        if (secondsSinceStart < freezeOnStartSeconds) {
+        if (secondsSinceStart < freezeOnStartSeconds && mode == Mode.INTERACTIVE) {
             return
         }
         // Get the action that should be performed

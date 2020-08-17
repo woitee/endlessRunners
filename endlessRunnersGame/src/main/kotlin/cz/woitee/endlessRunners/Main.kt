@@ -1,15 +1,12 @@
 package cz.woitee.endlessRunners
 
 import cz.woitee.endlessRunners.game.Game
-import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
-import cz.woitee.endlessRunners.game.descriptions.imitators.ChameleonGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
 import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
-import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
 
 fun main(args: Array<String>) {
     // Just select the components! There is a lot of them prepared, but you can also make your own!

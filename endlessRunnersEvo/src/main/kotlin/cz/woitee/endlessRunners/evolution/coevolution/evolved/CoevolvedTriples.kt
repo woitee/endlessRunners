@@ -1,6 +1,5 @@
 package cz.woitee.endlessRunners.evolution.coevolution.evolved
 
-import cz.woitee.endlessRunners.evolution.coevolution.CoevolutionRunner
 import cz.woitee.endlessRunners.evolution.coevolution.CoevolvedTriple
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockMethods
 import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController

@@ -36,6 +36,7 @@ class EvoBlockRunner(
     gameDescription: GameDescription,
     playerControllerFactory: () -> PlayerController,
     val numGenerations: Long = 25L,
+    val populationSize: Int = 30,
     val printStats: Boolean = false,
     val csvLoggingPrefix: String = "",
     seed: Long = Random().nextLong()
@@ -162,7 +163,7 @@ class EvoBlockRunner(
 
         val engine = Engine
                 .builder(fitness, factory)
-                .populationSize(30)
+                .populationSize(populationSize)
                 // Setting concurrency only for fitness evaluation and not for tasks within the evaluation (such as mutation and crossover)
                 .executor(Concurrency.SERIAL_EXECUTOR)
                 .evaluator(MyConcurrentEvaluator<IntegerGene, Int>(ForkJoinPool.commonPool()))

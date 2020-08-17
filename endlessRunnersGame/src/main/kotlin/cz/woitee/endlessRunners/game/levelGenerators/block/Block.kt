@@ -4,11 +4,12 @@ import cz.woitee.endlessRunners.game.Grid2D
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.geom.Vector2Int
+import java.io.Serializable
 
 /**
  * A block, that is always at ground level.
  */
-open class Block(val width: Int, val height: Int) {
+open class Block(val width: Int, val height: Int) : Serializable {
     val definition = Grid2D<GameObject?>(width, height) { null }
     val dimensions
         get() = Vector2Int(width, height)

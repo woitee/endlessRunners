@@ -1,6 +1,5 @@
 package cz.woitee.endlessRunners.game.gui
 
-import cz.woitee.endlessRunners.game.PlayerScreenX
 import java.awt.Color
 import java.awt.Graphics
 

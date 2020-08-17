@@ -14,11 +14,6 @@ import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGener
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
-import cz.woitee.endlessRunners.utils.addOrPut
-import cz.woitee.endlessRunners.utils.except
-import io.jenetics.DoubleGene
-import io.jenetics.IntegerGene
-import io.jenetics.engine.EvolutionResult
 import java.util.*
 
 /**
@@ -65,10 +60,10 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
             println("ITERATION $i")
 
             print("evolving blocks ($numBlocks): ")
-            coevolver.evolveBlocks(30, numBlocks, true)
+            coevolver.evolveBlocks(30, numBlocks, 30, true)
 
             println("evolving controller")
-            coevolver.evolveController(50)
+            coevolver.evolveController(50, 50)
             println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
         }
 
@@ -125,14 +120,14 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
             // =============== //
 
             print("evolving blocks ($numBlocks): ")
-            coevolver.evolveBlocks(30, numBlocks, true)
+            coevolver.evolveBlocks(30, 30, numBlocks, true)
 
             // =================== //
             // Evolving controller //
             // =================== //
 
             println("Evolving controller")
-            coevolver.evolveController(50)
+            coevolver.evolveController(50, 50)
             println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
 
             // ========================= //
@@ -143,7 +138,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
                 println("Not evolving game description in the last iteration, we want to end with best controller and blocks for a given game")
             } else {
                 println("Evolving game description")
-                coevolver.evolveDescription(20)
+                coevolver.evolveDescription(20, 50)
                 println("Game Description fitness: ${coevolver.gameDescriptionPopulation!!.bestFitness}")
             }
         }

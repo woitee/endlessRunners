@@ -1,10 +1,6 @@
 package cz.woitee.endlessRunners.utils
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serializable
+import java.io.*
 
 /**
  * Utils to provide Java default serialization to strings that will actually work.
@@ -44,6 +40,23 @@ object JavaSerializationUtils {
             return res
         } finally {
             ois?.close()
+        }
+    }
+
+    inline fun <reified T> loadFromFile(filename: String) = File(filename).inputStream().use { fis ->
+        ObjectInputStream(fis).use {
+            it.readObject() as T
+        }
+    }
+}
+
+fun Serializable.saveToFile(filename: String) {
+    val file = File(filename)
+    file.parentFile.mkdirs()
+
+    file.outputStream().use { fos ->
+        ObjectOutputStream(fos).use {
+            it.writeObject(this)
         }
     }
 }

@@ -9,6 +9,7 @@ import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import java.util.*
+import kotlin.math.abs
 
 /**
  * A validator of HeightBlocks, checking their playability and difficulty.
@@ -51,7 +52,9 @@ class BlockValidator(val gameDescription: GameDescription, val playerControllerF
             if (gameState.player.x > maxPlayerX) maxPlayerX = gameState.player.x
         }
 
-        return ActionPlan(actionList, !gameState.isGameOver, maxPlayerX)
+        val endHeightDiff = abs(gameState.player.y - 24 * (1 + block.endHeight))
+        val success = !gameState.isGameOver && endHeightDiff < 24.0
+        return ActionPlan(actionList, success, maxPlayerX)
     }
 
     /**

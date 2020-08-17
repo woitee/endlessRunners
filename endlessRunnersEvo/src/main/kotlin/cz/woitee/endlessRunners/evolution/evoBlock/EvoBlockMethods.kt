@@ -1,5 +1,6 @@
 package cz.woitee.endlessRunners.evolution.evoBlock
 
+import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.BlockValidator
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
@@ -45,6 +46,7 @@ open class EvoBlockMethods(
      * Data class to hold elemental values used for fitness computation.
      */
     data class FitnessValues(
+        val block: HeightBlock,
         val success: Boolean,
         val maxPlayerX: Double,
         val ruggedness: Int,
@@ -52,8 +54,15 @@ open class EvoBlockMethods(
         val contributingToMinority: Boolean = false,
         val numCustomObjects: Int = 0,
         val minimumDifferencesFromOthers: Int = 0,
-        val minimumPlanDifferenceFromOthers: Int = 0
-    )
+        val minimumPlanDifferenceFromOthers: Int = 0,
+        val plan: String = ""
+    ) {
+        override fun toString(): String {
+        return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness," +
+                "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan)\n" +
+                block.toString()
+        }
+    }
 
     /**
      * Calculate elementary fitness values for a given block, using the playerControllerFactory given.
@@ -74,6 +83,7 @@ open class EvoBlockMethods(
         }
 
         return FitnessValues(
+                block,
                 plan.success,
                 plan.maxPlayerX,
                 EvoBlockUtils.calculateRuggedness(block),
@@ -81,7 +91,8 @@ open class EvoBlockMethods(
                 (isUpBlock(block) && numUpBlocks < numDownBlocks) || (isDownBlock(block) && numDownBlocks < numUpBlocks),
                 numCustomObjects,
                 otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.min() ?: 0,
-                otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.min() ?: 0
+                otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.min() ?: 0,
+                plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButton.index.toString() ?: "" }
         )
     }
 

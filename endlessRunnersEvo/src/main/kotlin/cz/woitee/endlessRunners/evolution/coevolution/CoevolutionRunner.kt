@@ -28,9 +28,6 @@ import java.util.*
  * Contains some partial methods that were used for experimentation.
  */
 class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().nextLong()) {
-    /** A representation of a resulting triple of best game description, and the best controller and blocks for this description */
-    data class CoevolvedTriple(val blocks: ArrayList<HeightBlock>, val controller: EvolvedPlayerController, val description: EvolvedGameDescription)
-
     /** Runs a phase-evolution of only blocks and controllers. Phase-evolution is similiar to coevolution, with the difference
      * of resetting each population to a random one in each iteration.
      *
@@ -61,66 +58,22 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param gameDescription GameDescription to coevolve for
      * */
     fun coevolveBlocksAndController(gameDescription: GameDescription) {
-        val timeStamp = DateUtils.timestampString()
+        val coevolver = Coevolver(seed)
         val numBlocks = 7
-
-        val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
-        val bestBlocks = ArrayList<HeightBlock>()
-        var controllerResult: EvolutionResult<DoubleGene, Double>? = null
-        var bestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
-
-        var allBlocks = ArrayList<HeightBlock>()
 
         for (i in 1..numIterations) {
             println("ITERATION $i")
 
-            // =============== //
-            // Evolving blocks //
-            // =============== //
-
             print("evolving blocks ($numBlocks): ")
-
-            val evoBlockRunner = EvoBlockRunner(gameDescription, { EvolvedPlayerController(bestController.genotype) }, 25, false, csvLoggingPrefix = "coevo_$timeStamp/")
-            for (j in 0 until numBlocks) {
-                val otherBlocks = bestBlocks.except(j)
-                val blockResult = evoBlockRunner.evolveToResult(
-                        otherBlocks,
-                        if (i == 1) null else blockPopulations[j].genotypes,
-                        if (i == 1) 0 else blockPopulations[j].generation
-                )
-                val block = evoBlockRunner.genotype2block(blockResult.bestPhenotype.genotype)
-                bestBlocks.addOrPut(j, block)
-                blockPopulations.addOrPut(j, blockResult)
-                print("|")
-            }
-            println()
-            println("Avg block fitness: ${blockPopulations.map { it.bestFitness }.average()}")
-
-            allBlocks.clear()
-            allBlocks.addAll(evoBlockRunner.defaultBlocks)
-            allBlocks.addAll(bestBlocks)
-
-            for ((j, block) in allBlocks.withIndex()) {
-                println("block $j attributes: ${evoBlockRunner.getFitnessValues(block, allBlocks.except(j))}")
-            }
-
-            // =================== //
-            // Evolving controller //
-            // =================== //
+            coevolver.evolveBlocks(30, numBlocks, true)
 
             println("evolving controller")
-
-            val evoControllerRunner = EvoControllerRunner(gameDescription, { HeightBlockLevelGenerator(gameDescription, allBlocks) }, csvLoggingPrefix = "coevo_$timeStamp/")
-            controllerResult = evoControllerRunner.evolveToResult(
-                    controllerResult?.genotypes,
-                    controllerResult?.generation ?: 0
-            )
-            bestController = EvolvedPlayerController(controllerResult.bestPhenotype.genotype)
-            println("Controller fitness: ${controllerResult.bestFitness}")
+            coevolver.evolveController(50)
+            println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
         }
 
-        val evoBlockRunner = EvoBlockRunner(gameDescription, { bestController })
-        evoBlockRunner.runGameWithBlocks(allBlocks)
+        val evoBlockRunner = EvoBlockRunner(gameDescription, { coevolver.currentBestController })
+        evoBlockRunner.runGameWithBlocks(coevolver.currentBestBlocks)
     }
 
     /** Performs a phase evolution of all three - gameDescription, playerController and levelGenerator. Phase-evolution is similiar to coevolution, with the difference
@@ -160,19 +113,8 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * Returns a triple of best-game description and best players and best levelGenerators for it.
      * */
     fun coevolveDescriptionBlocksAndController(): CoevolvedTriple {
-        val random = Random(seed)
-        val timeStamp = DateUtils.timestampString()
         val numBlocks = 7
-
-        val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
-        val bestBlocks = ArrayList<HeightBlock>()
-        val allBlocks = ArrayList<HeightBlock>()
-
-        var controllerPopulation: EvolutionResult<DoubleGene, Double>? = null
-        var bestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
-
-        var gameDescriptionPopulation: EvolutionResult<DoubleGene, Double>? = null
-        var bestGameDescription = EvolvedGameDescription(EvolvedGameDescription.sampleGenotype())
+        val coevolver = Coevolver(seed)
 
         for (i in 1..numIterations) {
 
@@ -183,57 +125,15 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
             // =============== //
 
             print("evolving blocks ($numBlocks): ")
-
-            val evoBlockRunner = EvoBlockRunner(
-                    bestGameDescription,
-                    { EvolvedPlayerController(bestController.genotype) },
-                    15,
-                    false,
-                    csvLoggingPrefix = "coevo_$timeStamp/",
-                    seed = random.nextLong()
-            )
-            for (j in 0 until numBlocks) {
-                val otherBlocks = bestBlocks.except(j)
-                val blockResult = evoBlockRunner.evolveToResult(
-                        otherBlocks,
-                        if (i == 1) null else blockPopulations[j].genotypes,
-                        if (i == 1) 0 else blockPopulations[j].generation
-                )
-                val block = evoBlockRunner.genotype2block(blockResult.bestPhenotype.genotype)
-                bestBlocks.addOrPut(j, block)
-                blockPopulations.addOrPut(j, blockResult)
-                print("|")
-            }
-            println()
-            println("Avg block fitness: ${blockPopulations.map { it.bestFitness }.average()}")
-
-            allBlocks.clear()
-            allBlocks.addAll(evoBlockRunner.defaultBlocks)
-            allBlocks.addAll(bestBlocks)
-
-            for ((j, block) in allBlocks.withIndex()) {
-                println("block $j attributes: ${evoBlockRunner.getFitnessValues(block, allBlocks.except(j))}")
-            }
+            coevolver.evolveBlocks(30, numBlocks, true)
 
             // =================== //
             // Evolving controller //
             // =================== //
 
-            println("evolving controller")
-
-            val evoControllerRunner = EvoControllerRunner(
-                    bestGameDescription,
-                    { HeightBlockLevelGenerator(bestGameDescription, allBlocks) },
-                    csvLoggingPrefix = "coevo_$timeStamp/",
-                    numGenerations = 50,
-                    seed = random.nextLong()
-            )
-            controllerPopulation = evoControllerRunner.evolveToResult(
-                    controllerPopulation?.genotypes,
-                    controllerPopulation?.generation ?: 0
-            )
-            bestController = EvolvedPlayerController(controllerPopulation.bestPhenotype.genotype)
-            println("Controller fitness: ${controllerPopulation.bestFitness}")
+            println("Evolving controller")
+            coevolver.evolveController(50)
+            println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
 
             // ========================= //
             // Evolving game description //
@@ -243,24 +143,13 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
                 println("Not evolving game description in the last iteration, we want to end with best controller and blocks for a given game")
             } else {
                 println("Evolving game description")
-
-                val evoGameRunner = EvoGameRunner(
-                        { EvolvedPlayerController(bestController.genotype) },
-                        { EvolvedPlayerController(bestController.genotype) },
-                        allBlocks,
-                        numGenerations = 10,
-                        csvLoggingPrefix = "coevo_$timeStamp/",
-                        seed = random.nextLong()
-                )
-                gameDescriptionPopulation = evoGameRunner.evolveToResult(gameDescriptionPopulation?.genotypes, gameDescriptionPopulation?.generation ?: 0)
-                bestGameDescription = EvolvedGameDescription(gameDescriptionPopulation.bestPhenotype.genotype)
-
-                println("Game Description fitness: ${gameDescriptionPopulation.bestFitness}")
+                coevolver.evolveDescription(20)
+                println("Game Description fitness: ${coevolver.gameDescriptionPopulation!!.bestFitness}")
             }
         }
 
         println("Coevolution finished")
-        return CoevolvedTriple(bestBlocks, bestController, bestGameDescription)
+        return coevolver.getBestTriple()
     }
 
     /**

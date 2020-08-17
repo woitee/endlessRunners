@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.evolution.coevolution.evolved
 
 import cz.woitee.endlessRunners.evolution.coevolution.CoevolutionRunner
+import cz.woitee.endlessRunners.evolution.coevolution.CoevolvedTriple
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockMethods
 import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
@@ -21,7 +22,7 @@ object CoevolvedTriples {
      *
      * @param index From which run to return results. Should be in the range of 0 - 19.
      */
-    fun get(index: Int): CoevolutionRunner.CoevolvedTriple {
+    fun get(index: Int): CoevolvedTriple {
         val reader = InputStreamReader(javaClass.getResourceAsStream("/best_of_run$index.txt"))
         val lines = reader.readLines()
 
@@ -35,6 +36,6 @@ object CoevolvedTriples {
             blocks.add(evoBlockMethods.genotype2block(JavaSerializationUtils.unserializeFromString<Genotype<IntegerGene>>(lines[i])!!))
         }
 
-        return CoevolutionRunner.CoevolvedTriple(blocks, playerController, gameDescription)
+        return CoevolvedTriple(blocks, playerController, gameDescription)
     }
 }

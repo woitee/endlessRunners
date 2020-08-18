@@ -1,8 +1,6 @@
 package cz.woitee.endlessRunners.utils
 
-import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import java.io.*
 
 /**
  * A custom interface for serialization, due to finding problems with both Kotlin and Java serialization (reported
@@ -11,6 +9,20 @@ import java.io.ObjectOutputStream
 interface MySerializable {
     fun writeObject(oos: ObjectOutputStream): MySerializable
     fun readObject(ois: ObjectInputStream): MySerializable
+
+    fun toByteArray(): ByteArray {
+        val bos = ByteArrayOutputStream()
+        ObjectOutputStream(bos).use {
+            writeObject(it)
+        }
+        return bos.toByteArray()
+    }
+    fun fromByteArray(byteArray: ByteArray) {
+        val bis = ByteArrayInputStream(byteArray)
+        return ObjectInputStream(bis).use {
+            readObject(it)
+        }
+    }
 
     fun saveToFile(filename: String) {
         val file = File(filename)

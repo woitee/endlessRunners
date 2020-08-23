@@ -1,5 +1,6 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
+import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController
@@ -18,6 +19,7 @@ import io.jenetics.IntegerGene
 import io.jenetics.engine.EvolutionResult
 import io.jenetics.prngine.LCG64ShiftRandom
 import io.jenetics.util.RandomRegistry
+import org.knowm.xchart.XYChart
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.random.Random
@@ -37,6 +39,8 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
     var currentBestController: EvolvedPlayerController
     var currentBestGameDescription: EvolvedGameDescription
 
+    val evoProgressAccumulator = EvoProgressAccumulator()
+
     init {
         RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
         currentBestController = EvolvedPlayerController(EvolvedPlayerController.sampleGenotype())
@@ -51,12 +55,14 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
             populationSize,
             false,
             csvLoggingPrefix = "coevo_$timestamp/",
-            seed = random.nextLong()
+            seed = random.nextLong(),
+            evoProgressAccumulator = evoProgressAccumulator
         )
 
         val firstIteration = blockPopulations.isEmpty()
 
         for (j in 0 until numBlocks) {
+            evoBlockRunner.accumulatorKey = "-$j"
             val otherBlocks = evolvedBlocks.except(j)
             val blockResult = if (firstIteration) {
                 evoBlockRunner.evolveToResult(otherBlocks, null, 0)
@@ -90,7 +96,8 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
                 csvLoggingPrefix = "coevo_$timestamp/",
                 numGenerations = numGenerations,
                 populationSize = populationSize,
-                seed = random.nextLong()
+                seed = random.nextLong(),
+                evoProgressAccumulator = evoProgressAccumulator
         )
 
         controllerPopulation = evoControllerRunner.evolveToResult(
@@ -100,7 +107,7 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
 
         currentBestController = EvolvedPlayerController(controllerPopulation!!.bestPhenotype.genotype)
     }
-    fun evolveDescription(numGenerations: Long, populationSize: Int) {
+    fun evolveDescription(numGenerations: Long, populationSize: Int): EvoGameRunner.FitnessWithReasons {
         val evoGameRunner = EvoGameRunner(
                 { EvolvedPlayerController(currentBestController.genotype) },
                 { EvolvedPlayerController(currentBestController.genotype) },
@@ -108,14 +115,17 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
                 numGenerations = numGenerations,
                 populationSize = populationSize,
                 csvLoggingPrefix = "coevo_$timestamp/",
-                seed = random.nextLong()
+                seed = random.nextLong(),
+                evoProgressAccumulator = evoProgressAccumulator
         )
 
         gameDescriptionPopulation = evoGameRunner.evolveToResult(gameDescriptionPopulation?.genotypes, gameDescriptionPopulation?.generation ?: 0)
         currentBestGameDescription = EvolvedGameDescription(gameDescriptionPopulation!!.bestPhenotype.genotype)
+
+        return evoGameRunner.fitnessWithReasoning(currentBestGameDescription)
     }
 
-    fun getBestTriple(): CoevolvedTriple {
+    fun currentBestTriple(): CoevolvedTriple {
         return CoevolvedTriple(currentBestBlocks, currentBestController, currentBestGameDescription)
     }
 

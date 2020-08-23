@@ -1,11 +1,14 @@
 package cz.woitee.endlessRunners.evolution.evoController
 
+import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
+import cz.woitee.endlessRunners.game.levelGenerators.block.BlockValidator
+import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import cz.woitee.endlessRunners.game.tracking.GameStateTracking
 import cz.woitee.endlessRunners.game.tracking.TrackingUtils
@@ -39,10 +42,11 @@ class EvoControllerRunner(
     val numGenerations: Long = 200L,
     val populationSize: Int = 50,
     val csvLoggingPrefix: String = "",
-    val seed: Long = Random().nextLong()
+    val seed: Long = Random().nextLong(),
+    val evoProgressAccumulator: EvoProgressAccumulator? = null
 ) {
     /** number of game updates for each fitness evalutaion */
-    val fitnessGameplayUpdates = 10000
+    val fitnessGameplayUpdates = 1000
 
     val myEvaluator = MyConcurrentEvaluator<DoubleGene, Double>(ForkJoinPool.commonPool(), true, seed = seed)
 
@@ -79,10 +83,10 @@ class EvoControllerRunner(
                 .populationSize(populationSize)
                 .offspringFraction(0.8)
                 .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector(5, TournamentSelector()))
+                .survivorsSelector(EliteSelector(2, TournamentSelector()))
                 .offspringSelector(TournamentSelector())
                 .alterers(
-                        MultiPointCrossover(0.3),
+                        MultiPointCrossover(0.1),
                         GaussianMutator<DoubleGene, Double>(0.05),
                         GaussianMutator<DoubleGene, Double>(0.005)
                 )
@@ -107,6 +111,7 @@ class EvoControllerRunner(
                     println("Generation ${result.generation}: The fitness is ${best.fitness}")
                 }
             }.peek(statistics)
+            .peek { evoProgressAccumulator?.addData("controller", it.bestFitness.toDouble()) }
 
         stream2 = stream2.peek(csvPeeker)
         val result = stream2
@@ -144,13 +149,22 @@ class EvoControllerRunner(
     fun fitness(controller: PlayerController, seed: Long? = null): Double {
         val gameDescriptionCopy = gameDescription.makeCopy()
         val gameDescriptionTracking = TrackingUtils.addTracking(gameDescriptionCopy)
+        val levelGenerator = levelGeneratorFactory()
         val game = Game(
-                levelGeneratorFactory(), controller, null,
+                levelGenerator, controller, null,
                 gameDescription = gameDescriptionCopy,
                 mode = Game.Mode.SIMULATION,
                 seed = seed ?: Random().nextLong()
 //                seed = 1L
         )
+
+        var blockFitness = 0
+        if (levelGenerator is HeightBlockLevelGenerator) {
+            val blockValidator = BlockValidator(gameDescription, { controller })
+            for (block in levelGenerator.blocks) {
+                if (blockValidator.validate(block)) blockFitness -= 500
+            }
+        }
 
         val gameStateTracking = GameStateTracking()
 
@@ -170,6 +184,6 @@ class EvoControllerRunner(
         }
 
 //        println("${genotype.get(0, 0)} ${myEvaluator.seedForGenotype(genotype)} -> $fitness {${gameStateTracking.numInits}, ${totalActionsUsage}}")
-        return (gameStateTracking.numInits * 500 + totalActionsUsage).toDouble()
+        return blockFitness + (gameStateTracking.numInits * 200 + totalActionsUsage).toDouble()
     }
 }

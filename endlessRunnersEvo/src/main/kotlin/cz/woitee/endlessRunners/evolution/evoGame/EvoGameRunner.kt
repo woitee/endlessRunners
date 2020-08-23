@@ -1,5 +1,6 @@
 package cz.woitee.endlessRunners.evolution.evoGame
 
+import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.DateUtils
@@ -53,7 +54,8 @@ class EvoGameRunner(
     val numGenerations: Long = 50,
     val populationSize: Int = 50,
     val csvLoggingPrefix: String = "",
-    val seed: Long = Random.Default.nextLong()
+    val seed: Long = Random.Default.nextLong(),
+    val evoProgressAccumulator: EvoProgressAccumulator? = null
 ) {
 
     /**
@@ -131,6 +133,24 @@ class EvoGameRunner(
      * A helper class to monitor running fitness evaluations.
      */
     data class ThreadComputationStopper(val startMillis: Long, val computationStopper: ComputationStopper)
+    class FitnessWithReasons {
+        var value = 0.0
+        private val reasons = ArrayList<String>()
+
+        val reasoning: String
+            get() = reasons.joinToString("; ")
+
+        fun award(amount: Double, reason: String) {
+            value += amount
+            reasons.add("$amount for $reason")
+        }
+
+        fun printReasoning() {
+            println("FITNESS REASONING")
+            reasons.forEach { println(it) }
+            println()
+        }
+    }
 
     val myEvaluator = MyConcurrentEvaluator<DoubleGene, Double>(ForkJoinPool.commonPool(), true, seed = seed)
 
@@ -188,6 +208,10 @@ class EvoGameRunner(
     }
 
     fun fitness(gameDescription: GameDescription): Double {
+        return fitnessWithReasoning(gameDescription).value
+    }
+
+    fun fitnessWithReasoning(gameDescription: GameDescription): FitnessWithReasons {
 //        println("${Thread.currentThread().id} evaluating $gameDescription")
         val threadId = Thread.currentThread().id
         val computationStopper = ComputationStopper()
@@ -206,44 +230,37 @@ class EvoGameRunner(
 //        println(gameDescription.toString())
 //        println(fitnessValues.gameDescriptionTracking)
 //        println(fitnessValues.gameplayStats)
+        
+        val fitness = FitnessWithReasons()
 
-        var fitness = 0.0
-        val fitnessReasoning = StringBuilder()
-        fun awardFitness(amount: Double, reason: String) {
-            fitness += amount
-            fitnessReasoning.append("$amount for $reason; ")
-        }
-
-        awardFitness(fitnessValues.averageBlockFitness / 2, "half of average block fitness")
+        fitness.award(fitnessValues.averageBlockFitness / 2, "half of average block fitness")
 
         with(fitnessValues.gameplayStats) {
-            if (timeAirborne in 100..900) awardFitness(200.0, "reasonable time airborne")
-            if (timeOutOfScreen < 100) awardFitness(200.0, "low time spent out of screen")
+            if (timeAirborne in 100..900) fitness.award(500.0, "reasonable time airborne ($timeAirborne)")
+            if (timeOutOfScreen < 100) fitness.award(500.0, "low time spent out of screen ($timeOutOfScreen)")
             for ((shape, time) in timeInOtherDimensions) {
-                if (time > 10) awardFitness(100.0, "being in dimensions (${shape.x}, ${shape.y})")
+                if (time > 10) fitness.award(100.0, "being in dimensions (${shape.x}, ${shape.y})")
             }
-            awardFitness(-100.0 * (numInits - 1), "number of restarts (${numInits - 1})")
+            fitness.award(-100.0 * (numInits - 1), "number of restarts (${numInits - 1})")
         }
 
         with(fitnessValues.gameDescriptionTracking) {
             for (action in actions) {
-                if (action.timesUsed >= 2) awardFitness(200.0, "using action $action")
+                if (action.timesUsed >= 2) fitness.award(200.0, "using action $action")
             }
             for (holdAction in holdActions) {
-                if (holdAction.timesStarted >= 2) awardFitness(200.0, "using action $holdAction")
+                if (holdAction.timesStarted >= 2) fitness.award(200.0, "using action $holdAction")
             }
             for (effect in effects) {
-                if (effect.timesApplied >= 2) awardFitness(100.0, "applying effect $effect")
+                if (effect.timesApplied >= 2) fitness.award(100.0, "applying effect $effect")
             }
             for (collisionEffect in collisionEffects) {
-                if (collisionEffect.timesApplied >= 2) awardFitness(40.0, "applying collision effect $collisionEffect")
+                if (collisionEffect.timesApplied >= 2) fitness.award(40.0, "applying collision effect $collisionEffect")
             }
             for (condition in conditions) {
-                if (condition.trueEvaluations >= 1 && condition.falseEvaluations >= 1) awardFitness(100.0, "$condition evaluated as both true and false")
+                if (condition.trueEvaluations >= 1 && condition.falseEvaluations >= 1) fitness.award(100.0, "$condition evaluated as both true and false")
             }
         }
-
-//        println(fitnessReasoning)
 
         return fitness
     }
@@ -280,7 +297,7 @@ class EvoGameRunner(
                 .survivorsSelector(EliteSelector(1, TournamentSelector()))
                 .offspringSelector(TournamentSelector())
                 .alterers(
-                        SinglePointCrossover(0.3),
+                        SinglePointCrossover(0.1),
                         GaussianMutator<DoubleGene, Double>(0.05)
                 )
                 .build()
@@ -303,6 +320,7 @@ class EvoGameRunner(
                 }
                 .peek(csvPeeker)
                 .peek(statistics)
+                .peek { evoProgressAccumulator?.addData("game", it.bestFitness.toDouble()) }
                 .collect(collector)
 
         csvPeeker.close()

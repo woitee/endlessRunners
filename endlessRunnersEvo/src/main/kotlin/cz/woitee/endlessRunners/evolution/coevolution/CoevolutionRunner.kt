@@ -144,7 +144,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
         }
 
         println("Coevolution finished")
-        return coevolver.getBestTriple()
+        return coevolver.currentBestTriple()
     }
 
     /**

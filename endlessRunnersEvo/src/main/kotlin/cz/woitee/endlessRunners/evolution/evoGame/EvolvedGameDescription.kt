@@ -242,8 +242,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      */
     fun getNonTimedEffectFromGenes(gene1: Double, gene2: Double): GameEffect {
         return when {
-            // Gravity (with strength -2 to +2)
-            gene1 < 0.2 -> Gravity(GameEffect.Target.PLAYER, -2 + gene2 * 4)
+            // Gravity (with strength -2 to +4)
+            gene1 < 0.2 -> Gravity(GameEffect.Target.PLAYER, -2 + gene2 * 6)
             // SpeedChange (either absolute from 12 to 36, or relative of -5 to +5)
             gene1 < 0.4 -> {
                 if (gene2 < 0.5) SpeedChange(GameEffect.Target.PLAYER, 12.0 + gene2 * 48)

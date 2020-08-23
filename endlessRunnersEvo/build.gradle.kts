@@ -17,6 +17,9 @@ dependencies {
     // HashKode has been forked by Gabriel Shanahan to add Gradle and thus work around the invalid JAR bug
     implementation("com.github.gabriel-shanahan:hashkode:latest.integration")
 
+    // XChart
+    implementation("org.knowm.xchart:xchart:3.6.5")
+
     // JUnit5 with KotlinTest
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")

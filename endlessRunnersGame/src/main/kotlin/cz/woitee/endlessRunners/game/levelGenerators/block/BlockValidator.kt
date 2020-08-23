@@ -3,6 +3,7 @@ package cz.woitee.endlessRunners.game.levelGenerators.block
 import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
@@ -87,11 +88,8 @@ class BlockValidator(val gameDescription: GameDescription, val playerControllerF
         gameState.player.x = 0.0
         gameState.player.y = ((block.startHeight + 1) * BlockHeight).toDouble()
 
-        for (y in 0 until HeightBlocks) {
-            if (y !in block.endHeight + 1 .. block.endHeight + 2) {
-                gameState.addToGrid(SolidBlock(), maxX, y)
-                gameState.addToGrid(SolidBlock(), maxX - 1, y)
-            }
+        for (x in maxX - 1..maxX) {
+            gameState.addToGrid(SolidBlock(), x, block.endHeight)
         }
 
         return gameState

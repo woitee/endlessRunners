@@ -41,6 +41,7 @@ class CoevolverSerializationTest {
         assertSameResults(coevolver, coevolver2)
     }
 
+
     private fun fullIteration(coevolver: Coevolver) {
         coevolver.evolveBlocks(5, 30, 4)
         coevolver.evolveController(5, 10)

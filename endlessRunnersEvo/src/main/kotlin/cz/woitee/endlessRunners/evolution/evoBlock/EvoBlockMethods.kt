@@ -171,8 +171,9 @@ open class EvoBlockMethods(
     }
     protected fun fitness3(values: FitnessValues): Int {
         val tooManyCustomPenalty = if (values.numCustomObjects <= 4) 0 else (values.numCustomObjects - 4) * 100
+        val successBenefit = if (values.success) 500 else 0
 
-        return values.maxPlayerX.roundToInt() * 12 - Math.abs(values.difficulty - targetDifficulty) * 100 - values.ruggedness - tooManyCustomPenalty
+        return successBenefit + values.maxPlayerX.roundToInt() * 12 - Math.abs(values.difficulty - targetDifficulty) * 100 - values.ruggedness - tooManyCustomPenalty
     }
 
     /**

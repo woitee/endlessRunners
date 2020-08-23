@@ -110,6 +110,9 @@ open class HeightBlockLevelGenerator(
         for (y in currentBlockY until currentBlockY + currentBlock.height) {
             col[y] = currentBlock.definition[currentBlockOffset, y - currentBlockY]?.makeCopy()
         }
+        for (y in currentBlockY + currentBlock.height until HeightBlocks) {
+            col[y] = currentBlock.definition[currentBlockOffset, currentBlock.height - 1]?.makeCopy()
+        }
         ++currentBlockOffset
         return col
     }

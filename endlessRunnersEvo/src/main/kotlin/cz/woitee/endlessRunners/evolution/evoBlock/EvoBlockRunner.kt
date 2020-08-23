@@ -1,5 +1,6 @@
 package cz.woitee.endlessRunners.evolution.evoBlock
 
+import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.alterers.LargeBlockMutator
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
@@ -39,7 +40,8 @@ class EvoBlockRunner(
     val populationSize: Int = 30,
     val printStats: Boolean = false,
     val csvLoggingPrefix: String = "",
-    seed: Long = Random().nextLong()
+    seed: Long = Random().nextLong(),
+    val evoProgressAccumulator: EvoProgressAccumulator? = null
 ) :
 
         EvoBlockMethods(gameDescription, playerControllerFactory, seed = seed) {
@@ -70,6 +72,7 @@ class EvoBlockRunner(
                     "#######"
             ))
     )
+    var accumulatorKey = ""
 
     /**
      * Evolve multiple blocks for the game, trying for them to not be similiar.
@@ -85,6 +88,7 @@ class EvoBlockRunner(
         stopWatch.start()
 
         for (i in 1..numBlocks) {
+            accumulatorKey = "-$i"
             val block = evolveBlock(evolvedBlocks)
             if (printStats) {
                 println(block)
@@ -186,13 +190,16 @@ class EvoBlockRunner(
         } else {
             engine.stream(startingPopulation, startingGeneration)
         }
-                        .limit(numGenerations)
+            .limit(numGenerations)
 //                      .limit {
 //                           if (it.bestFitness < bestFitness + allowedIncrement) ++fitnessUnchangedTimes
 //                           bestFitness = max(it.bestFitness, bestFitness)
 //                           fitnessUnchangedTimes < 100
 //                        }
-                        .peek(statistics)
+            .peek(statistics)
+            .peek {
+                evoProgressAccumulator?.addData("block$accumulatorKey", it.bestFitness.toDouble())
+            }
 //                        .peek {
 //                            val bestGenotype = it.bestPhenotype.genotype
 //                            println("${it.generation}")

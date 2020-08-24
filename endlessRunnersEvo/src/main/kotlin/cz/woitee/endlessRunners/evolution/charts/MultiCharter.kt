@@ -1,9 +1,7 @@
 package cz.woitee.endlessRunners.evolution.charts
 
-import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XChartPanel
 import org.knowm.xchart.XYChart
-import java.awt.FlowLayout
 import java.awt.GridLayout
 import javax.swing.JFrame
 import javax.swing.WindowConstants
@@ -25,18 +23,25 @@ class MultiCharter {
         var addedNewChart = false
 
         for ((i, chartData) in chartDatas.withIndex()) {
-            if (i < charts.size) {
-                charts[i].update(chartData)
-            } else {
-                val chart = chartData.toXYChart()
-                charts.add(chart)
+            if (i >= charts.size) {
+                charts.add(XYChart(600, 400))
                 addedNewChart = true
             }
+
+            val chart = charts[i]
+            chart.update(chartData)
         }
 
         if (addedNewChart) {
             repackJFrame()
         }
+
+        for (chart in charts) {
+            for (series in chart.seriesMap.values) {
+                if (series.xySeriesRenderStyle == null) return
+            }
+        }
+
         frame.repaint()
     }
 

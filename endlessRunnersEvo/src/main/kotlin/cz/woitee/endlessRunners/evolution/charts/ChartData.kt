@@ -1,13 +1,18 @@
 package cz.woitee.endlessRunners.evolution.charts
 
 import org.knowm.xchart.XYChart
+import org.knowm.xchart.XYSeries
+import java.awt.BasicStroke
+import java.awt.Color
+import javax.swing.SwingUtilities
 
 data class ChartData(val title: String,
                      val xTitle: String,
                      val yTitle: String,
                      val lineNames: List<String>,
                      val xData: List<Number>,
-                     val yData: List<List<Number>>) {
+                     val yData: List<List<Number>>,
+                     val xMarksEvery: Int = 50) {
 
     fun toXYChart(): XYChart {
         val xyChart = XYChart(600, 400)
@@ -30,9 +35,26 @@ data class ChartData(val title: String,
             if (xyChart.seriesMap.containsKey(lineNames[i])) {
                 xyChart.updateXYSeries(lineName, xs, ys, null)
             } else {
-                xyChart.addSeries(lineName, xs, ys)
+                SwingUtilities.invokeAndWait {
+                    val series = xyChart.addSeries(lineName, xs, ys)
+                    series.xySeriesRenderStyle = XYSeries.XYSeriesRenderStyle.Line
+                    series.lineStyle = BasicStroke()
+                    // Transparent markers
+                    series.markerColor = Color(0, 0, 0, 0)
+                }
             }
         }
+        xyChart.setCustomXAxisTickLabelsMap(customTicksLabels())
+    }
+
+    private fun customTicksLabels(): MutableMap<Any, Any> {
+        val map = HashMap<Any, Any>()
+
+        for (i in 0 .. xData.size step xMarksEvery) {
+            map[i] = i
+        }
+
+        return map
     }
 }
 

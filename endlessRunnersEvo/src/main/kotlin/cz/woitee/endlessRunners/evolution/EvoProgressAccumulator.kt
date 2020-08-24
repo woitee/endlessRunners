@@ -11,6 +11,11 @@ class EvoProgressAccumulator {
 
     val charter = MultiCharter()
 
+    private var lastKey = ""
+    private val keyToNumGenerations = HashMap<String, Int>()
+    private val plotKeysToNumGenerations = HashMap<String, Int>()
+    private var currentNumGenerations = 0
+
     fun addData(key: String, bestFitness: Double) {
         if (!entriesByKey.containsKey(key)) entriesByKey[key] = arrayListOf()
 
@@ -19,7 +24,21 @@ class EvoProgressAccumulator {
         allEntries.add(entry)
         entriesByKey[key]!!.add(entry)
 
+        updateKeyCounting(key)
+
         charter.update(getChartDatas())
+    }
+
+    private fun updateKeyCounting(key: String) {
+        if (key != lastKey && lastKey != "") {
+            if (!keyToNumGenerations.containsKey(lastKey)) {
+                keyToNumGenerations[lastKey] = currentNumGenerations
+                plotKeysToNumGenerations[lastKey.split("-")[0]] = currentNumGenerations
+            }
+            currentNumGenerations = 0
+        }
+        lastKey = key
+        ++currentNumGenerations
     }
 
     fun getChartDatas(): List<ChartData> {
@@ -46,7 +65,8 @@ class EvoProgressAccumulator {
                     "best fitness",
                     lineNames,
                     xData,
-                    yDatas
+                    yDatas,
+                    plotKeysToNumGenerations.getOrDefault(plotKey, 1000)
             ))
         }
 

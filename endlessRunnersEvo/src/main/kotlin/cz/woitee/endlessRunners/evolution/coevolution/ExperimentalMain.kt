@@ -35,7 +35,8 @@ fun fullCoevolution(seed: Long) {
         // =================== //
 
         println("Evolving controller")
-        coevolver.evolveController(200, 50)
+        val controllerGenerations = if (i == numIterations) 200L else 50L
+        coevolver.evolveController(controllerGenerations, 50)
         coevolver.saveToFile("out/snapshots/$paddedI-2.snap")
         println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
 

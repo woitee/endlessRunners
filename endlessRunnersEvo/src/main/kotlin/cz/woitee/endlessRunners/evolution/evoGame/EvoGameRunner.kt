@@ -84,7 +84,7 @@ class EvoGameRunner(
         /**
          * Evolve blocks for as the first component of fitness evaluation.
          */
-        protected fun evolveBlocks() {
+        private fun evolveBlocks() {
             // Evolve blocks and count their average fitness
             val runner = EvoBlockRunner(gameDescription, { playerControllerFactoryForBlocks(computationStopper) }, seed = rng.nextLong())
 
@@ -97,7 +97,7 @@ class EvoGameRunner(
         /**
          * Run simulation for a predetermined number of steps as the second component of the fitness.
          */
-        protected fun runGameSimulation() {
+        private fun runGameSimulation() {
             val stopWatch = StopWatch()
             // Run game for a given number of updates and calculate fitness from it
             stopWatch.start()
@@ -233,13 +233,13 @@ class EvoGameRunner(
         
         val fitness = FitnessWithReasons()
 
-        fitness.award(fitnessValues.averageBlockFitness / 2, "half of average block fitness")
+        fitness.award(fitnessValues.averageBlockFitness, "average block fitness")
 
         with(fitnessValues.gameplayStats) {
-            if (timeAirborne in 100..900) fitness.award(500.0, "reasonable time airborne ($timeAirborne)")
+            if (timeAirborne in 200..800) fitness.award(500.0, "reasonable time airborne ($timeAirborne)")
             if (timeOutOfScreen < 100) fitness.award(500.0, "low time spent out of screen ($timeOutOfScreen)")
             for ((shape, time) in timeInOtherDimensions) {
-                if (time > 10) fitness.award(100.0, "being in dimensions (${shape.x}, ${shape.y})")
+                if (time > 10) fitness.award(500.0, "being in dimensions (${shape.x}, ${shape.y})")
             }
             fitness.award(-100.0 * (numInits - 1), "number of restarts (${numInits - 1})")
         }
@@ -294,10 +294,13 @@ class EvoGameRunner(
                 .evaluator(myEvaluator)
                 .offspringFraction(0.8)
                 .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector(1, TournamentSelector()))
+                .survivorsSelector(TournamentSelector())
                 .offspringSelector(TournamentSelector())
                 .alterers(
-                        SinglePointCrossover(0.1),
+                        // 81 genes
+                        MultiPointCrossover(0.1),
+//                        SwapMutator(0.01)
+                        GaussianMutator<DoubleGene, Double>(1.0 / 81),
                         GaussianMutator<DoubleGene, Double>(0.05)
                 )
                 .build()

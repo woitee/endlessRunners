@@ -98,8 +98,11 @@ open class EvolvedPlayerController(val genotype: Genotype<DoubleGene>) : PlayerC
         // Pick the highest activated and press it, or pick the lowest activated and release that
         var bestActionActivation = 0.0
         var bestButton: GameButton.StateChange? = null
-        gameState.buttons.forEachIndexed { buttonIx, button ->
-            val activation = activations[buttonIx]
+//        gameState.buttons.forEachIndexed { buttonIx, button ->
+        activations.forEachIndexed { i, activation ->
+//            val activation = activations[buttonIx]
+            val button = gameState.buttons[i]
+
             if (activation > bestActionActivation && !button.isPressed) {
                 bestActionActivation = activation
                 bestButton = button.hold

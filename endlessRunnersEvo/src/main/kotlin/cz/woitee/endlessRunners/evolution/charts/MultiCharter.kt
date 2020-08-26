@@ -1,10 +1,10 @@
 package cz.woitee.endlessRunners.evolution.charts
 
-import org.knowm.xchart.XChartPanel
-import org.knowm.xchart.XYChart
 import java.awt.GridLayout
 import javax.swing.JFrame
 import javax.swing.WindowConstants
+import org.knowm.xchart.XChartPanel
+import org.knowm.xchart.XYChart
 
 class MultiCharter {
     val chartPanels = ArrayList<XChartPanel<XYChart>>()

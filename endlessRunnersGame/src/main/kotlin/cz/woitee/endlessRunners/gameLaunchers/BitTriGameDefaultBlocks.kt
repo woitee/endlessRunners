@@ -1,12 +1,12 @@
 package cz.woitee.endlessRunners.gameLaunchers
 
-import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 
 /**
  * Default blocks for the BitTri game.
  */
-fun bitTriGameDefaultBlocks(gameDescription: BitTriGameDescription): ArrayList<HeightBlock> {
+fun bitTriGameDefaultBlocks(gameDescription: GameDescription): ArrayList<HeightBlock> {
     return arrayListOf(
             HeightBlock(gameDescription, arrayListOf(
                     "P  P",

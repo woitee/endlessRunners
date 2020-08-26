@@ -1,15 +1,26 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
-import org.knowm.xchart.QuickChart
-import org.knowm.xchart.SwingWrapper
-import org.knowm.xchart.XYChart
+import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
+import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
+import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
+import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.CanabalGameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.ChameleonGameDescription
+import cz.woitee.endlessRunners.game.levelGenerators.CanabalLevelGenerator
+import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
+import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
+import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
+import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
 import kotlin.random.Random
 
 fun main() {
     val seed = Random.nextLong()
     println("Seed is $seed")
 
-    fullCoevolution(seed)
+//    fullCoevolution(seed)
+    checkFitnessOfKnownGames()
 }
 
 fun fullCoevolution(seed: Long) {
@@ -58,4 +69,85 @@ fun fullCoevolution(seed: Long) {
 
     println("Coevolution finished")
     runner.runGame(coevolver.currentBestTriple())
+}
+
+fun checkFitnessOfKnownGames() {
+    val canabalGameDescription = CanabalGameDescription()
+    val bitTriGameDescription = BitTriGameDescription()
+    val chameleonGameDescription = ChameleonGameDescription()
+
+    val bitTriBlocks = bitTriGameDefaultBlocks(bitTriGameDescription)
+    val chameleonBlocks = chameleonGameDefaultBlocks(chameleonGameDescription)
+
+    val canabalLevelGenerator = CanabalLevelGenerator()
+    val bitTriBlockLevelGenerator = HeightBlockLevelGenerator(bitTriGameDescription, bitTriBlocks)
+    val chameleonLevelGenerator = HeightBlockLevelGenerator(chameleonGameDescription, chameleonBlocks)
+
+    val averagingNumber = 100
+    var totalBitTri = 0.0
+    var totalChameleon = 0.0
+
+    repeat(averagingNumber) {
+        // Evaluation
+        val bitTriFitness = evaluateGame(bitTriGameDescription, bitTriBlocks)
+        val chameleonFitness = evaluateGame(chameleonGameDescription, chameleonBlocks)
+        totalBitTri += bitTriFitness
+        totalChameleon += chameleonFitness
+    }
+
+    println("Bit Tri has fitness ${totalBitTri / averagingNumber}")
+    println("Chameleon has fitness ${totalChameleon / averagingNumber}")
+}
+
+fun evaluateGame(gameDescription: GameDescription, blocks: ArrayList<HeightBlock>): Double {
+    val evoProgressAccumulator = EvoProgressAccumulator()
+    val controllerRunner = EvoControllerRunner(
+            gameDescription,
+            { HeightBlockLevelGenerator(gameDescription, blocks) },
+            numGenerations = 300
+//            evoProgressAccumulator = evoProgressAccumulator
+    )
+
+    val controller = controllerRunner.evolveController()
+
+    val gameRunner = EvoGameRunner(
+            { controller },
+            { controller },
+            blocks
+    )
+
+    val fitnessWithReasons = gameRunner.fitnessWithReasoning(gameDescription)
+    return fitnessWithReasons.value
+    println(fitnessWithReasons.reasoning)
+
+    val blockRunner = EvoBlockRunner(
+            gameDescription,
+            { controller },
+            300,
+            100,
+            evoProgressAccumulator = evoProgressAccumulator
+    )
+
+    val newBlocks = blockRunner.evolveMultipleBlocks(7)
+
+    val newControllerRunner = EvoControllerRunner(
+            gameDescription,
+            { HeightBlockLevelGenerator(gameDescription, newBlocks) },
+            numGenerations = 300,
+            evoProgressAccumulator = evoProgressAccumulator
+    )
+    val newController = newControllerRunner.evolveController()
+
+    val newGameRunner = EvoGameRunner(
+            { newController },
+            { newController },
+            newBlocks,
+            evoProgressAccumulator = evoProgressAccumulator
+    )
+
+    println(newGameRunner.fitnessWithReasoning(gameDescription).value)
+
+    EvoBlockRunner(gameDescription, { newController }).runGameWithBlocks(newBlocks)
+
+    return fitnessWithReasons.value
 }

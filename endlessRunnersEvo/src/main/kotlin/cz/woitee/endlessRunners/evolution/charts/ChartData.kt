@@ -1,18 +1,20 @@
 package cz.woitee.endlessRunners.evolution.charts
 
-import org.knowm.xchart.XYChart
-import org.knowm.xchart.XYSeries
 import java.awt.BasicStroke
 import java.awt.Color
 import javax.swing.SwingUtilities
+import org.knowm.xchart.XYChart
+import org.knowm.xchart.XYSeries
 
-data class ChartData(val title: String,
-                     val xTitle: String,
-                     val yTitle: String,
-                     val lineNames: List<String>,
-                     val xData: List<Number>,
-                     val yData: List<List<Number>>,
-                     val xMarksEvery: Int = 50) {
+data class ChartData(
+    val title: String,
+    val xTitle: String,
+    val yTitle: String,
+    val lineNames: List<String>,
+    val xData: List<Number>,
+    val yData: List<List<Number>>,
+    val xMarksEvery: Int = 50
+) {
 
     fun toXYChart(): XYChart {
         val xyChart = XYChart(600, 400)

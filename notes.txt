@@ -1,0 +1,8 @@
+TODO:
+
+ - measure fitness of both ready-games
+ - prepare both ready games as individuals
+
+
+BitTri - 4223.71
+Chameleon - 6707.2

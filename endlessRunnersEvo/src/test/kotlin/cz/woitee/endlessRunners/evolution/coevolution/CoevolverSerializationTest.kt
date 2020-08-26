@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.random.Random
+import org.junit.jupiter.api.Assertions.assertEquals
 
 class CoevolverSerializationTest {
     @org.junit.jupiter.api.Test
@@ -40,7 +40,6 @@ class CoevolverSerializationTest {
 
         assertSameResults(coevolver, coevolver2)
     }
-
 
     private fun fullIteration(coevolver: Coevolver) {
         coevolver.evolveBlocks(5, 30, 4)

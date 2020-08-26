@@ -122,7 +122,7 @@ class EvoBlockRunner(
 //                updateCallback = { sleep(100) }
         )
 
-        game.run()
+        game.run(15000)
     }
 
     /**

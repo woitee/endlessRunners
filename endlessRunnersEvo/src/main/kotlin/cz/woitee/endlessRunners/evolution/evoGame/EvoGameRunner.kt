@@ -230,7 +230,7 @@ class EvoGameRunner(
 //        println(gameDescription.toString())
 //        println(fitnessValues.gameDescriptionTracking)
 //        println(fitnessValues.gameplayStats)
-        
+
         val fitness = FitnessWithReasons()
 
         fitness.award(fitnessValues.averageBlockFitness, "average block fitness")

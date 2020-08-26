@@ -19,10 +19,10 @@ import io.jenetics.engine.EvolutionStatistics
 import io.jenetics.internal.util.Concurrency
 import io.jenetics.prngine.LCG64ShiftRandom
 import io.jenetics.util.RandomRegistry
-import java.util.*
 import java.util.concurrent.ForkJoinPool
 import java.util.function.Function
 import kotlin.math.roundToLong
+import kotlin.random.Random
 
 /**
  * A class for running neuroevolutions of PlayerControllers.
@@ -42,7 +42,7 @@ class EvoControllerRunner(
     val numGenerations: Long = 200L,
     val populationSize: Int = 50,
     val csvLoggingPrefix: String = "",
-    val seed: Long = Random().nextLong(),
+    val seed: Long = Random.Default.nextLong(),
     val evoProgressAccumulator: EvoProgressAccumulator? = null
 ) {
     /** number of game updates for each fitness evalutaion */
@@ -127,11 +127,13 @@ class EvoControllerRunner(
      *
      * @param controller Controller to run the game width.
      * @param timeLimitSeconds Limit of time for the game run.
+     * @param seed Seed for the random number generator.
      */
-    fun runGame(controller: PlayerController, timeLimitSeconds: Double = -1.0) {
+    fun runGame(controller: PlayerController, timeLimitSeconds: Double = -1.0, seed: Long = Random.Default.nextLong()) {
         val game = Game(
                 levelGeneratorFactory(), controller, GamePanelVisualizer(),
-                gameDescription = gameDescription
+                gameDescription = gameDescription,
+                seed = seed
         )
 
         game.run((timeLimitSeconds * 1000).roundToLong())
@@ -154,7 +156,7 @@ class EvoControllerRunner(
                 levelGenerator, controller, null,
                 gameDescription = gameDescriptionCopy,
                 mode = Game.Mode.SIMULATION,
-                seed = seed ?: Random().nextLong()
+                seed = seed ?: Random.Default.nextLong()
 //                seed = 1L
         )
 

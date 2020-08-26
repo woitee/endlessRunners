@@ -90,7 +90,7 @@ class Game(
      */
     fun run(timeLimitMillis: Long = -1L) {
         init()
-        if (timeLimitMillis == -1L) {
+        if (timeLimitMillis < 0) {
             updateThread.run()
             stop()
         } else {

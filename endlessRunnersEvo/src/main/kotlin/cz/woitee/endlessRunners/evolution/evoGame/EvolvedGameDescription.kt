@@ -46,7 +46,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             if (max == min) {
                 return DoubleChromosome.of(0.0, 1.0, min * numAttributes)
             }
-            return DoubleChromosome.of(0.0, 1.0, IntRange.of(min * numAttributes, max * numAttributes))
+            return DoubleChromosome.of(0.0, 1.0, IntRange.of(min * numAttributes, max * numAttributes + 1))
         }
     }
 
@@ -75,7 +75,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
 
     companion object {
         // to see description of what the genes mean, see the init function
-        val customObjectsSpec = ChromosomeSpec(1, 3)
+        val customObjectsSpec = ChromosomeSpec(1, 4)
         val gameConditionsSpec = ChromosomeSpec(1, 4, 2)
         val customEffectsSpec = ChromosomeSpec(1, 5, 4) // two additional only for conditional effects
         val customActionsSpec = ChromosomeSpec(4, 5, 4) // two additional only for conditional actions
@@ -118,7 +118,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         // Parsing the genes to the various parameters of a game description
 
         // Chromosome 1 - Game Global Variables (e.g. starting speed)
-        for (genePack in GenePack(genotype[0], gameConditionsSpec.numAttributes)) {
+        for (genePack in GenePack(genotype[0], globalVariablesSpec.numAttributes)) {
             val gene = genePack.gene(0)
             when (genePack.currentIndex) {
                 0 -> playerStartingSpeed = 1.0 + 30.0 * gene
@@ -149,11 +149,13 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             val gene1 = genePack.gene(0)
             val gene2 = genePack.gene(1)
             if (!isTimedEffect(gene1)) continue
-            allEffects[genePack.currentIndex] = getTimedEffectFromGenes(gene1, gene2)
+            // +1 since GameOver isn't counted
+            allEffects[genePack.currentIndex + 1] = getTimedEffectFromGenes(gene1, gene2)
         }
         for (genePack in GenePack(genotype[3], customEffectsSpec.numAttributes)) {
             if (!isConditional(genePack.gene(0))) continue
-            allEffects[genePack.currentIndex] = getConditonalEffectFromGenes(
+            // +1 since GameOver isn't counted
+            allEffects[genePack.currentIndex + 1] = getConditonalEffectFromGenes(
                     genePack.gene(0), genePack.gene(1), genePack.gene(2), genePack.gene(3)
             )
         }
@@ -165,13 +167,14 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         }
         for (genePack in GenePack(genotype[4], collisionEffectsSpec.numAttributes)) {
             if (!isConditional(genePack.gene(0))) continue
-            allCollisionEffects[genePack.currentIndex] = getConditionalCollisionEffectFromGenes(genePack.gene(0), genePack.gene(1), genePack.gene(2), genePack.gene(3))
+            // +1 since GameOver isn't counted
+            allCollisionEffects[genePack.currentIndex + 1] = getConditionalCollisionEffectFromGenes(genePack.gene(0), genePack.gene(1), genePack.gene(2), genePack.gene(3))
         }
         // Chromosome 6 - Permanent Effects (effects that occur on every update (main notable - Gravity)
         for (genePack in GenePack(genotype[5], permanentEffectsSpec.numAttributes)) {
             val gene = genePack.gene(0)
             val permEffect = when (genePack.currentIndex) {
-                0 -> Gravity(GameEffect.Target.PLAYER, 0 + gene * 2)
+                0 -> Gravity(GameEffect.Target.PLAYER, gene * 2)
                 else -> {
                     val candidate = selectByGene(allEffects, gene)
                     if (candidate !is GameOver) candidate else null
@@ -188,6 +191,11 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         for (genePack in GenePack(genotype[6], customActionsSpec.numAttributes)) {
             if (!isConditional(genePack.gene(0))) continue
             allActions[genePack.currentIndex] = getConditionalActionFromGenes(genePack.gene(0), genePack.gene(1), genePack.gene(2), genePack.gene(3))
+        }
+        // Some non-conditional actions could have been "disabled" by gene3 - they are only used for conditional actions
+        for (genePack in GenePack(genotype[6], customActionsSpec.numAttributes)) {
+            if (isConditional(genePack.gene(0))) continue
+            if (genePack.gene(2) >= 0.5) allActions[genePack.currentIndex] = NoAction
         }
         // Chromosome 8 - Collision Mapping (genes say the success of collision Player x Object)
         for (genePack in GenePack(genotype[7], collisionMappingSpec.numAttributes)) {
@@ -249,8 +257,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
                 if (gene2 < 0.5) SpeedChange(GameEffect.Target.PLAYER, 12.0 + gene2 * 48)
                 else SpeedChange(GameEffect.Target.PLAYER, -5 + (gene2 - 0.5) * 20, GameEffect.Relativity.RELATIVE)
             }
-            // ScoreChange (in range -50, -40, ... 40, 50)
-            gene1 < 0.6 -> ScoreChange((gene2 * 10).toInt() * 10 - 50)
+            // ScoreChange (in range -100, -40, ... 40, 100)
+            gene1 < 0.6 -> ScoreChange((gene2 * 20).toInt() * 10 - 100)
 
             isTimedEffect(gene1) || isConditional(gene1) -> throw Exception("This section is reserved for timed and conditional effects.")
             else -> throw Exception("This shouldn't happen")
@@ -319,7 +327,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      * meaning depending on the type).
      */
     fun getActionFromGenes(gene1: Double, gene2: Double): GameAction {
-        val part = 1.0 / 6
+        val part = 0.8 / 5
 
         return when {
             // JumpAction with jump power between 1 and 51
@@ -331,11 +339,11 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             )
             // ChangeColorHoldAction with a random color
             gene1 < 3 * part -> ChangeColorHoldAction(
-                    when {
-                        gene2 < 0.33 -> GameObjectColor.GREEN
-                        gene2 < 0.67 -> GameObjectColor.YELLOW
-                        else -> GameObjectColor.ORANGE
-                    }
+                    selectByGene(listOf(
+                            GameObjectColor.GREEN,
+                            GameObjectColor.YELLOW,
+                            GameObjectColor.ORANGE
+                    ), gene2)!!
             )
             // DoubleJumpAction with jump power between 1 and 51
             gene1 < 4 * part -> {
@@ -369,7 +377,9 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             else -> throw Exception("This is reserved for conditional collision effects")
         }
 
-        if (gene3 >= 0.5) desiredEffect = MultipleCollisionEffect(desiredEffect, DestroyOther())
+        if (gene3 >= 0.5) {
+            desiredEffect = if (gene1 < 0.4) DestroyOther() else MultipleCollisionEffect(desiredEffect, DestroyOther())
+        }
         return desiredEffect
     }
 

@@ -19,7 +19,6 @@ import io.jenetics.IntegerGene
 import io.jenetics.engine.EvolutionResult
 import io.jenetics.prngine.LCG64ShiftRandom
 import io.jenetics.util.RandomRegistry
-import org.knowm.xchart.XYChart
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.random.Random

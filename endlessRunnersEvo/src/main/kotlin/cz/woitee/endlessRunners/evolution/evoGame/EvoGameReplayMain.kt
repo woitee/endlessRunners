@@ -14,7 +14,7 @@ import org.apache.commons.csv.CSVParser
 /**
  * Main method for replaying results of a specific run of the evolution.
  */
-fun main(args: Array<String>) {
+fun main() {
     val phenotype = findBestPhenotype("EvoGame_2018_06_24-13_21_27.csv")
 
     val runner = EvoGameRunner({ NoActionPlayerController() }, { NoActionPlayerController() })

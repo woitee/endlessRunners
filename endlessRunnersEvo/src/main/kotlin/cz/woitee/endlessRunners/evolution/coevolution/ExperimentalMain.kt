@@ -117,7 +117,6 @@ fun evaluateGame(gameDescription: GameDescription, blocks: ArrayList<HeightBlock
     )
 
     val fitnessWithReasons = gameRunner.fitnessWithReasoning(gameDescription)
-    return fitnessWithReasons.value
     println(fitnessWithReasons.reasoning)
 
     val blockRunner = EvoBlockRunner(

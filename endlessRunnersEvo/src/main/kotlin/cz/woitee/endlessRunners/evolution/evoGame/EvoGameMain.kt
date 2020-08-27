@@ -7,7 +7,7 @@ import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 /**
  * A simple main method running an evolution of GameDescriptions, using Delayed Twin DFS controllers.
  */
-fun main(args: Array<String>) {
+fun main() {
 //    val gameDescription = TestingGameDescription()
 //    val fitness = EvoGameRunner().fitness(gameDescription)
 //

@@ -8,7 +8,7 @@ import cz.woitee.endlessRunners.utils.StopWatch
 /**
  * A sample main method that runs an evolution of a single block and then shortly demos how the DFS plays through it.
  */
-fun main(args: Array<String>) {
+fun main() {
     val gameDescription = BitTriGameDescription()
 
     for (i in 1..10) {

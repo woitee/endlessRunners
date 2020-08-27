@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("org.jetbrains.dokka") version "0.9.18"
     id("org.jmailen.kotlinter") version "2.1.1"

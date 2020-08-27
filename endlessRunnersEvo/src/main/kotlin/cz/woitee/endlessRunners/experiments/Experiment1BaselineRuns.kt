@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Game recording runs of several AI players in the experiment runs.
  */
-fun main(args: Array<String>) {
+fun main() {
     runGameWithController(DFSPlayerController(BasicDFS()), "basicDFS", 1)
     runGameWithController(DFSPlayerController(BasicDFS()), "basicDFS", 2)
     runGameWithController(DFSPlayerController(DelayedTwinDFS(0.25)), "delayedTwinDFS", 1)

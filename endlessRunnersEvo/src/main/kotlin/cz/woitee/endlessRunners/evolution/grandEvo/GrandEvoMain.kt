@@ -7,7 +7,7 @@ import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
 /**
  * A simple main function running a simple combined evolution of blocks and a player.
  */
-fun main(args: Array<String>) {
+fun main() {
     val gameDescription = CrouchGameDescription()
     val runner = GrandEvoRunner(gameDescription)
 

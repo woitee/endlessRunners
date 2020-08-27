@@ -1,12 +1,13 @@
 package cz.woitee.endlessRunners.gameLaunchers
 
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.ChameleonGameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 
 /**
  * Returns the default blocks for Chameleon.
  */
-fun chameleonGameDefaultBlocks(gameDescription: ChameleonGameDescription): ArrayList<HeightBlock> {
+fun chameleonGameDefaultBlocks(gameDescription: GameDescription): ArrayList<HeightBlock> {
     return arrayListOf(
             HeightBlock(gameDescription, arrayListOf(
                     "P       P",

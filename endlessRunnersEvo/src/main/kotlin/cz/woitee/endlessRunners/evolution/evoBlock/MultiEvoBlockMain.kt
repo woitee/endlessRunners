@@ -9,7 +9,7 @@ import cz.woitee.endlessRunners.utils.except
  * Main method that launches an example evolution of 10 HeightBlocks for CrouchGame and then runs the game with a
  * Delayed Twin DFS player controller.
  */
-fun main(args: Array<String>) {
+fun main() {
     val gameDescription = CrouchGameDescription()
     val controllerFactory = { DFSPlayerController(DelayedTwinDFS(0.05)) }
 

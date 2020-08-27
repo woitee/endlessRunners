@@ -6,6 +6,7 @@ import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.arrayList
 import io.jenetics.*
+import kotlin.math.min
 
 /**
  * A player controller representation of a genotype - a neural network.
@@ -99,19 +100,20 @@ open class EvolvedPlayerController(val genotype: Genotype<DoubleGene>) : PlayerC
         var bestActionActivation = 0.0
         var bestButton: GameButton.StateChange? = null
 //        gameState.buttons.forEachIndexed { buttonIx, button ->
-        activations.forEachIndexed { i, activation ->
-//            val activation = activations[buttonIx]
+        for (i in 0 until min(activations.size, gameState.buttons.size)) {
+            val activation = activations[i]
             val button = gameState.buttons[i]
 
-            if (activation > bestActionActivation && !button.isPressed) {
+            if (activation > 0 && activation > bestActionActivation && !button.isPressed) {
                 bestActionActivation = activation
                 bestButton = button.hold
             }
-            if (-activation > bestActionActivation && button.isPressed) {
+            if (activation < 0 && -activation > bestActionActivation && button.isPressed) {
                 bestActionActivation = -activation
                 bestButton = button.release
             }
         }
+
         return bestButton
     }
 }

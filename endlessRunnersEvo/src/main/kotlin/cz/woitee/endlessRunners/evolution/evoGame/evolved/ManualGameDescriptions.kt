@@ -4,8 +4,11 @@ import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.game.BlockHeight
+import cz.woitee.endlessRunners.game.descriptions.imitators.ChameleonGameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
+import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
+import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
 import io.jenetics.Chromosome
 import io.jenetics.DoubleGene
 import io.jenetics.Genotype
@@ -32,9 +35,6 @@ val conditional = doubleGene(0.9)
 
 fun bitTriEvolvedGameDescription(): Genotype<DoubleGene> {
     val sampleGenotype = EvolvedGameDescription.sampleGenotype()
-
-    val sampleDescription = EvolvedGameDescription(sampleGenotype)
-    println(sampleDescription)
 
     val newChromosomes = ArrayList<Chromosome<DoubleGene>>()
     // Chromosome 1 - global variables
@@ -120,6 +120,10 @@ fun bitTriEvolvedGameDescription(): Genotype<DoubleGene> {
     // Chromosome 8 - Collision Mapping
     // Always in order UP DOWN RIGHT
     newChromosomes.add(sampleGenotype[7].newInstance(ISeq.of(
+            // SOLIDBLOCK - default of move to contact
+            doubleGene(0.25),
+            doubleGene(0.25),
+            doubleGene(0.25),
             // GREEN - default of move to contact
             doubleGene(0.25),
             doubleGene(0.25),
@@ -145,15 +149,103 @@ fun bitTriEvolvedGameDescription(): Genotype<DoubleGene> {
         chromosome
     }, 8)
 }
+fun chameleonEvolvedGameDescription(): Genotype<DoubleGene> {
+    val sampleGenotype = EvolvedGameDescription.sampleGenotype()
+
+    val newChromosomes = ArrayList<Chromosome<DoubleGene>>()
+    // Chromosome 1 - global variables
+    newChromosomes.add(sampleGenotype[0].newInstance(ISeq.of(
+            speedGene(20.0)
+    )))
+    // Chromosome 2 - Custom Objects
+    newChromosomes.add(sampleGenotype[1].newInstance(ISeq.of(
+            { customObjectGene(true) }, 1
+    )))
+    // Chromosome 3 - Game Conditions
+    newChromosomes.add(sampleGenotype[2].newInstance(ISeq.of(
+            // PlayerHasColor(GREEN)
+            doubleGene(1.0),
+            selectorGene(2, 5)
+    )))
+    // Chromosome 4 - Game Effects
+    newChromosomes.add(sampleGenotype[3].newInstance(ISeq.of(
+            // GameOver is always included
+            selectorGene(0, 3) * 0.6,
+            doubleGene(1.0 / 3),
+            unusedGene,
+            unusedGene
+    )))
+    // Chromosome 5 - Collision Effects
+    newChromosomes.add(sampleGenotype[4].newInstance(ISeq.of(
+            // GameOver is always included
+            // Conditional(GREEN, nothing, GameOver)
+            conditional,
+            selectorGene(0, 1),
+            // -- selecting from 1 since unassigned are filtered out
+            doubleGene(0.75),
+            selectorGene(0, 1) * 0.5,
+            // Conditional(GREEN, GameOver, nothing)
+            conditional,
+            selectorGene(0, 1),
+            // -- selecting from 2 since unassigned are filtered out
+            selectorGene(0, 2) * 0.5,
+            doubleGene(0.75)
+    )))
+    // Chromosome 6 - Permanent Effects
+    newChromosomes.add(sampleGenotype[5].newInstance(ISeq.of(
+            // Gravity
+            gravityGene(100 * 0.7 / BlockHeight)
+    )))
+    // Chromosome 7 - Custom Actions
+    newChromosomes.add(sampleGenotype[6].newInstance(ISeq.of(
+            // MultiJumpAction(25.0)
+            selectorGene(3, 5) * 0.8,
+            jumpGene(25.0),
+            doubleGene(0.25),
+            unusedGene,
+            // MultiJumpAction(20.0)
+            selectorGene(3, 5) * 0.8,
+            jumpGene(20.0),
+            doubleGene(0.25),
+            unusedGene,
+            // ChangeColor(GREEN)
+            selectorGene(2, 5) * 0.8,
+            selectorGene(0, 3),
+            unusedGene,
+            unusedGene
+    )))
+
+    // Chromosome 8 - Collision Mapping
+    // Always in order UP DOWN RIGHT
+    newChromosomes.add(sampleGenotype[7].newInstance(ISeq.of(
+            // SOLIDBLOCK - die if GREEN
+            collisionSelectorGene(2, 3),
+            collisionSelectorGene(2, 3),
+            collisionSelectorGene(0, 3),
+            // GREEN - die if not GREEN
+            collisionSelectorGene(1, 3),
+            collisionSelectorGene(1, 3),
+            collisionSelectorGene(0, 3)
+    )))
+
+    var i = 0
+    return Genotype.of({
+        val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
+        ++i
+        chromosome
+    }, 8)
+}
 
 fun main() {
-    val genotype = bitTriEvolvedGameDescription()
+    val genotype = chameleonEvolvedGameDescription()
     val gameDescription = EvolvedGameDescription(genotype)
+    val originalGameDescription = ChameleonGameDescription()
 
     val controllerRunner = EvoControllerRunner(
             gameDescription,
-            { HeightBlockLevelGenerator(gameDescription, bitTriGameDefaultBlocks(gameDescription)) },
-            numGenerations = 500L,
+            { HeightBlockLevelGenerator(gameDescription, chameleonGameDefaultBlocks(gameDescription)) },
+            numGenerations = 500,
+            populationSize = 100,
             evoProgressAccumulator = EvoProgressAccumulator()
     )
     val controller = controllerRunner.evolveController()

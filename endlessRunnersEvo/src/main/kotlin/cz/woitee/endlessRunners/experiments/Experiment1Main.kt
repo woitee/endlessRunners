@@ -21,7 +21,7 @@ val startsWithGame1: Boolean = Random().nextBoolean()
 /**
  * Main method, launching the experiment.
  */
-fun main(args: Array<String>) {
+fun main() {
     println("Starting with game " + if (startsWithGame1) 1 else 2)
     val gui = ExperimentGUI(
         arrayOf("Reakční test", "Demonstrace", "Hra 1", "Hra 2"),

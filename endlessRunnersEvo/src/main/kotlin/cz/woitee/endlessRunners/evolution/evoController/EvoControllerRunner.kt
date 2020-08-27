@@ -10,6 +10,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.levelGenerators.block.BlockValidator
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
+import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
 import cz.woitee.endlessRunners.game.tracking.GameStateTracking
 import cz.woitee.endlessRunners.game.tracking.TrackingUtils
 import io.jenetics.*
@@ -82,13 +83,13 @@ class EvoControllerRunner(
                 .optimize(Optimize.MINIMUM)
                 .populationSize(populationSize)
                 .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
+                .maximalPhenotypeAge(2000)
                 .survivorsSelector(EliteSelector(2, TournamentSelector()))
                 .offspringSelector(TournamentSelector())
                 .alterers(
                         MultiPointCrossover(0.1),
-                        GaussianMutator<DoubleGene, Double>(0.05),
-                        GaussianMutator<DoubleGene, Double>(0.005)
+                        GaussianMutator(0.05),
+                        GaussianMutator(0.005)
                 )
                 .build()
 
@@ -131,7 +132,7 @@ class EvoControllerRunner(
      */
     fun runGame(controller: PlayerController, timeLimitSeconds: Double = -1.0, seed: Long = Random.Default.nextLong()) {
         val game = Game(
-                levelGeneratorFactory(), controller, GamePanelVisualizer(),
+                levelGeneratorFactory(), DisplayingWrapper(controller), GamePanelVisualizer(),
                 gameDescription = gameDescription,
                 seed = seed
         )

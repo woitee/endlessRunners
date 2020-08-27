@@ -78,8 +78,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         val customObjectsSpec = ChromosomeSpec(1, 4)
         val gameConditionsSpec = ChromosomeSpec(1, 4, 2)
         val customEffectsSpec = ChromosomeSpec(1, 5, 4) // two additional only for conditional effects
-        val customActionsSpec = ChromosomeSpec(4, 5, 4) // two additional only for conditional actions
-        val collisionEffectsSpec = ChromosomeSpec(1, 4, 4) // three additional only for conditional effects
+        val customActionsSpec = ChromosomeSpec(2, 5, 4) // two additional only for conditional actions
+        val collisionEffectsSpec = ChromosomeSpec(1, 5, 4) // three additional only for conditional effects
         val permanentEffectsSpec = ChromosomeSpec(1, 3)
         // player collision with any custom object
         val collisionMappingSpec = ChromosomeSpec(min(1, customObjectsSpec.min), customObjectsSpec.max, 3) // we only separate Right, Up and Down collisions
@@ -185,7 +185,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         // Chromosome 7 - Game Actions (genes say the type and a single attribute of action)
         for (genePack in GenePack(genotype[6], customActionsSpec.numAttributes)) {
             allActions.add(
-                    if (isConditional(genePack.gene(0))) NoAction else getActionFromGenes(genePack.gene(0), genePack.gene(1))
+                    if (isConditional(genePack.gene(0))) NoAction else getActionFromGenes(genePack.gene(0), genePack.gene(1), genePack.gene(2))
             )
         }
         for (genePack in GenePack(genotype[6], customActionsSpec.numAttributes)) {
@@ -250,7 +250,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      */
     fun getNonTimedEffectFromGenes(gene1: Double, gene2: Double): GameEffect {
         return when {
-            // Gravity (with strength -2 to +4)
+            // Gravity (with strength -2 to +6)
             gene1 < 0.2 -> Gravity(GameEffect.Target.PLAYER, -2 + gene2 * 6)
             // SpeedChange (either absolute from 12 to 36, or relative of -5 to +5)
             gene1 < 0.4 -> {
@@ -326,7 +326,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      * Extract action from two Double genes - first describes the type and second the properties (with variable
      * meaning depending on the type).
      */
-    fun getActionFromGenes(gene1: Double, gene2: Double): GameAction {
+    fun getActionFromGenes(gene1: Double, gene2: Double, gene3: Double): GameAction {
         val part = 0.8 / 5
 
         return when {
@@ -347,7 +347,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             )
             // DoubleJumpAction with jump power between 1 and 51
             gene1 < 4 * part -> {
-                MultiJumpAction(1.0 + gene2 * 50.0, 2)
+                MultiJumpAction(1.0 + gene2 * 50.0, 1 + (gene3 * 2).toInt())
             }
             // Apply some TimedGameEffect
             gene1 < 5 * part -> { ApplyGameEffectAction(
@@ -372,7 +372,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             gene1 < 0.4 -> MoveToContact()
             gene1 < 0.8 -> {
                 val effect = selectByGene(allEffects, gene2)
-                if (effect is UndoableGameEffect) ApplyGameEffect(effect) else NoCollisionEffect
+                if (effect is UndoableGameEffect) ApplyGameEffect(effect) else MoveToContact()
             }
             else -> throw Exception("This is reserved for conditional collision effects")
         }
@@ -387,7 +387,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      * Extracting a conditional collision effect from 4 genes that represent it.
      */
     fun getConditionalCollisionEffectFromGenes(gene1: Double, gene2: Double, gene3: Double, gene4: Double): ICollisionEffect {
-        return getConditionalFromGenes(gene2, gene3, gene4, allCollisionEffects, NoCollisionEffect) { cond, a, b -> ConditionalCollisionEffect(cond, a, b) }
+        return getConditionalFromGenes(gene2, gene3, gene4, allCollisionEffects, MoveToContact()) { cond, a, b -> ConditionalCollisionEffect(cond, a, b) }
     }
 
     /**
@@ -407,7 +407,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      */
     fun addColllisionMapFromGenes(genePack: GenePack) {
         val index = genePack.currentIndex
-        val otherClass = GameObjectClass.fromInt(GameObjectClass.CUSTOM0.ord + index)
+        val otherClass = GameObjectClass.fromInt(GameObjectClass.SOLIDBLOCK.ord + index)
         for ((i, direction) in arrayOf(Direction4.UP, Direction4.DOWN, Direction4.RIGHT).withIndex()) {
             val gene = genePack.gene(i)
             if (gene < 0.5) continue

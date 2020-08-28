@@ -8,9 +8,9 @@ import cz.woitee.endlessRunners.game.descriptions.OldBitTriGameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
+import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream
-import org.junit.jupiter.api.Assertions.*
 
 internal class BasicDFSTest {
     @org.junit.jupiter.api.Test
@@ -42,16 +42,16 @@ internal class BasicDFSTest {
         gameDescription: GameDescription = OldBitTriGameDescription()
     ) {
         val game = Game(
-                FlatLevelGenerator(),
-                DFSPlayerController(dfsProvider),
+            FlatLevelGenerator(),
+            DFSPlayerController(dfsProvider),
 
 //                null,
-                GamePanelVisualizer(),
-                updateRate = 75.0,
+            GamePanelVisualizer(),
+            updateRate = 75.0,
 
-                mode = Game.Mode.INTERACTIVE,
-                gameDescription = gameDescription,
-                restartOnGameOver = false
+            mode = Game.Mode.INTERACTIVE,
+            gameDescription = gameDescription,
+            restartOnGameOver = false
         )
         game.gameState.serializationVersion = serializationVersion
         val file = File(filePath)
@@ -75,7 +75,7 @@ internal class BasicDFSTest {
 //        DebugUtils.printDebugInfo(game.gameState)
 
         var exception: Throwable? = null
-            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exception = e }
+        game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exception = e }
 
         game.start()
 

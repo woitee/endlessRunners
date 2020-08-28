@@ -1,7 +1,7 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
-import kotlin.random.Random
 import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.random.Random
 
 class CoevolverSerializationTest {
     @org.junit.jupiter.api.Test

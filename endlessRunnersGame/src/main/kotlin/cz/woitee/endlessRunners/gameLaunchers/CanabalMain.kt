@@ -14,7 +14,10 @@ fun main(args: Array<String>) {
     val playerController = DFSPlayerController()
 
     val game = Game(
-            CanabalLevelGenerator(), playerController, GamePanelVisualizer(), gameDescription = CanabalGameDescription()
+        CanabalLevelGenerator(),
+        playerController,
+        GamePanelVisualizer(),
+        gameDescription = CanabalGameDescription()
     )
 
     game.run()

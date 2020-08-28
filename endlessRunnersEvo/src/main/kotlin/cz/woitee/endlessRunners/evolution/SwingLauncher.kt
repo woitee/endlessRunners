@@ -217,8 +217,9 @@ class SwingLauncher {
                 Canabal -> CanabalLevelGenerator()
                 BitTri -> HeightBlockLevelGenerator(gameDescription, bitTriGameDefaultBlocks(BitTriGameDescription()))
                 Chameleon -> HeightBlockLevelGenerator(gameDescription, chameleonGameDefaultBlocks(ChameleonGameDescription()))
-                EvolvedHeightBlocks -> HeightBlockLevelGenerator(gameDescription,
-                        EvoBlockRunner(gameDescription, { DFSPlayerController(DelayedTwinDFS(0.1)) }).evolveMultipleBlocks(7)
+                EvolvedHeightBlocks -> HeightBlockLevelGenerator(
+                    gameDescription,
+                    EvoBlockRunner(gameDescription, { DFSPlayerController(DelayedTwinDFS(0.1)) }).evolveMultipleBlocks(7)
                 )
                 CoEvo1 -> HeightBlockLevelGenerator(gameDescription, CoevolvedTriples.get(0).blocks)
                 CoEvo2 -> HeightBlockLevelGenerator(gameDescription, CoevolvedTriples.get(1).blocks)

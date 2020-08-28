@@ -85,7 +85,8 @@ object DummyObjects {
     }
     class MockGameDescription : GameDescription() {
         override val allActions: ArrayList<GameAction> = arrayListOf(
-            MockAction(), MockHoldAction()
+            MockAction(),
+            MockHoldAction()
         )
     }
 
@@ -100,7 +101,9 @@ object DummyObjects {
     fun createDummyButtonModel(): ButtonModel {
         val game = createDummyGame()
         return ButtonModel(
-                GameState(game, null), GameState(game, null), game.updateTime
+            GameState(game, null),
+            GameState(game, null),
+            game.updateTime
         )
     }
 }

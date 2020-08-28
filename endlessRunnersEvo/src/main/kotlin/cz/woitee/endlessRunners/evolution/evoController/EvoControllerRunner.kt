@@ -75,23 +75,23 @@ class EvoControllerRunner(
     fun evolveToResult(startingPopulation: Iterable<Genotype<DoubleGene>>? = null, startingGeneration: Long = 0L): EvolutionResult<DoubleGene, Double> {
         val genotype = EvolvedPlayerController.sampleGenotype()
         val engine = Engine
-                .builder(fitness, genotype)
-                // Setting concurrency only for fitness evaluation and not for tasks within the evaluation (such as mutation and crossover)
-                // Also using a custom evaluator to distribute random values consistently
-                .executor(Concurrency.SERIAL_EXECUTOR)
-                .evaluator(myEvaluator)
-                .optimize(Optimize.MINIMUM)
-                .populationSize(populationSize)
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(2000)
-                .survivorsSelector(EliteSelector(2, TournamentSelector()))
-                .offspringSelector(TournamentSelector())
-                .alterers(
-                        MultiPointCrossover(0.1),
-                        GaussianMutator(0.05),
-                        GaussianMutator(0.005)
-                )
-                .build()
+            .builder(fitness, genotype)
+            // Setting concurrency only for fitness evaluation and not for tasks within the evaluation (such as mutation and crossover)
+            // Also using a custom evaluator to distribute random values consistently
+            .executor(Concurrency.SERIAL_EXECUTOR)
+            .evaluator(myEvaluator)
+            .optimize(Optimize.MINIMUM)
+            .populationSize(populationSize)
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(2000)
+            .survivorsSelector(EliteSelector(2, TournamentSelector()))
+            .offspringSelector(TournamentSelector())
+            .alterers(
+                MultiPointCrossover(0.1),
+                GaussianMutator(0.05),
+                GaussianMutator(0.005)
+            )
+            .build()
 
         val statistics = EvolutionStatistics.ofNumber<Double>()
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
@@ -116,8 +116,8 @@ class EvoControllerRunner(
 
         stream2 = stream2.peek(csvPeeker)
         val result = stream2
-                .peek(statistics)
-                .collect(collector)
+            .peek(statistics)
+            .collect(collector)
 
         return result
     }
@@ -132,9 +132,11 @@ class EvoControllerRunner(
      */
     fun runGame(controller: PlayerController, timeLimitSeconds: Double = -1.0, seed: Long = Random.Default.nextLong()) {
         val game = Game(
-                levelGeneratorFactory(), DisplayingWrapper(controller), GamePanelVisualizer(),
-                gameDescription = gameDescription,
-                seed = seed
+            levelGeneratorFactory(),
+            DisplayingWrapper(controller),
+            GamePanelVisualizer(),
+            gameDescription = gameDescription,
+            seed = seed
         )
 
         game.run((timeLimitSeconds * 1000).roundToLong())
@@ -154,10 +156,12 @@ class EvoControllerRunner(
         val gameDescriptionTracking = TrackingUtils.addTracking(gameDescriptionCopy)
         val levelGenerator = levelGeneratorFactory()
         val game = Game(
-                levelGenerator, controller, null,
-                gameDescription = gameDescriptionCopy,
-                mode = Game.Mode.SIMULATION,
-                seed = seed ?: Random.Default.nextLong()
+            levelGenerator,
+            controller,
+            null,
+            gameDescription = gameDescriptionCopy,
+            mode = Game.Mode.SIMULATION,
+            seed = seed ?: Random.Default.nextLong()
 //                seed = 1L
         )
 

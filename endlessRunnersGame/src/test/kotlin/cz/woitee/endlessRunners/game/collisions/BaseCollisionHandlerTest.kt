@@ -117,7 +117,9 @@ class BaseCollisionHandlerTest {
     fun weirdlyAllignedCollision() {
         val game = DummyObjects.createDummyGame()
         game.gameState.gridX = 134207
-        val block = Block(game.gameDescription, arrayListOf(
+        val block = Block(
+            game.gameDescription,
+            arrayListOf(
                 "                    #         ",
                 "                 #            ",
                 "   #    #      #    ##     ## ",
@@ -125,7 +127,8 @@ class BaseCollisionHandlerTest {
                 "        ######################",
                 "     #########################",
                 " #############################"
-        ))
+            )
+        )
         for (y in 0 until block.height) {
             for (x in 0 until block.width) {
                 game.gameState.addToGrid(block.definition[x, y], x, y + 1)

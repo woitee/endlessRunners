@@ -24,7 +24,7 @@ data class Collision(
 ) {
 
     constructor (other: GameObject, locationX: Double, locationY: Double, myLocationX: Double, myLocationY: Double) :
-            this (other, locationX, locationY, myLocationX, myLocationY, CollisionUtils.gameObjectLocToDir(other, locationX, locationY))
+        this (other, locationX, locationY, myLocationX, myLocationY, CollisionUtils.gameObjectLocToDir(other, locationX, locationY))
 
     val distance: Double
         get() = Distance2D.distance(myLocationX, myLocationY, locationX, locationY)

@@ -16,7 +16,8 @@ import javax.swing.JSlider
  * A GUI class for testing precision timing.
  */
 class HitPrecisionTest {
-    val defaultText = """
+    val defaultText =
+        """
             Tato hra je na zjištění vaší preciznosti trefování správného okamžiku.
             Vpravo je posuvník. Vašim úkolem je stisknout "šipku nahoru"
             co nejpřesněji v moment, kdy dovystoupá na nápis "CÍL".
@@ -25,7 +26,8 @@ class HitPrecisionTest {
 
             Nyní stiskněte tlačítko začít.
         """.trimIndent()
-    val inGameText = """ Stiskněte klávesu "šipka nahoru" co nejpřesněji v okamžik,
+    val inGameText =
+        """ Stiskněte klávesu "šipka nahoru" co nejpřesněji v okamžik,
         |kdy posuvník vystoupá na nápis "CÍL".
         |""".trimMargin()
 
@@ -105,13 +107,15 @@ class HitPrecisionTest {
         panel.add(slider)
         panel.add(button)
 
-        panel.addKeyListener(object : KeyAdapter() {
-            override fun keyPressed(e: KeyEvent?) {
-                if (e?.keyCode == 38) {
-                    spaceBarPressed()
+        panel.addKeyListener(
+            object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent?) {
+                    if (e?.keyCode == 38) {
+                        spaceBarPressed()
+                    }
                 }
             }
-        })
+        )
     }
 
     private fun spaceBarPressed() {
@@ -164,7 +168,8 @@ class HitPrecisionTest {
             Thread.sleep(1000)
         }
 
-        textArea.text = """A to je vše! Díky!
+        textArea.text =
+            """A to je vše! Díky!
             |
             |Vracím se do menu...
         """.trimMargin()

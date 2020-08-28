@@ -14,14 +14,20 @@ object GenotypeConverter {
             val integerChromosome = (chromosome as IntegerChromosome)
             if (exactLengthAndValues) {
                 val doubleGenes = integerChromosome.map { intGene -> DoubleGene.of(intGene.doubleValue(), intGene.min.toDouble(), intGene.max.toDouble() + ALMOST_ONE) }
-                chromosomes.add(DoubleChromosome.of(
+                chromosomes.add(
+                    DoubleChromosome.of(
                         *doubleGenes.toTypedArray()
-                ))
+                    )
+                )
             } else {
-                chromosomes.add(DoubleChromosome.of(
+                chromosomes.add(
+                    DoubleChromosome.of(
                         // the maximum is larger to provide the same length on the number axis
-                        integerChromosome.min.toDouble(), integerChromosome.max.toDouble() + ALMOST_ONE, integerChromosome.lengthRange()
-                ))
+                        integerChromosome.min.toDouble(),
+                        integerChromosome.max.toDouble() + ALMOST_ONE,
+                        integerChromosome.lengthRange()
+                    )
+                )
             }
         }
         return Genotype.of(chromosomes)
@@ -33,13 +39,19 @@ object GenotypeConverter {
             val doubleChromosome = (chromosome as DoubleChromosome)
             if (exactLengthAndValues) {
                 val intGenes = doubleChromosome.map { doubleGene -> IntegerGene.of(Math.floor(doubleGene.allele).toInt(), doubleGene.min.toInt(), (doubleChromosome.max - ALMOST_ONE).toInt()) }
-                chromosomes.add(IntegerChromosome.of(
+                chromosomes.add(
+                    IntegerChromosome.of(
                         *intGenes.toTypedArray()
-                ))
+                    )
+                )
             } else {
-                chromosomes.add(IntegerChromosome.of(
-                        doubleChromosome.min.toInt(), (doubleChromosome.max - ALMOST_ONE).toInt(), doubleChromosome.lengthRange()
-                ))
+                chromosomes.add(
+                    IntegerChromosome.of(
+                        doubleChromosome.min.toInt(),
+                        (doubleChromosome.max - ALMOST_ONE).toInt(),
+                        doubleChromosome.lengthRange()
+                    )
+                )
             }
         }
         return Genotype.of(chromosomes)

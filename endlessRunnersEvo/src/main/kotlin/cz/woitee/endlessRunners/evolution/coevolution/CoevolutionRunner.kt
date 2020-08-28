@@ -72,7 +72,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
     }
 
     /** Performs a phase evolution of all three - gameDescription, playerController and levelGenerator. Phase-evolution is similiar to coevolution, with the difference
-        of resetting each population to a random one in each iteration.
+     of resetting each population to a random one in each iteration.
      */
     fun phaseEvolveDescriptionBlocksAndController(): CoevolvedTriple {
         val timeStamp = DateUtils.timestampString()
@@ -93,9 +93,9 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
             println("Iteration $i: controller evaluated")
 
             val evoGameRunner = EvoGameRunner(
-                    { EvolvedPlayerController(bestController.genotype) },
-                    { EvolvedPlayerController(bestController.genotype) },
-                    csvLoggingPrefix = "phaseevo_$timeStamp/"
+                { EvolvedPlayerController(bestController.genotype) },
+                { EvolvedPlayerController(bestController.genotype) },
+                csvLoggingPrefix = "phaseevo_$timeStamp/"
             )
             bestGameDescription = evoGameRunner.evolveGame()
             println("Iteration $i: game evaluated")
@@ -174,11 +174,11 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
         val gamePanelVisualizer = GamePanelVisualizer(timeProportionedDrawing = false, debugging = true)
 
         val game = Game(
-                HeightBlockLevelGenerator(gameDescription, allBlocks),
-                playerController,
-                gamePanelVisualizer,
-                gameDescription = gameDescription
-                // uncomment for screenshots
+            HeightBlockLevelGenerator(gameDescription, allBlocks),
+            playerController,
+            gamePanelVisualizer,
+            gameDescription = gameDescription
+            // uncomment for screenshots
 //                updateCallback = {
 //                    val gameState = it.gameState
 //                    var maxPlayerX = 0.0

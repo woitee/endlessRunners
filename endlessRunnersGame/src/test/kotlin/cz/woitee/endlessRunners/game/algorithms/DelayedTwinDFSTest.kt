@@ -24,16 +24,16 @@ import cz.woitee.endlessRunners.game.playerControllers.ExternalProxyPlayerContro
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.readFromFile
+import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import java.io.ObjectInputStream
 import java.util.*
-import org.junit.jupiter.api.Assertions.*
 
 internal class DelayedTwinDFSTest {
     class TimedChangeShapeGameDescription : OldBitTriGameDescription() {
         override val allActions: ArrayList<GameAction> = arrayListOf(
-                JumpAction(22.0),
-                ChangeShapeHoldAction(2, 1)
+            JumpAction(22.0),
+            ChangeShapeHoldAction(2, 1)
         )
     }
     class HolesLevelGenerator(val holeWidth: Int = 2) : LevelGenerator() {
@@ -78,14 +78,17 @@ internal class DelayedTwinDFSTest {
         val delayedTwinDFS = DelayedTwinDFS(delayTime)
         val playerController = DFSPlayerController(delayedTwinDFS)
         val visualizer = GamePanelVisualizer()
-        val game = Game(levelGenerator, playerController, visualizer,
-                mode = Game.Mode.INTERACTIVE,
-                gameDescription = gameDescription,
-                restartOnGameOver = false
+        val game = Game(
+            levelGenerator,
+            playerController,
+            visualizer,
+            mode = Game.Mode.INTERACTIVE,
+            gameDescription = gameDescription,
+            restartOnGameOver = false
         )
 
         var exceptionMessage = ""
-            game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exceptionMessage = e.message ?: "No Message" }
+        game.updateThread.thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, e -> exceptionMessage = e.message ?: "No Message" }
 
         game.start()
         game.updateThread.join(7000)
@@ -114,12 +117,12 @@ internal class DelayedTwinDFSTest {
         val delayedTwinDFSVisualizer = DelayedTwinDFSVisualizer(delayedTwinDFS)
         delayedTwinDFSVisualizer.start()
         dfsTest.runTestFromFile(
-                filePath,
-                serializationVersion,
-                dfsProvider = delayedTwinDFS,
-                time = runTime,
-                gameDescription = gameDescription,
-                expectGameOver = expectGameOver
+            filePath,
+            serializationVersion,
+            dfsProvider = delayedTwinDFS,
+            time = runTime,
+            gameDescription = gameDescription,
+            expectGameOver = expectGameOver
         )
         delayedTwinDFSVisualizer.dispose()
     }
@@ -144,9 +147,12 @@ internal class DelayedTwinDFSTest {
         val currentStatePath = "src/test/resources/WrongCurrent_2017_12_03-18_32_26_255.dmp"
         val delayedStatePath = "src/test/resources/WrongDelayed_2017_12_03-18_32_26_261.dmp"
 
-        val game = Game(SimpleLevelGenerator(), NoActionPlayerController(), GamePanelVisualizer(),
-                mode = Game.Mode.INTERACTIVE,
-                gameDescription = OldBitTriGameDescription()
+        val game = Game(
+            SimpleLevelGenerator(),
+            NoActionPlayerController(),
+            GamePanelVisualizer(),
+            mode = Game.Mode.INTERACTIVE,
+            gameDescription = OldBitTriGameDescription()
         )
 
         val currentState = game.gameState.makeCopy()
@@ -156,7 +162,9 @@ internal class DelayedTwinDFSTest {
         delayedState.readFromFile(delayedStatePath)
 
         val buttonModel = ButtonModel(
-            currentState, delayedState, game.updateTime
+            currentState,
+            delayedState,
+            game.updateTime
         )
         val delayedTwinDFS = DelayedTwinDFS(0.25)
         delayedTwinDFS.init(game.gameState)
@@ -171,13 +179,13 @@ internal class DelayedTwinDFSTest {
         val levelGenerator = DFSEnsuring(SimpleLevelGenerator(), delayedTwinDFS, dumpErrors = false)
         val playerDFS = DelayedTwinDFS(0.25)
         val game = Game(
-                levelGenerator,
-                DFSPlayerController(playerDFS),
+            levelGenerator,
+            DFSPlayerController(playerDFS),
 //                null,
-                GamePanelVisualizer(),
-                mode = Game.Mode.INTERACTIVE,
-                gameDescription = OldBitTriGameDescription(),
-                restartOnGameOver = false
+            GamePanelVisualizer(),
+            mode = Game.Mode.INTERACTIVE,
+            gameDescription = OldBitTriGameDescription(),
+            restartOnGameOver = false
         )
         val file = File(filePath)
         val ois = ObjectInputStream(file.inputStream())
@@ -279,11 +287,11 @@ internal class DelayedTwinDFSTest {
         val proxyPlayerController = ExternalProxyPlayerController()
 
         val dummyGame = Game(
-                delayedTwinDFSLevelGenerator,
-                proxyPlayerController,
-                GamePanelVisualizer(),
-                gameDescription = GameOverGameDescription(),
-                freezeOnStartSeconds = 0.0
+            delayedTwinDFSLevelGenerator,
+            proxyPlayerController,
+            GamePanelVisualizer(),
+            gameDescription = GameOverGameDescription(),
+            freezeOnStartSeconds = 0.0
         )
         dummyGame.init()
         var dummyState = dummyGame.gameState

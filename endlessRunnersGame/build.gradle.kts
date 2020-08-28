@@ -1,8 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.jetbrains.dokka") version "0.9.18"
-    id("org.jmailen.kotlinter") version "2.1.1"
+    id("org.jmailen.kotlinter") version "3.0.2"
 }
 
 group = "cz.woitee.endlessRunners"
@@ -24,7 +22,7 @@ dependencies {
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
 
     // This is needed due to a known issue with KotlinTest: https://github.com/kotlintest/kotlintest/issues/639
-    testCompile("org.slf4j", "slf4j-simple", "1.7.26")
+    testImplementation("org.slf4j", "slf4j-simple", "1.7.26")
 }
 
 tasks.test {

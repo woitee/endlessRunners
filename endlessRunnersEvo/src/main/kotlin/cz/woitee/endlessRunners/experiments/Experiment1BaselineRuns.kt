@@ -32,10 +32,12 @@ fun runGameWithController(playerController: PlayerController, identifier: String
     val actualPlayerController = RecordingWrapper(playerController)
 
     val game = Game(
-            levelGenerator, actualPlayerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription,
-            freezeOnStartSeconds = 1.0
+        levelGenerator,
+        actualPlayerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription,
+        freezeOnStartSeconds = 1.0
     )
 
     game.run((5 * 60 * 1000).toLong())

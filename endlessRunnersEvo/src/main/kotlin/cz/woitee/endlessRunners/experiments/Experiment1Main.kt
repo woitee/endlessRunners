@@ -30,13 +30,16 @@ fun main() {
                 println("Reaction Test clicked")
                 ReactionAndPrecisionTest().run()
                 true
-            }, {
+            },
+            {
                 println("Demonstration")
                 runDemo()
-            }, {
+            },
+            {
                 println("Game 1 Start")
                 runGame1()
-            }, {
+            },
+            {
                 println("Game 2 Start")
                 runGame2()
             }
@@ -54,13 +57,15 @@ fun main() {
  * Runs the experiment 30 second demo.
  */
 fun runDemo(timeMinutes: Double = 0.5): Boolean {
-    val gamePreparation = IntermediatoryDescriptorFrame("""
+    val gamePreparation = IntermediatoryDescriptorFrame(
+        """
         Toto je automaticky hrané demo.
 
         Hra se bude 30 sekund hrát "sama". Slouží pouze pro ilustraci, co Vás čeká.
 
         Stiskněte tlačítko pokračovat.
-        """.trimIndent())
+        """.trimIndent()
+    )
     if (!gamePreparation.waitUntilInteraction())
         return false
 
@@ -70,9 +75,12 @@ fun runDemo(timeMinutes: Double = 0.5): Boolean {
     val levelGenerator = DeterministicSeeds(SimpleLevelGenerator(), 2018031)
     val playerController = DFSPlayerController(dfs = DelayedTwinDFS(0.15))
 
-    val game = Game(levelGenerator, playerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription
     )
 
     game.run((timeMinutes * 60 * 1000).toLong())
@@ -84,7 +92,8 @@ fun runDemo(timeMinutes: Double = 0.5): Boolean {
  * Runs first game of the experiments (which could be either from a selection of two).
  */
 fun runGame1(timeMinutes: Double = 5.0): Boolean {
-    val gamePreparation = IntermediatoryDescriptorFrame("""
+    val gamePreparation = IntermediatoryDescriptorFrame(
+        """
         Právě spouštíte první hru. Ve hře ovládáte modrou postavu (obdélník),
         která se sama pohybuje směrem vpravo. Při stisknutí klávesy "šipka nahoru" postava vyskočí,
         a při stisknutí klávesy "šipka dolů" se skrčí. Vašim cílem je nenarazit do překážek a dostat se co nejdále.
@@ -93,7 +102,8 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
         Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
 
         Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra se ihned spustí.
-        """.trimIndent())
+        """.trimIndent()
+    )
     if (!gamePreparation.waitUntilInteraction())
         return false
 
@@ -105,11 +115,14 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
     val timingAnnouncer = createTimingAnnouncer()
-    val game = Game(levelGenerator, playerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription,
-            updateCallback = { game -> timingAnnouncer.onUpdate(game); },
-            freezeOnStartSeconds = 1.0
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription,
+        updateCallback = { game -> timingAnnouncer.onUpdate(game); },
+        freezeOnStartSeconds = 1.0
     )
 
     val originalGameOver = game.onGameOver
@@ -127,7 +140,8 @@ fun runGame1(timeMinutes: Double = 5.0): Boolean {
  * Runs first game of the experiments (the one the player has not played yet).
  */
 fun runGame2(timeMinutes: Double = 5.0): Boolean {
-    val gamePreparation = IntermediatoryDescriptorFrame("""
+    val gamePreparation = IntermediatoryDescriptorFrame(
+        """
         Právě spouštíte druhou hru, která má stejný vzhled i ovládání jako hra první.
 
         Rozdílem jsou jinak vytvořené úrovňe.
@@ -139,7 +153,8 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
         Hra se sama ukončí po uplynutí pěti minut, prosím, neukončujte hru do té doby žádným způsobem.
 
         Pokud je Vám vše jasné, klikněte na tlačítko "Pokračovat". Hra 2 se ihned spustí.
-        """.trimIndent())
+        """.trimIndent()
+    )
     if (!gamePreparation.waitUntilInteraction())
         return false
 
@@ -154,11 +169,14 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
 //    val playerController = RecordingWrapper(DFSPlayerController(DelayedTwinDFS(0.25)))
 
     val timingAnnouncer = createTimingAnnouncer()
-    val game = Game(levelGenerator, playerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription,
-            updateCallback = { game -> timingAnnouncer.onUpdate(game); },
-            freezeOnStartSeconds = 1.0
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription,
+        updateCallback = { game -> timingAnnouncer.onUpdate(game); },
+        freezeOnStartSeconds = 1.0
     )
 
     val originalGameOver = game.onGameOver
@@ -173,17 +191,19 @@ fun runGame2(timeMinutes: Double = 5.0): Boolean {
 }
 
 /**
-    Adds an announcer that calls out time remaining until the end of the run.
+ Adds an announcer that calls out time remaining until the end of the run.
  */
 fun createTimingAnnouncer(): TimingAnnouncer {
-    return TimingAnnouncer(hashMapOf(
-        Pair(60.0, "Zbývají 4 minuty"),
-        Pair(120.0, "Zbývají 3 minuty"),
-        Pair(180.0, "Zbývají 2 minuty"),
-        Pair(240.0, "Zbývá 1 minuta"),
-        Pair(270.0, "Zbývá 30 sekund"),
-        Pair(295.0, "Hra se ukončí za 5 sekund")
-    ))
+    return TimingAnnouncer(
+        hashMapOf(
+            Pair(60.0, "Zbývají 4 minuty"),
+            Pair(120.0, "Zbývají 3 minuty"),
+            Pair(180.0, "Zbývají 2 minuty"),
+            Pair(240.0, "Zbývá 1 minuta"),
+            Pair(270.0, "Zbývá 30 sekund"),
+            Pair(295.0, "Hra se ukončí za 5 sekund")
+        )
+    )
 }
 
 fun getLevelGeneratorForGame(order: Int): LevelGenerator {

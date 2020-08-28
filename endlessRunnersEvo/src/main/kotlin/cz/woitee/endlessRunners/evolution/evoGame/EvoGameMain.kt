@@ -14,8 +14,8 @@ fun main() {
 //    println("Fitness is $fitness")
 
     val runner = EvoGameRunner(
-            { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) },
-            { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) }
+        { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) },
+        { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) }
     )
 
     runner.runGame(BestEvolvedGameDescriptions.getGenotype(4))
@@ -25,8 +25,8 @@ fun main() {
 
 fun runEvolution() {
     val runner = EvoGameRunner(
-            { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) },
-            { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) }
+        { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) },
+        { stopper -> DFSPlayerController(DelayedTwinDFS(0.1, computationStopper = stopper)) }
     )
 
     val gameDescription = runner.evolveGame()

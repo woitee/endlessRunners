@@ -90,32 +90,32 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
     }
     fun evolveController(numGenerations: Long, populationSize: Int) {
         val evoControllerRunner = EvoControllerRunner(
-                currentBestGameDescription,
-                { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
-                csvLoggingPrefix = "coevo_$timestamp/",
-                numGenerations = numGenerations,
-                populationSize = populationSize,
-                seed = random.nextLong(),
-                evoProgressAccumulator = evoProgressAccumulator
+            currentBestGameDescription,
+            { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
+            csvLoggingPrefix = "coevo_$timestamp/",
+            numGenerations = numGenerations,
+            populationSize = populationSize,
+            seed = random.nextLong(),
+            evoProgressAccumulator = evoProgressAccumulator
         )
 
         controllerPopulation = evoControllerRunner.evolveToResult(
-                controllerPopulation?.genotypes,
-                controllerPopulation?.generation ?: 0
+            controllerPopulation?.genotypes,
+            controllerPopulation?.generation ?: 0
         )
 
         currentBestController = EvolvedPlayerController(controllerPopulation!!.bestPhenotype.genotype)
     }
     fun evolveDescription(numGenerations: Long, populationSize: Int): EvoGameRunner.FitnessWithReasons {
         val evoGameRunner = EvoGameRunner(
-                { EvolvedPlayerController(currentBestController.genotype) },
-                { EvolvedPlayerController(currentBestController.genotype) },
-                currentBestBlocks,
-                numGenerations = numGenerations,
-                populationSize = populationSize,
-                csvLoggingPrefix = "coevo_$timestamp/",
-                seed = random.nextLong(),
-                evoProgressAccumulator = evoProgressAccumulator
+            { EvolvedPlayerController(currentBestController.genotype) },
+            { EvolvedPlayerController(currentBestController.genotype) },
+            currentBestBlocks,
+            numGenerations = numGenerations,
+            populationSize = populationSize,
+            csvLoggingPrefix = "coevo_$timestamp/",
+            seed = random.nextLong(),
+            evoProgressAccumulator = evoProgressAccumulator
         )
 
         gameDescriptionPopulation = evoGameRunner.evolveToResult(gameDescriptionPopulation?.genotypes, gameDescriptionPopulation?.generation ?: 0)
@@ -168,7 +168,7 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
 
         currentBestBlocks.clear()
         currentBestBlocks.addAll(
-                EvoBlockRunner(currentBestGameDescription, { EvolvedPlayerController(currentBestController.genotype) }).defaultBlocks
+            EvoBlockRunner(currentBestGameDescription, { EvolvedPlayerController(currentBestController.genotype) }).defaultBlocks
         )
         currentBestBlocks.addAll(evolvedBlocks)
 

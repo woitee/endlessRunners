@@ -15,7 +15,8 @@ import javax.swing.JPanel
  * A GUI class for reaction testing - the players reaction to an unexpected event.
  */
 class ReactionTest {
-    val defaultText = """
+    val defaultText =
+        """
             Jednoduchá hra na zjištění doby odezvy.
             Vpravo je malý červený obdélník. Vašim úkolem je stisknout "šipku nahoru",
             vždy, jakmile změní barvu na zelenou.
@@ -23,14 +24,17 @@ class ReactionTest {
 
             Nyní stiskněte tlačítko začít.
         """.trimIndent()
-    val failText = """
+    val failText =
+        """
             Ups.
             Stiskli jste klávesu "šipka nahoru" dříve, než obdélník zezelenal.
 
             Začněte prosím znovu.
         """.trimIndent()
-    val waitNowText = """Čekejte... """
-    val pressNowText = """Zmáčkněte klávesu "šipka nahoru"! """
+    val waitNowText =
+        """Čekejte... """
+    val pressNowText =
+        """Zmáčkněte klávesu "šipka nahoru"! """
 
     val textArea = TextArea(defaultText)
     val colorLight = Label()
@@ -90,13 +94,15 @@ class ReactionTest {
         panel.add(colorLight)
         panel.add(button)
 
-        panel.addKeyListener(object : KeyAdapter() {
-            override fun keyPressed(e: KeyEvent?) {
-                if (e?.keyCode == 38) {
-                    spaceBarPressed()
+        panel.addKeyListener(
+            object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent?) {
+                    if (e?.keyCode == 38) {
+                        spaceBarPressed()
+                    }
                 }
             }
-        })
+        )
     }
 
     private fun spaceBarPressed() {
@@ -157,11 +163,12 @@ class ReactionTest {
             }
         }
 
-        textArea.text = """
+        textArea.text =
+            """
             A to je vše! Díky!
 
             Postupuji na další test.
-        """.trimIndent()
+            """.trimIndent()
         colorLight.isVisible = false
         button.isVisible = false
 

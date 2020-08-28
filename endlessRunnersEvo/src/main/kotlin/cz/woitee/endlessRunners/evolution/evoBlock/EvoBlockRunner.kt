@@ -44,7 +44,7 @@ class EvoBlockRunner(
     val evoProgressAccumulator: EvoProgressAccumulator? = null
 ) :
 
-        EvoBlockMethods(gameDescription, playerControllerFactory, seed = seed) {
+    EvoBlockMethods(gameDescription, playerControllerFactory, seed = seed) {
 
     init {
         RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
@@ -54,23 +54,32 @@ class EvoBlockRunner(
      * Default blocks, that are generally added to each game as fundamentals.
      */
     val defaultBlocks = arrayListOf(
-            HeightBlock(gameDescription, arrayListOf(
-                    "P  P",
-                    "P  P",
-                    "####"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "      P",
-                    "P     P",
-                    "P   ###",
-                    "#######"
-            )),
-            HeightBlock(gameDescription, arrayListOf(
-                    "P      ",
-                    "P     P",
-                    "###   P",
-                    "#######"
-            ))
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P  P",
+                "P  P",
+                "####"
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "      P",
+                "P     P",
+                "P   ###",
+                "#######"
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P      ",
+                "P     P",
+                "###   P",
+                "#######"
+            )
+        )
     )
     var accumulatorKey = ""
 
@@ -116,9 +125,12 @@ class EvoBlockRunner(
         val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
         val levelGenerator = HeightBlockLevelGenerator(gameDescription, blocks)
 
-        val game = Game(levelGenerator, playerController, visualiser,
-                mode = Game.Mode.INTERACTIVE,
-                gameDescription = gameDescription
+        val game = Game(
+            levelGenerator,
+            playerController,
+            visualiser,
+            mode = Game.Mode.INTERACTIVE,
+            gameDescription = gameDescription
 //                updateCallback = { sleep(100) }
         )
 
@@ -157,30 +169,32 @@ class EvoBlockRunner(
 
         this.existingBlocks = otherBlocks
 
-        val fitness = Function { genotype: Genotype<IntegerGene> -> when {
-            computationStopper.shouldStop -> 0
-            otherBlocks.isEmpty() -> fitness3(genotype)
-            else -> fitness4(genotype)
-        } }
+        val fitness = Function { genotype: Genotype<IntegerGene> ->
+            when {
+                computationStopper.shouldStop -> 0
+                otherBlocks.isEmpty() -> fitness3(genotype)
+                else -> fitness4(genotype)
+            }
+        }
 
         val factory = sampleGenotype()
 
         val engine = Engine
-                .builder(fitness, factory)
-                .populationSize(populationSize)
-                // Setting concurrency only for fitness evaluation and not for tasks within the evaluation (such as mutation and crossover)
-                .executor(Concurrency.SERIAL_EXECUTOR)
-                .evaluator(MyConcurrentEvaluator<IntegerGene, Int>(ForkJoinPool.commonPool()))
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector(2, TournamentSelector()))
-                .offspringSelector(TournamentSelector())
-                .alterers(
-                        MultiPointCrossover(0.2),
-                        GaussianMutator<IntegerGene, Int>(2.0 / factory.geneCount()),
-                        LargeBlockMutator<IntegerGene, Int>(0.05, 1, 3, blockDimension)
-                )
-                .build()
+            .builder(fitness, factory)
+            .populationSize(populationSize)
+            // Setting concurrency only for fitness evaluation and not for tasks within the evaluation (such as mutation and crossover)
+            .executor(Concurrency.SERIAL_EXECUTOR)
+            .evaluator(MyConcurrentEvaluator<IntegerGene, Int>(ForkJoinPool.commonPool()))
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(1000)
+            .survivorsSelector(EliteSelector(2, TournamentSelector()))
+            .offspringSelector(TournamentSelector())
+            .alterers(
+                MultiPointCrossover(0.2),
+                GaussianMutator<IntegerGene, Int>(2.0 / factory.geneCount()),
+                LargeBlockMutator<IntegerGene, Int>(0.05, 1, 3, blockDimension)
+            )
+            .build()
 
         val collector = EvolutionResult.toBestEvolutionResult<IntegerGene, Int>()
         val statistics = EvolutionStatistics.ofNumber<Int>()
@@ -243,8 +257,15 @@ class EvoBlockRunner(
      * Run a short demo of how a player progresses through a generated block.
      */
     fun demoRunBlock(heightBlock: HeightBlock) {
-        val game = Game(FlatLevelGenerator(), playerControllerFactory(), GamePanelVisualizer(),
-                75.0, 37.5, gameDescription = gameDescription, restartOnGameOver = false)
+        val game = Game(
+            FlatLevelGenerator(),
+            playerControllerFactory(),
+            GamePanelVisualizer(),
+            75.0,
+            37.5,
+            gameDescription = gameDescription,
+            restartOnGameOver = false
+        )
         val gameState = blockValidator.getBlockAsGameState(heightBlock, game)
 
         val plan = blockValidator.getPlan(heightBlock)

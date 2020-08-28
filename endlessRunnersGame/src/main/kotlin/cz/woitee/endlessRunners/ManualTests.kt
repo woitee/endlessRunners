@@ -33,24 +33,27 @@ fun visualizeDelayedTwinDFS(delayTime: Double = 0.25) {
 //    val playerController = DFSPlayerController(BasicDFS())
 
     val visualizer = GamePanelVisualizer()
-    val game = Game(levelGenerator, playerController, visualizer,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription,
-            updateCallback = { game ->
-                val genDelayedState = dfsOfLevelGenerator.buttonModel.delayedState
-                val genCurrentState = dfsOfLevelGenerator.buttonModel.currentState
-                val conDelayedState = dfsOfPlayer.buttonModel.delayedState
-                val conCurrentState = dfsOfPlayer.buttonModel.currentState
-                val gameState = game.gameState
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualizer,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription,
+        updateCallback = { game ->
+            val genDelayedState = dfsOfLevelGenerator.buttonModel.delayedState
+            val genCurrentState = dfsOfLevelGenerator.buttonModel.currentState
+            val conDelayedState = dfsOfPlayer.buttonModel.delayedState
+            val conCurrentState = dfsOfPlayer.buttonModel.currentState
+            val gameState = game.gameState
 
-                assert(genDelayedState.player.x == gameState.player.x)
-                assert(genDelayedState.player.y == gameState.player.y)
-                assert(conDelayedState.player.x == game.gameState.player.x)
-                assert(conDelayedState.player.y == game.gameState.player.y)
-                if (genDelayedState.player.x != genCurrentState.player.x) {
-                    assert(genCurrentState.player.x == conCurrentState.player.x)
-                }
+            assert(genDelayedState.player.x == gameState.player.x)
+            assert(genDelayedState.player.y == gameState.player.y)
+            assert(conDelayedState.player.x == game.gameState.player.x)
+            assert(conDelayedState.player.y == game.gameState.player.y)
+            if (genDelayedState.player.x != genCurrentState.player.x) {
+                assert(genCurrentState.player.x == conCurrentState.player.x)
             }
+        }
     )
 //    game.random.setSeed(1234)
 //    game.currentState.addToGrid(SolidBlock(), 20, 1)

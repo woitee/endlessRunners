@@ -57,14 +57,14 @@ class DelayedTwinDFSCache : MySerializable {
 
     fun clearAddedSince(gameTime: Double) {
         cachedStates
-                .filter { it.value >= gameTime }
-                .forEach { cachedStates.remove(it.key) }
+            .filter { it.value >= gameTime }
+            .forEach { cachedStates.remove(it.key) }
     }
 
     fun pruneUnusable(gameState: GameState) {
         cachedStates
-                .filterKeys { it.delayedCached.playerX < gameState.player.x }
-                .forEach { cachedStates.remove(it.key) }
+            .filterKeys { it.delayedCached.playerX < gameState.player.x }
+            .forEach { cachedStates.remove(it.key) }
     }
 
     override fun writeObject(oos: ObjectOutputStream): DelayedTwinDFSCache {

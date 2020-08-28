@@ -15,7 +15,7 @@ import java.util.*
  * @param blockDimensions The dimensions of the matrix we are mutating
  */
 class LargeBlockMutator<G, C : Comparable<C>>(probability: Double, val chromosomeIx: Int, val size: Int, val blockDimensions: Vector2Int) :
-        Mutator<G, C>(probability)
+    Mutator<G, C>(probability)
         where G : Gene<*, G>, G : Mean<G> {
 
     /**
@@ -26,9 +26,12 @@ class LargeBlockMutator<G, C : Comparable<C>>(probability: Double, val chromosom
         val result = genotype.toSeq().mapIndexed { i, gt ->
             if (i == chromosomeIx) this.mutate(gt, p, random) else MutatorResult.of(gt)
         }
-        return MutatorResult.of(Genotype.of(
+        return MutatorResult.of(
+            Genotype.of(
                 result.map { it.result }
-        ), result.stream().mapToInt { it.mutations }.sum())
+            ),
+            result.stream().mapToInt { it.mutations }.sum()
+        )
     }
 
     /**

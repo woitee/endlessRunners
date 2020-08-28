@@ -1,10 +1,10 @@
 package cz.woitee.endlessRunners.evolution.charts
 
+import org.knowm.xchart.XYChart
+import org.knowm.xchart.XYSeries
 import java.awt.BasicStroke
 import java.awt.Color
 import javax.swing.SwingUtilities
-import org.knowm.xchart.XYChart
-import org.knowm.xchart.XYSeries
 
 data class ChartData(
     val title: String,

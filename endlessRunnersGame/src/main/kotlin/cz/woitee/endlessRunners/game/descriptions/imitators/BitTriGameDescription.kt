@@ -27,49 +27,49 @@ import cz.woitee.endlessRunners.geom.Direction4
  */
 open class BitTriGameDescription : GameDescription() {
     val trampolineAction = ConditionalAction(
-            PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
-            JumpAction(25.0)
+        PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
+        JumpAction(25.0)
     )
 
     override val allActions: ArrayList<GameAction> = arrayListOf(
-            JumpAction(17.0),
-            ChangeShapeHoldAction(2, 1),
-            trampolineAction,
-            ChangeColorHoldAction(GameObjectColor.YELLOW)
+        JumpAction(17.0),
+        ChangeShapeHoldAction(2, 1),
+        trampolineAction,
+        ChangeColorHoldAction(GameObjectColor.YELLOW)
     )
     override val customObjects = arrayListOf<GameObject>(CustomBlock(0), CustomBlock(1), CustomBlock(2), CustomBlock(3))
 
     override val collisionEffects = hashMapOf<BaseCollisionHandler.CollisionHandlerEntry, ICollisionEffect>(
-            // Collision with red block results in death
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(
-                            GameObjectClass.PLAYER,
-                            GameObjectClass.CUSTOM1,
-                            Direction4.any()
-                    ),
-                    ApplyGameEffect(GameOver())
+        // Collision with red block results in death
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM1,
+                Direction4.any()
             ),
-            // Yellow block is coin -> gain score
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(
-                            GameObjectClass.PLAYER,
-                            GameObjectClass.CUSTOM2,
-                            Direction4.any()
-                    ),
-                    MultipleCollisionEffect(ApplyGameEffect(ScoreChange(100)), DestroyOther())
+            ApplyGameEffect(GameOver())
+        ),
+        // Yellow block is coin -> gain score
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM2,
+                Direction4.any()
             ),
-            // Orange block is a door, which can be kicked through
-            Pair(
-                BaseCollisionHandler.CollisionHandlerEntry(
-                    GameObjectClass.PLAYER,
-                    GameObjectClass.CUSTOM3,
-                    Direction4.any()
-                ),
-                ConditionalCollisionEffect(
-                        PlayerHasColor(GameObjectColor.YELLOW),
-                        DestroyOther(),
-                        ApplyGameEffect(GameOver())
-                )
+            MultipleCollisionEffect(ApplyGameEffect(ScoreChange(100)), DestroyOther())
+        ),
+        // Orange block is a door, which can be kicked through
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM3,
+                Direction4.any()
+            ),
+            ConditionalCollisionEffect(
+                PlayerHasColor(GameObjectColor.YELLOW),
+                DestroyOther(),
+                ApplyGameEffect(GameOver())
             )
+        )
     )
 }

@@ -42,22 +42,22 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
 
         val engine = Engine
-                .builder(fitness, genotype)
-                .populationSize(30)
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector())
-                .offspringSelector(RouletteWheelSelector())
-                .alterers(
-                        GaussianMutator<DoubleGene, Double>(1.0 / genotype.geneCount()),
-                        MultiPointCrossover(0.2),
-                        LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
-                )
-                .build()
+            .builder(fitness, genotype)
+            .populationSize(30)
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(1000)
+            .survivorsSelector(EliteSelector())
+            .offspringSelector(RouletteWheelSelector())
+            .alterers(
+                GaussianMutator<DoubleGene, Double>(1.0 / genotype.geneCount()),
+                MultiPointCrossover(0.2),
+                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
+            )
+            .build()
 
         return engine.stream()
-                .limit(10)
-                .collect(collector)
+            .limit(10)
+            .collect(collector)
     }
 
     /**
@@ -81,37 +81,39 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
         val fitnessParts = ArrayList<GenotypeCombiner.FitnessPart>()
         for (i in 1..numBlocks) {
             genotypes.add(GenotypeConverter.intGenotype2doubleGenotype(evoMethods.sampleGenotype()))
-            fitnessParts.add(GenotypeCombiner.FitnessPart(
+            fitnessParts.add(
+                GenotypeCombiner.FitnessPart(
                     Function {
                         gt: Genotype<DoubleGene> ->
                         evoMethods.fitness3(GenotypeConverter.doubleGenotype2intGenotype(gt, true)).toDouble()
                     },
                     1.0
-            ))
+                )
+            )
         }
 
         val combiner = GenotypeCombiner(*genotypes.toTypedArray())
         combiner.setFitnesses(*fitnessParts.toTypedArray())
 
         val engine = Engine
-                .builder(combiner.fitness, combiner.factory)
-                .populationSize(30)
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector())
-                .offspringSelector(RouletteWheelSelector())
-                .alterers(
-                        GaussianMutator<DoubleGene, Double>(1.0 / combiner.factory.geneCount()),
-                        MultiPointCrossover(0.2),
-                        LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
-                )
-                .build()
+            .builder(combiner.fitness, combiner.factory)
+            .populationSize(30)
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(1000)
+            .survivorsSelector(EliteSelector())
+            .offspringSelector(RouletteWheelSelector())
+            .alterers(
+                GaussianMutator<DoubleGene, Double>(1.0 / combiner.factory.geneCount()),
+                MultiPointCrossover(0.2),
+                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
+            )
+            .build()
 
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
 
         val result = engine.stream()
-                .limit(3000)
-                .collect(collector)
+            .limit(3000)
+            .collect(collector)
 
         return combiner.expandEvolutionResult(result)
     }
@@ -171,25 +173,25 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
         val fitness = Function<Genotype<DoubleGene>, Double> { fitness(it) }
 
         val engine = Engine
-                .builder(fitness, combiner.factory)
-                .populationSize(30)
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
-                .survivorsSelector(EliteSelector())
-                .offspringSelector(RouletteWheelSelector())
-                .alterers(
-                        GaussianMutator<DoubleGene, Double>(1.0 / combiner.factory.geneCount()),
-                        MultiPointCrossover(0.2),
-                        LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
-                )
-                .build()
+            .builder(fitness, combiner.factory)
+            .populationSize(30)
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(1000)
+            .survivorsSelector(EliteSelector())
+            .offspringSelector(RouletteWheelSelector())
+            .alterers(
+                GaussianMutator<DoubleGene, Double>(1.0 / combiner.factory.geneCount()),
+                MultiPointCrossover(0.2),
+                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
+            )
+            .build()
 
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
 
         val result = engine.stream()
-                .limit(3000)
-                .peek { result -> println("${result.generation}: ${result.bestFitness}") }
-                .collect(collector)
+            .limit(3000)
+            .peek { result -> println("${result.generation}: ${result.bestFitness}") }
+            .collect(collector)
 
         return combiner.expandEvolutionResult(result)
     }

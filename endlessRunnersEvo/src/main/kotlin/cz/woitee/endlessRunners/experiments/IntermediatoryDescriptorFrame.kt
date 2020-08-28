@@ -20,11 +20,13 @@ class IntermediatoryDescriptorFrame(val description: String) {
     fun createFrame(): JFrame {
         val frame = JFrame("Intermediatory Frame")
         frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        frame.addWindowListener(object : WindowAdapter() {
-            override fun windowClosed(e: WindowEvent?) {
-                dispose()
+        frame.addWindowListener(
+            object : WindowAdapter() {
+                override fun windowClosed(e: WindowEvent?) {
+                    dispose()
+                }
             }
-        })
+        )
         val panel = JPanel()
 
         addContent(panel)

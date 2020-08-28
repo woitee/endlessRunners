@@ -11,13 +11,16 @@ class EvoBlockMethodsTest {
         val gameDescription = CrouchGameDescription()
         val evoMethods = EvoBlockMethods(gameDescription, { DFSPlayerController() })
 
-        val block = HeightBlock(gameDescription, arrayListOf(
+        val block = HeightBlock(
+            gameDescription,
+            arrayListOf(
                 "P  P",
                 "P  P",
                 "####",
                 "####",
                 "#  #"
-        ))
+            )
+        )
 
         assertEquals(2, block.startHeight)
         assertEquals(2, block.endHeight)

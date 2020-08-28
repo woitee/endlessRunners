@@ -19,9 +19,11 @@ class GameDescriptionTracking {
             sb.appendln("Action $action was used ${action.timesUsed} (${action.timesUndone} undone) times")
         }
         for (action in holdActions) {
-            sb.appendln("Action $action was started ${action.timesStarted} (${action.timesUndoneStart} undone) times, " +
-                        "stopped ${action.timesStopped} (${action.timesUndoneStop} undone) times and " +
-                        "kept applied for ${action.timesKeptHeld} (${action.timesUndoneKeepHolding} undone) frames in total.")
+            sb.appendln(
+                "Action $action was started ${action.timesStarted} (${action.timesUndoneStart} undone) times, " +
+                    "stopped ${action.timesStopped} (${action.timesUndoneStop} undone) times and " +
+                    "kept applied for ${action.timesKeptHeld} (${action.timesUndoneKeepHolding} undone) frames in total."
+            )
         }
         for (effect in effects) {
             sb.appendln("Effect $effect occured in ${effect.timesApplied} (${effect.timesUndone} undone) frames")

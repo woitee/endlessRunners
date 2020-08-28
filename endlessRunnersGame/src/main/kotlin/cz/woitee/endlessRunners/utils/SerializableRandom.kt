@@ -16,7 +16,7 @@ class SerializableRandom(
 ) : Random(), Serializable {
 
     constructor(seed1: Int, seed2: Int) :
-            this(seed1, seed2, 0, 0, seed1.inv(), (seed1 shl 10) xor (seed2 ushr 4))
+        this(seed1, seed2, 0, 0, seed1.inv(), (seed1 shl 10) xor (seed2 ushr 4))
 
     constructor(seed: Long) : this(seed.toInt(), seed.shr(32).toInt())
 
@@ -42,8 +42,8 @@ class SerializableRandom(
     }
 
     private fun Int.takeUpperBits(bitCount: Int): Int =
-            this.ushr(32 - bitCount) and (-bitCount).shr(31)
+        this.ushr(32 - bitCount) and (-bitCount).shr(31)
 
     override fun nextBits(bitCount: Int): Int =
-            nextInt().takeUpperBits(bitCount)
+        nextInt().takeUpperBits(bitCount)
 }

@@ -146,8 +146,8 @@ abstract class AbstractDFS(
     }
     protected open fun pruneUnusableCache(gameState: GameState) {
         cachedStates
-                .filter { it.playerX < gameState.player.x }
-                .forEach { cachedStates.remove(it) }
+            .filter { it.playerX < gameState.player.x }
+            .forEach { cachedStates.remove(it) }
     }
     protected open fun clearCache() {
         cachedStates.clear()

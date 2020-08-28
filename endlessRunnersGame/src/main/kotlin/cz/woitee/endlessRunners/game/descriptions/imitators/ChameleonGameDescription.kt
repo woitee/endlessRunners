@@ -24,30 +24,30 @@ class ChameleonGameDescription : GameDescription() {
     override var playerStartingSpeed = 20.0
 
     override val allActions = arrayListOf(
-            MultiJumpAction(25.0),
-            MultiJumpAction(20.0),
-            ChangeColorHoldAction(GameObjectColor.GREEN, true)
+        MultiJumpAction(25.0),
+        MultiJumpAction(20.0),
+        ChangeColorHoldAction(GameObjectColor.GREEN, true)
     )
 
     override val collisionEffects = hashMapOf<BaseCollisionHandler.CollisionHandlerEntry, ICollisionEffect>(
-            // Collision with solid blocks up-down survives only if player is blue
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.UP or Direction4.DOWN),
-                    ConditionalCollisionEffect(PlayerHasColor(GameObjectColor.BLUE), MoveToContact(), ApplyGameEffect(GameOver()))
-            ),
-            // Likewise, collision with green blocks survives only if the player is green
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.CUSTOM0, Direction4.UP or Direction4.DOWN),
-                    ConditionalCollisionEffect(PlayerHasColor(GameObjectColor.GREEN), MoveToContact(), ApplyGameEffect(GameOver()))
-            ),
-            // Colliding in direction right for both objects is death regardless of player color
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.RIGHT),
-                    ApplyGameEffect(GameOver())
-            ),
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.CUSTOM0, Direction4.RIGHT),
-                    ApplyGameEffect(GameOver())
-            )
+        // Collision with solid blocks up-down survives only if player is blue
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.UP or Direction4.DOWN),
+            ConditionalCollisionEffect(PlayerHasColor(GameObjectColor.BLUE), MoveToContact(), ApplyGameEffect(GameOver()))
+        ),
+        // Likewise, collision with green blocks survives only if the player is green
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.CUSTOM0, Direction4.UP or Direction4.DOWN),
+            ConditionalCollisionEffect(PlayerHasColor(GameObjectColor.GREEN), MoveToContact(), ApplyGameEffect(GameOver()))
+        ),
+        // Colliding in direction right for both objects is death regardless of player color
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.RIGHT),
+            ApplyGameEffect(GameOver())
+        ),
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.CUSTOM0, Direction4.RIGHT),
+            ApplyGameEffect(GameOver())
+        )
     )
 }

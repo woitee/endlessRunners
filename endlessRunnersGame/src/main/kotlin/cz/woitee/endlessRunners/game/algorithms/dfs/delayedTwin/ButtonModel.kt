@@ -137,12 +137,12 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
 
     fun isReleasable(button: Int): Boolean {
         return (!currentStateDisabled && currentState.buttons[button].makesSenseToRelease) ||
-                (!delayedStateDisabled && delayedState.buttons[button].makesSenseToRelease)
+            (!delayedStateDisabled && delayedState.buttons[button].makesSenseToRelease)
     }
 
     fun isPressable(button: Int): Boolean {
         return (!currentStateDisabled && currentState.buttons[button].makesSenseToPress) ||
-                (!delayedStateDisabled && delayedState.buttons[button].makesSenseToPress)
+            (!delayedStateDisabled && delayedState.buttons[button].makesSenseToPress)
     }
 
     fun orderedApplicableButtonActions(): ArrayList<ButtonAction?> {
@@ -180,9 +180,9 @@ class ButtonModel(var currentState: GameState, var delayedState: GameState, val 
         }
 
         return ButtonUndo(
-                if (currentStateDisabled) NoUndo else currentState.advanceUndoableByAction(currentStateChange, updateTime),
-                if (delayedStateDisabled) NoUndo else delayedState.advanceUndoableByAction(delayedStateChange, updateTime),
-                disabledStates
+            if (currentStateDisabled) NoUndo else currentState.advanceUndoableByAction(currentStateChange, updateTime),
+            if (delayedStateDisabled) NoUndo else delayedState.advanceUndoableByAction(delayedStateChange, updateTime),
+            disabledStates
         )
     }
 

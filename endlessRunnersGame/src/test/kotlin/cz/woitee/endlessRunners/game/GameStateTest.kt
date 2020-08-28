@@ -9,10 +9,10 @@ internal class GameStateTest {
     @org.junit.jupiter.api.Test
     fun heldActionRegistrationTest() {
         val game = Game(
-                FlatLevelGenerator(),
-                NoActionPlayerController(),
-                null,
-                gameDescription = DummyObjects.MockGameDescription()
+            FlatLevelGenerator(),
+            NoActionPlayerController(),
+            null,
+            gameDescription = DummyObjects.MockGameDescription()
         )
 
         // Preparation
@@ -42,10 +42,10 @@ internal class GameStateTest {
     @org.junit.jupiter.api.Test
     fun heldActionRegistrationUndoableTest() {
         val game = Game(
-                FlatLevelGenerator(),
-                NoActionPlayerController(),
-                null,
-                gameDescription = DummyObjects.MockGameDescription()
+            FlatLevelGenerator(),
+            NoActionPlayerController(),
+            null,
+            gameDescription = DummyObjects.MockGameDescription()
         )
 
         // Preparation
@@ -136,10 +136,10 @@ internal class GameStateTest {
 
     fun outOfGridTest(xOffset: Double, yOffset: Double) {
         val game = Game(
-                FlatLevelGenerator(),
-                NoActionPlayerController(),
-                null,
-                gameDescription = DummyObjects.MockGameDescription()
+            FlatLevelGenerator(),
+            NoActionPlayerController(),
+            null,
+            gameDescription = DummyObjects.MockGameDescription()
         )
 
         val gameState = game.gameState

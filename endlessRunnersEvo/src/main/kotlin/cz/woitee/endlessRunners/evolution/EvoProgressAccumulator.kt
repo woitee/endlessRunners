@@ -59,7 +59,8 @@ class EvoProgressAccumulator {
 
             val xData = List(yDatas[0].size) { it.toDouble() }
 
-            charts.add(ChartData(
+            charts.add(
+                ChartData(
                     "Chart of $plotKey",
                     "generation",
                     "best fitness",
@@ -67,7 +68,8 @@ class EvoProgressAccumulator {
                     xData,
                     yDatas,
                     plotKeysToNumGenerations.getOrDefault(plotKey, 1000)
-            ))
+                )
+            )
         }
 
         return charts

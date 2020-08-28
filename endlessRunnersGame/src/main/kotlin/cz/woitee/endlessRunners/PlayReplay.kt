@@ -16,9 +16,12 @@ fun main(args: Array<String>) {
     val levelGenerator = FromRecordingLevelGenerator(replayPath)
     val playerController = FromRecordingPlayerController(replayPath)
 
-    val game = Game(levelGenerator, playerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription
     )
 
     game.gameState.tag = "Main"

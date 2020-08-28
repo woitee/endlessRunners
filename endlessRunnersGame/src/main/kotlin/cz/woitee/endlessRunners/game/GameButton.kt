@@ -88,7 +88,7 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
 
         override fun equals(other: Any?) = compareFields(other) {
             equal = one.gameButton == two.gameButton &&
-                    one.interactionType == two.interactionType
+                one.interactionType == two.interactionType
         }
 
         override fun hashCode() = hashKode(gameButton, interactionType)

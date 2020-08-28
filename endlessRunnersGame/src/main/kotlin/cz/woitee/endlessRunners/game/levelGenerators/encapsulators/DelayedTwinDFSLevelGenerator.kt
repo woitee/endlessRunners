@@ -12,7 +12,7 @@ import java.util.ArrayList
  * states between frames (it has to). To accomplish this, it monitors what the player does in between states.
  */
 class DelayedTwinDFSLevelGenerator(delayTime: Double, innerGenerator: LevelGenerator, doDFSAfterFail: Boolean = false, dumpErrors: Boolean = true) :
-        DFSEnsuring(innerGenerator, DelayedTwinDFS(delayTime, allowSearchInBeginning = true), doDFSAfterFail, dumpErrors) {
+    DFSEnsuring(innerGenerator, DelayedTwinDFS(delayTime, allowSearchInBeginning = true), doDFSAfterFail, dumpErrors) {
 
     val delayedTwin: DelayedTwinDFS
         get() = dfsProvider as DelayedTwinDFS

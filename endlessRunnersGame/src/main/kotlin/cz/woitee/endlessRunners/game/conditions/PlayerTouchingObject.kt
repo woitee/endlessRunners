@@ -24,8 +24,8 @@ class PlayerTouchingObject(val dir: Direction4, val gameObjectClass: GameObjectC
             }
         } else if (dir == Direction4.RIGHT || dir == Direction4.LEFT) {
             val gridLoc = gameState.gridLocation(
-                    if (dir == Direction4.LEFT) { player.x - 1 } else { player.x + player.widthPx + 1 },
-                    player.y
+                if (dir == Direction4.LEFT) { player.x - 1 } else { player.x + player.widthPx + 1 },
+                player.y
             )
             for (i in 0 .. player.heightBlocks) {
                 if (gameState.grid.safeGet(gridLoc.x, gridLoc.y + i)?.gameObjectClass == gameObjectClass)

@@ -104,14 +104,14 @@ class GenotypeCombiner(vararg genotypes: Genotype<DoubleGene>) {
         for (i in populations.indices) {
             val population = ISeq.of(populations[i])
             val evoResult = EvolutionResult.of(
-                    evolutionResult.optimize,
-                    population,
-                    evolutionResult.generation,
-                    evolutionResult.totalGenerations,
-                    evolutionResult.durations,
-                    evolutionResult.killCount,
-                    evolutionResult.invalidCount,
-                    evolutionResult.alterCount
+                evolutionResult.optimize,
+                population,
+                evolutionResult.generation,
+                evolutionResult.totalGenerations,
+                evolutionResult.durations,
+                evolutionResult.killCount,
+                evolutionResult.invalidCount,
+                evolutionResult.alterCount
             )
             evolutionResults.add(evoResult)
         }

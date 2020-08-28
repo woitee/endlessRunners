@@ -82,8 +82,10 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
 
     fun resizeHeight(targetHeight: Int) {
         for (column in grid) {
-            column.resizeTo(targetHeight,
-                    factory)
+            column.resizeTo(
+                targetHeight,
+                factory
+            )
         }
         this.height = targetHeight
     }
@@ -112,10 +114,15 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
     }
 
     fun debugPrint() {
-        forEach({
-            gameObject -> print(if (gameObject == null) " " else "#")
-        }, {
-            _ -> println()
-        })
+        forEach(
+            {
+                gameObject ->
+                print(if (gameObject == null) " " else "#")
+            },
+            {
+                _ ->
+                println()
+            }
+        )
     }
 }

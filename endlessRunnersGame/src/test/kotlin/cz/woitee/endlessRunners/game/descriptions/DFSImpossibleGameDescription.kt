@@ -9,6 +9,6 @@ class DFSImpossibleGameDescription : GameDescription() {
     override var playerStartingSpeed = 1.0
 
     override val allActions = arrayListOf<GameAction>(
-            ApplyGameEffectAction(SpeedChange(GameEffect.Target.PLAYER, 0.01, GameEffect.Relativity.RELATIVE))
+        ApplyGameEffectAction(SpeedChange(GameEffect.Target.PLAYER, 0.01, GameEffect.Relativity.RELATIVE))
     )
 }

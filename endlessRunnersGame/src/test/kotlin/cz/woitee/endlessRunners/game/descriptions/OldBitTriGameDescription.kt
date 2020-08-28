@@ -26,38 +26,38 @@ import cz.woitee.endlessRunners.geom.Direction4
  */
 open class OldBitTriGameDescription : GameDescription() {
     val trampolineAction = ConditionalAction(
-            PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
-            JumpAction(30.0)
+        PlayerTouchingObject(Direction4.DOWN, GameObjectClass.CUSTOM0),
+        JumpAction(30.0)
     )
 
     override val allActions: ArrayList<GameAction> = arrayListOf(
-            JumpAction(22.0),
-            ChangeShapeHoldAction(2, 1),
-            trampolineAction,
-            ChangeColorHoldAction(GameObjectColor.YELLOW)
+        JumpAction(22.0),
+        ChangeShapeHoldAction(2, 1),
+        trampolineAction,
+        ChangeColorHoldAction(GameObjectColor.YELLOW)
     )
     override val customObjects = arrayListOf<GameObject>(CustomBlock(0), CustomBlock(1))
 
     override val collisionEffects = hashMapOf<BaseCollisionHandler.CollisionHandlerEntry, ICollisionEffect>(
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(
-                            GameObjectClass.PLAYER,
-                            GameObjectClass.CUSTOM1,
-                            Direction4.any()
-                    ),
-                    ConditionalCollisionEffect(
-                            PlayerHasColor(GameObjectColor.YELLOW),
-                            DestroyOther(),
-                            ApplyGameEffect(GameOver())
-                    )
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM1,
+                Direction4.any()
             ),
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(
-                            GameObjectClass.PLAYER,
-                            GameObjectClass.CUSTOM2,
-                            Direction4.any()
-                    ),
-                    ApplyGameEffect(ScoreChange(10))
+            ConditionalCollisionEffect(
+                PlayerHasColor(GameObjectColor.YELLOW),
+                DestroyOther(),
+                ApplyGameEffect(GameOver())
             )
+        ),
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM2,
+                Direction4.any()
+            ),
+            ApplyGameEffect(ScoreChange(10))
+        )
     )
 }

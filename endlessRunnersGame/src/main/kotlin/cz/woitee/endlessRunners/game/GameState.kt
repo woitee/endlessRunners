@@ -18,10 +18,10 @@ import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.MySerializable
 import cz.woitee.endlessRunners.utils.pools.DefaultUndoListPool
 import cz.woitee.endlessRunners.utils.reverse
+import nl.pvdberg.hashkode.hashKode
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.util.*
-import nl.pvdberg.hashkode.hashKode
 
 /**
  * A state of the game, contains objects in the game, other statuses and provides methods to advance the game
@@ -113,9 +113,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
 
         gameObject.gameState = this
         grid[
-                (gameObject.x / BlockWidth - gridX).toInt(),
-                (gameObject.y / BlockHeight).toInt()
-                ] = gameObject
+            (gameObject.x / BlockWidth - gridX).toInt(),
+            (gameObject.y / BlockHeight).toInt()
+        ] = gameObject
     }
     /**
      * Removes an object from a GameState.
@@ -127,9 +127,9 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             updateObjects.remove(gameObject)
 
         grid[
-                (gameObject.x / BlockWidth - gridX).toInt(),
-                (gameObject.y / BlockHeight).toInt()
-                ] = null
+            (gameObject.x / BlockWidth - gridX).toInt(),
+            (gameObject.y / BlockHeight).toInt()
+        ] = null
     }
 
     /**
@@ -228,9 +228,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 if (gameTime >= targetTime) {
                     undoList.add(effect.stopEffect.applyUndoablyOn(this))
                     it.remove()
-                    undoList.add(object : IUndo { override fun undo(gameState: GameState) {
-                        timedEffects[targetTime] = effect
-                    } })
+                    undoList.add(
+                        object : IUndo {
+                            override fun undo(gameState: GameState) {
+                                timedEffects[targetTime] = effect
+                            }
+                        }
+                    )
                 }
             }
             updateObjects.map {
@@ -252,9 +256,13 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 undoList.add(belowGroundEffect.applyUndoablyOn(this))
             }
             gameTime += time
-            undoList.add(object : IUndo { override fun undo(gameState: GameState) {
-                gameState.gameTime -= time
-            } })
+            undoList.add(
+                object : IUndo {
+                    override fun undo(gameState: GameState) {
+                        gameState.gameTime -= time
+                    }
+                }
+            )
             return UndoFactory.multiUndo(undoList)
         }
     }
@@ -293,20 +301,24 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
                 if (button.isPressed && !action.isAppliedIn(this) && action.isApplicableOn(this)) {
                     undoList.add(action.applyUndoablyOn(this))
                     heldActions[action] = gameTime
-                    undoList.add(object : IUndo {
-                        override fun undo(gameState: GameState) {
-                            gameState.heldActions.remove(action)
+                    undoList.add(
+                        object : IUndo {
+                            override fun undo(gameState: GameState) {
+                                gameState.heldActions.remove(action)
+                            }
                         }
-                    })
+                    )
                 } else if ((!button.isPressed || !action.canBeKeptApplyingOn(this)) && action.isAppliedIn(this) && action.canBeStoppedApplyingOn(this)) {
                     undoList.add(action.stopApplyingUndoablyOn(this))
                     val originalTime = heldActions[action]!!
                     heldActions.remove(action)
-                    undoList.add(object : IUndo {
-                        override fun undo(gameState: GameState) {
-                            gameState.heldActions[action] = originalTime
+                    undoList.add(
+                        object : IUndo {
+                            override fun undo(gameState: GameState) {
+                                gameState.heldActions[action] = originalTime
+                            }
                         }
-                    })
+                    )
                 } else if (action.isAppliedIn(this)) {
                     undoList.add(action.keepApplyingUndoablyOn(this))
                 }
@@ -454,14 +466,18 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             val action = button.action
             if (action !is HoldButtonAction && button.makesSenseToPress) {
                 results.add(
-                    GameButton.StateChange(button,
+                    GameButton.StateChange(
+                        button,
                         if (onlyHolds) GameButton.InteractionType.HOLD else GameButton.InteractionType.PRESS
                     )
                 )
             } else if (action is HoldButtonAction && button.makesSenseToPress) {
-                results.add(GameButton.StateChange(button,
-                    GameButton.InteractionType.HOLD
-                ))
+                results.add(
+                    GameButton.StateChange(
+                        button,
+                        GameButton.InteractionType.HOLD
+                    )
+                )
             } else if (button.makesSenseToRelease) {
                 results.add(GameButton.StateChange(button, GameButton.InteractionType.RELEASE))
             }

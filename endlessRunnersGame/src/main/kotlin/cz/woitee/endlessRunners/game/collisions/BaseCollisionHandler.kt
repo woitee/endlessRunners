@@ -45,7 +45,7 @@ open class BaseCollisionHandler(val game: Game) {
         for ((entry, collEffect) in game.gameDescription.collisionEffects) {
             for (dir in entry.directionFlags.flagsToDirections()) {
                 collisionHandlerMapping.put(
-                        CollisionHandlerEntry(entry.srcClass, entry.targetClass, dir),
+                    CollisionHandlerEntry(entry.srcClass, entry.targetClass, dir),
                     collEffect
                 )
             }
@@ -122,11 +122,12 @@ open class BaseCollisionHandler(val game: Game) {
         for (collPoint in movingObject.collPoints) {
 //            val targetPoint = corner + Vector2Double(movingObject.xspeed * game.updateTime * BlockWidth, movingObject.yspeed * game.updateTime * BlockHeight)
             val collRes = nearestCollision(
-                    movingObject.gameState,
-                    collPoint.x,
-                    collPoint.y,
-                    collPoint.x + movingObject.xspeed * game.updateTime * BlockWidth,
-                    collPoint.y + movingObject.yspeed * game.updateTime * BlockHeight) ?: continue
+                movingObject.gameState,
+                collPoint.x,
+                collPoint.y,
+                collPoint.x + movingObject.xspeed * game.updateTime * BlockWidth,
+                collPoint.y + movingObject.yspeed * game.updateTime * BlockHeight
+            ) ?: continue
             val dist = Distance2D.distance(collRes.locationX, collRes.locationY, collPoint.x, collPoint.y)
             if (dist < closest) {
                 closest = dist
@@ -153,11 +154,13 @@ open class BaseCollisionHandler(val game: Game) {
             lastCollisionObject = collision.other
 
             val collEffect: ICollisionEffect? =
-                    collisionHandlerMapping.get(CollisionHandlerEntry(
-                            movingObject.gameObjectClass,
-                            collision.other.gameObjectClass,
-                            collision.direction
-                    )) ?: getDefaultCollisionEffect(collision.other, collision.direction)
+                collisionHandlerMapping.get(
+                    CollisionHandlerEntry(
+                        movingObject.gameObjectClass,
+                        collision.other.gameObjectClass,
+                        collision.direction
+                    )
+                ) ?: getDefaultCollisionEffect(collision.other, collision.direction)
             collEffect ?: continue
 
             if (!undoable) {

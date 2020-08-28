@@ -17,54 +17,75 @@ open class HeightBlockLevelGenerator(
     val gameDescription: GameDescription,
     val blocks: List<HeightBlock> =
         arrayListOf(
-                HeightBlock(gameDescription, arrayListOf(
-                        "P  P",
-                        "P  P",
-                        "####"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "       P",
-                        "P      P",
-                        "P   ####",
-                        "########"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "P       ",
-                        "P      P",
-                        "####   P",
-                        "########"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "P          ",
-                        "P          ",
-                        "####       ",
-                        "####      P",
-                        "####      P",
-                        "###########"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "   ###   ",
-                        "   ###   ",
-                        "P  ###  P",
-                        "P       P",
-                        "#########"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "   ###        ",
-                        "   ###        ",
-                        "P  ###       P",
-                        "P            P",
-                        "#        #####",
-                        "##############"
-                )),
-                HeightBlock(gameDescription, arrayListOf(
-                        "      ",
-                        "P     ",
-                        "P    P",
-                        "     P",
-                        "    # ",
-                        "######"
-                ))
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "P  P",
+                    "P  P",
+                    "####"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "       P",
+                    "P      P",
+                    "P   ####",
+                    "########"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "P       ",
+                    "P      P",
+                    "####   P",
+                    "########"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "P          ",
+                    "P          ",
+                    "####       ",
+                    "####      P",
+                    "####      P",
+                    "###########"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "   ###   ",
+                    "   ###   ",
+                    "P  ###  P",
+                    "P       P",
+                    "#########"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "   ###        ",
+                    "   ###        ",
+                    "P  ###       P",
+                    "P            P",
+                    "#        #####",
+                    "##############"
+                )
+            ),
+            HeightBlock(
+                gameDescription,
+                arrayListOf(
+                    "      ",
+                    "P     ",
+                    "P    P",
+                    "     P",
+                    "    # ",
+                    "######"
+                )
+            )
         )
 ) : LevelGenerator() {
 

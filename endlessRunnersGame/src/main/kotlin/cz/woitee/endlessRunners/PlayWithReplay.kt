@@ -20,9 +20,12 @@ fun main(args: Array<String>) {
     val levelGenerator = DelayedTwinDFSLevelGenerator(0.25, SimpleLevelGenerator())
     val playerController = RecordingWrapper(KeyboardPlayerController())
 
-    val game = Game(levelGenerator, playerController, visualiser,
-            mode = Game.Mode.INTERACTIVE,
-            gameDescription = gameDescription
+    val game = Game(
+        levelGenerator,
+        playerController,
+        visualiser,
+        mode = Game.Mode.INTERACTIVE,
+        gameDescription = gameDescription
     )
 
     game.gameState.tag = "Main"

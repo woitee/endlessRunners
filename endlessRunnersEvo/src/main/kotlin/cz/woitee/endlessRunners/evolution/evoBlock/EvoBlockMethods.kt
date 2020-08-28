@@ -58,7 +58,7 @@ open class EvoBlockMethods(
         val plan: String = ""
     ) {
         override fun toString(): String {
-        return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness," +
+            return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness," +
                 "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan)\n" +
                 block.toString()
         }
@@ -83,16 +83,16 @@ open class EvoBlockMethods(
         }
 
         return FitnessValues(
-                block,
-                plan.success,
-                plan.maxPlayerX,
-                EvoBlockUtils.calculateRuggedness(block),
-                EvoBlockUtils.calculateDifficulty(plan.actions),
-                (isUpBlock(block) && numUpBlocks < numDownBlocks) || (isDownBlock(block) && numDownBlocks < numUpBlocks),
-                numCustomObjects,
-                otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.min() ?: 0,
-                otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.min() ?: 0,
-                plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButton.index.toString() ?: "" }
+            block,
+            plan.success,
+            plan.maxPlayerX,
+            EvoBlockUtils.calculateRuggedness(block),
+            EvoBlockUtils.calculateDifficulty(plan.actions),
+            (isUpBlock(block) && numUpBlocks < numDownBlocks) || (isDownBlock(block) && numDownBlocks < numUpBlocks),
+            numCustomObjects,
+            otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.min() ?: 0,
+            otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.min() ?: 0,
+            plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButton.index.toString() ?: "" }
         )
     }
 
@@ -112,10 +112,10 @@ open class EvoBlockMethods(
      */
     // Other blocks that already exist. Plans for these blocks get generated every time they are set into var existingPlans
     var existingBlocks: List<HeightBlock> = ArrayList()
-            set(value) {
-                field = value
-                existingPlans = value.map(blockValidator::getPlan)
-            }
+        set(value) {
+            field = value
+            existingPlans = value.map(blockValidator::getPlan)
+        }
     /**
      * Plans (sequences of actions) of how to best behave in existingBlocks.
      */
@@ -207,8 +207,8 @@ open class EvoBlockMethods(
     fun sampleGenotype(): Genotype<IntegerGene> {
         val customBlocks = gameDescription.customObjects.count()
         return Genotype.of(
-                IntegerChromosome.of(0, 3, 2),
-                IntegerChromosome.of(0, customBlocks + 1, width * (height - 1))
+            IntegerChromosome.of(0, 3, 2),
+            IntegerChromosome.of(0, customBlocks + 1, width * (height - 1))
         )
     }
 

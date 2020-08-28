@@ -98,9 +98,11 @@ class DelayedTwinDFS(
                 dfsStack.pollLast()
             }
             if (gameState.player.x != dfsStack.peekLast().cachedState.playerX ||
-                    gameState.player.y != dfsStack.peekLast().cachedState.playerY ||
-                    gameState.player.yspeed != dfsStack.peekLast().cachedState.playerYSpeed) {
-                throw InvalidParameterException("Fast forwarding of previously saved state to the one passed as argument failed! " +
+                gameState.player.y != dfsStack.peekLast().cachedState.playerY ||
+                gameState.player.yspeed != dfsStack.peekLast().cachedState.playerYSpeed
+            ) {
+                throw InvalidParameterException(
+                    "Fast forwarding of previously saved state to the one passed as argument failed! " +
                         "(ExpectedX: ${dfsStack.peekLast().cachedState.playerX} ActualX: ${gameState.player.x}) " +
                         "(ExpectedY: ${dfsStack.peekLast().cachedState.playerY} ActualY: ${gameState.player.y}) " +
                         "(ExpectedYSpeed: ${dfsStack.peekLast().cachedState.playerYSpeed} ActualYSpeed: ${gameState.player.yspeed}) "
@@ -171,9 +173,9 @@ class DelayedTwinDFS(
         }
 
         return ButtonModel.ButtonUndo(
-                buttonModel.currentState.advanceUndoableByAction(currentAction, buttonModel.updateTime),
-                buttonModel.delayedState.advanceUndoableByAction(delayedAction, buttonModel.updateTime),
-                buttonModel.disabledStates
+            buttonModel.currentState.advanceUndoableByAction(currentAction, buttonModel.updateTime),
+            buttonModel.delayedState.advanceUndoableByAction(delayedAction, buttonModel.updateTime),
+            buttonModel.disabledStates
         )
     }
 
@@ -194,13 +196,13 @@ class DelayedTwinDFS(
         while (dfsStack.size < maxDepth && !buttonModel.delayedState.isPlayerAtEnd(updateTime)) {
             if (computationStopper.shouldStop) { return SearchResult(false) }
             val currentActions: List<ButtonModel.ButtonAction?> =
-                    if (dfsStack.size % actionEvery == 0) buttonModel.orderedApplicableButtonActions()
-                    else arrayListOf(null)
+                if (dfsStack.size % actionEvery == 0) buttonModel.orderedApplicableButtonActions()
+                else arrayListOf(null)
             var stackData = StackData(
-                    buttonModel.noUndo(),
-                    0,
-                    currentActions,
-                    CachedState(buttonModel.delayedState)
+                buttonModel.noUndo(),
+                0,
+                currentActions,
+                CachedState(buttonModel.delayedState)
             )
             if (sleepTime > 0) sleep(sleepTime)
             stackData.statesUndo = advanceCorrectStates(currentActions[0])
@@ -275,8 +277,10 @@ class DelayedTwinDFS(
         }
 
         if (debugPrints) {
-            println("From current positions ${buttonModel.delayedState.player.location} ${buttonModel.currentState.player.location}\n" +
-                    "Next should be ${listOfPositions[listOfPositions.size - 2]} ${listOfPositions[listOfPositions.size - 1]} achieved by ${actions[0]}\n")
+            println(
+                "From current positions ${buttonModel.delayedState.player.location} ${buttonModel.currentState.player.location}\n" +
+                    "Next should be ${listOfPositions[listOfPositions.size - 2]} ${listOfPositions[listOfPositions.size - 1]} achieved by ${actions[0]}\n"
+            )
         }
 
         assert(dfsStack.size == 0)

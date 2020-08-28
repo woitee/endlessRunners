@@ -8,30 +8,39 @@ import org.junit.jupiter.api.Assertions.*
 internal class EvoBlockTest {
     @org.junit.jupiter.api.Test
     fun testSimpleBlock() {
-        doBasicTest(arrayListOf(
+        doBasicTest(
+            arrayListOf(
                 "   ",
                 "###",
                 "   "
-        ), 1)
+            ),
+            1
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun testAdvancedBlock() {
-        doBasicTest(arrayListOf(
+        doBasicTest(
+            arrayListOf(
                 " # ",
                 "###",
                 " # "
-        ), 3)
+            ),
+            3
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun testMoreAdvancedBlock() {
-        doBasicTest(arrayListOf(
+        doBasicTest(
+            arrayListOf(
                 " #  ",
                 " ###",
                 "### ",
                 "  # "
-        ), 4)
+            ),
+            4
+        )
     }
 
     private fun doBasicTest(stringBlock: ArrayList<String>, smoothness: Int) {
@@ -40,8 +49,8 @@ internal class EvoBlockTest {
         val block1 = HeightBlock(gameDescription, stringBlock)
 
         assertEquals(
-                smoothness,
-                EvoBlockUtils.calculateRuggedness(block1)
+            smoothness,
+            EvoBlockUtils.calculateRuggedness(block1)
         )
     }
 }

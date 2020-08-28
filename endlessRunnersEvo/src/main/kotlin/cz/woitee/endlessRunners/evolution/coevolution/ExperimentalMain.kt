@@ -102,46 +102,46 @@ fun checkFitnessOfKnownGames() {
 fun evaluateGame(gameDescription: GameDescription, blocks: ArrayList<HeightBlock>): Double {
     val evoProgressAccumulator = EvoProgressAccumulator()
     val controllerRunner = EvoControllerRunner(
-            gameDescription,
-            { HeightBlockLevelGenerator(gameDescription, blocks) },
-            numGenerations = 300
+        gameDescription,
+        { HeightBlockLevelGenerator(gameDescription, blocks) },
+        numGenerations = 300
 //            evoProgressAccumulator = evoProgressAccumulator
     )
 
     val controller = controllerRunner.evolveController()
 
     val gameRunner = EvoGameRunner(
-            { controller },
-            { controller },
-            blocks
+        { controller },
+        { controller },
+        blocks
     )
 
     val fitnessWithReasons = gameRunner.fitnessWithReasoning(gameDescription)
     println(fitnessWithReasons.reasoning)
 
     val blockRunner = EvoBlockRunner(
-            gameDescription,
-            { controller },
-            300,
-            100,
-            evoProgressAccumulator = evoProgressAccumulator
+        gameDescription,
+        { controller },
+        300,
+        100,
+        evoProgressAccumulator = evoProgressAccumulator
     )
 
     val newBlocks = blockRunner.evolveMultipleBlocks(7)
 
     val newControllerRunner = EvoControllerRunner(
-            gameDescription,
-            { HeightBlockLevelGenerator(gameDescription, newBlocks) },
-            numGenerations = 300,
-            evoProgressAccumulator = evoProgressAccumulator
+        gameDescription,
+        { HeightBlockLevelGenerator(gameDescription, newBlocks) },
+        numGenerations = 300,
+        evoProgressAccumulator = evoProgressAccumulator
     )
     val newController = newControllerRunner.evolveController()
 
     val newGameRunner = EvoGameRunner(
-            { newController },
-            { newController },
-            newBlocks,
-            evoProgressAccumulator = evoProgressAccumulator
+        { newController },
+        { newController },
+        newBlocks,
+        evoProgressAccumulator = evoProgressAccumulator
     )
 
     println(newGameRunner.fitnessWithReasoning(gameDescription).value)

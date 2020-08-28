@@ -35,8 +35,8 @@ open class BasicDFS(
         while (undoList.count() < maxDepth && !gameState.isPlayerAtEnd(updateTime)) {
             if (computationStopper.shouldStop) { return SearchResult(false) }
             val currentActions: List<GameButton.StateChange?> =
-                    if (undoList.count() % actionEvery == 0) orderedPerformableButtonActions(gameState)
-                    else arrayListOf(null)
+                if (undoList.count() % actionEvery == 0) orderedPerformableButtonActions(gameState)
+                else arrayListOf(null)
 
             undoList.add(advanceState(gameState, currentActions[0]))
 

@@ -3,11 +3,11 @@ package cz.woitee.endlessRunners.evolution.utils
 import cz.woitee.endlessRunners.utils.JavaSerializationUtils
 import cz.woitee.endlessRunners.utils.fileWithCreatedPath
 import io.jenetics.engine.EvolutionResult
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import java.io.FileWriter
 import java.util.*
 import java.util.function.Consumer
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVPrinter
 
 /**
  * A CSV recording utility that prints stats from each generation of an evolutionary run into a CSV file.
@@ -38,12 +38,12 @@ class CSVPrintingPeeker<C> (val filepathBase: String, val serializeWholePopulati
     override fun accept(result: EvolutionResult<*, C>) {
         val best = result.getBestPhenotype()
         val values = arrayListOf(
-                DateUtils.timestampString(),
-                result.getGeneration(),
-                result.getPopulation().map { it.getFitness() },
-                best.getGenotype(),
-                JavaSerializationUtils.serializeToString(best.getGenotype()),
-                best.getFitness()
+            DateUtils.timestampString(),
+            result.getGeneration(),
+            result.getPopulation().map { it.getFitness() },
+            best.getGenotype(),
+            JavaSerializationUtils.serializeToString(best.getGenotype()),
+            best.getFitness()
         )
         if (serializeWholePopulation) {
             values.add(JavaSerializationUtils.serializeToString(result))

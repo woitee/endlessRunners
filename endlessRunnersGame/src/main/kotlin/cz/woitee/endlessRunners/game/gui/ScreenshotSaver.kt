@@ -25,10 +25,12 @@ object ScreenshotSaver {
         val gameState = BlockValidator(GameDescription(), { NoActionPlayerController() }).getBlockAsGameState(heightBlock)
         gameState.addToGrid(Player(), heightBlock.width - 1, heightBlock.endHeight + 1)
 
-        saveScreenshot(gameState, filename,
-                playerScreenX = 0.0,
-                endX = heightBlock.width,
-                endY = heightBlock.height
+        saveScreenshot(
+            gameState,
+            filename,
+            playerScreenX = 0.0,
+            endX = heightBlock.width,
+            endY = heightBlock.height
         )
     }
 
@@ -59,10 +61,10 @@ object ScreenshotSaver {
         val heightPx = height * BlockHeight
 
         val gamePanelVisualizer = GamePanelVisualizer(
-                width = widthPx,
-                height = heightPx,
-                showFrame = false,
-                playerScreenX = playerScreenX
+            width = widthPx,
+            height = heightPx,
+            showFrame = false,
+            playerScreenX = playerScreenX
         )
 
         saveScreenshot(gameState, gamePanelVisualizer, filename)

@@ -10,12 +10,15 @@ import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
  * Runs the BitTri game, controlled by Keyboard.
  */
 fun main(args: Array<String>) {
-        val playerController = KeyboardPlayerController()
+    val playerController = KeyboardPlayerController()
 //    val playerController = DFSPlayerController()
     val gameDescription = BitTriGameDescription()
 
     val game = Game(
-            HeightBlockLevelGenerator(gameDescription, bitTriGameDefaultBlocks(gameDescription)), playerController, GamePanelVisualizer(), gameDescription = gameDescription
+        HeightBlockLevelGenerator(gameDescription, bitTriGameDefaultBlocks(gameDescription)),
+        playerController,
+        GamePanelVisualizer(),
+        gameDescription = gameDescription
     )
 
     game.run()

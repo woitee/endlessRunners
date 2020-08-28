@@ -11,9 +11,9 @@ class DisplayingWrapper(val innerController: PlayerController) : PlayerControlle
         val visualizer = gameState.game.visualizer as? GamePanelVisualizer ?: return@also
 
         val text = gameState.buttons
-                .withIndex()
-                .filter { (_, button) -> button.isPressed }
-                .joinToString { (i, _) -> i.toString() }
+            .withIndex()
+            .filter { (_, button) -> button.isPressed }
+            .joinToString { (i, _) -> i.toString() }
 
         visualizer.debugText.text = text
     }

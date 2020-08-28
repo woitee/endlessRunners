@@ -71,11 +71,13 @@ open class GamePanelVisualizer(
     private fun createFrame(): JFrame {
         val frame = JFrame(panelName)
         frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-        frame.addWindowListener(object : WindowAdapter() {
-            override fun windowClosed(e: WindowEvent?) {
-                dispose()
+        frame.addWindowListener(
+            object : WindowAdapter() {
+                override fun windowClosed(e: WindowEvent?) {
+                    dispose()
+                }
             }
-        })
+        )
         val pane = frame.contentPane
 
         panel.background = Color.RED

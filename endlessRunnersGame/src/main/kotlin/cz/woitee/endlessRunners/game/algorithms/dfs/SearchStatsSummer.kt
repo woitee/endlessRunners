@@ -35,7 +35,7 @@ class SearchStatsSummer(val sumEvery: Int, val callback: (SearchStatsAverage) ->
                 "success=${roundDouble(success)}, " +
                 "cachedStates=${roundDouble(cachedStates)}, " +
                 "timeTaken=${roundDouble(timeTaken * 1000)}ms" +
-            ")"
+                ")"
         }
     }
 

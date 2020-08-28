@@ -25,14 +25,14 @@ import io.jenetics.engine.EvolutionStatistics
 import io.jenetics.internal.util.Concurrency
 import io.jenetics.prngine.LCG64ShiftRandom
 import io.jenetics.util.RandomRegistry
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ForkJoinPool
 import java.util.function.Function
 import kotlin.random.Random
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVPrinter
 
 /**
  * A class facilitating the runs of evolutions of the game rules.
@@ -104,12 +104,12 @@ class EvoGameRunner(
             gameDescriptionTracking = TrackingUtils.addTracking(gameDescription)
             val playerController = playerControllerFactoryForGameRun(computationStopper)
             val game = Game(
-                    gameDescription = gameDescription,
-                    levelGenerator = HeightBlockLevelGenerator(gameDescription, evolvedBlocks),
-                    visualizer = null,
-                    playerController = playerController,
-                    mode = Game.Mode.SIMULATION,
-                    seed = rng.nextLong()
+                gameDescription = gameDescription,
+                levelGenerator = HeightBlockLevelGenerator(gameDescription, evolvedBlocks),
+                visualizer = null,
+                playerController = playerController,
+                mode = Game.Mode.SIMULATION,
+                seed = rng.nextLong()
             )
 
             game.init()
@@ -196,7 +196,8 @@ class EvoGameRunner(
         val limitForDFS = samplePlayerControllerForBlocks is DFSPlayerController || samplePlayerControllerForGameRun is DFSPlayerController
 
         val gameDescription = EvolvedGameDescription(
-                genotype, limitForDFS
+            genotype,
+            limitForDFS
         )
 
         val fitness = fitness(gameDescription)
@@ -217,12 +218,12 @@ class EvoGameRunner(
         val computationStopper = ComputationStopper()
         runningFitnessComputations[threadId] = ThreadComputationStopper(System.currentTimeMillis(), computationStopper)
         val fitnessValues = FitnessValues(
-                gameDescription,
-                playerControllerFactoryForBlocks,
-                playerControllerFactoryForGameRun,
-                blocks = blocks,
-                computationStopper = computationStopper,
-                seed = seed
+            gameDescription,
+            playerControllerFactoryForBlocks,
+            playerControllerFactoryForGameRun,
+            blocks = blocks,
+            computationStopper = computationStopper,
+            seed = seed
         )
 
         runningFitnessComputations.remove(threadId)
@@ -288,22 +289,22 @@ class EvoGameRunner(
         val csvPeeker = CSVPrintingPeeker<Double>("out/${csvLoggingPrefix}evoGame/EvoGame_$seed")
 
         val engine = Engine
-                .builder(fitness, EvolvedGameDescription.sampleGenotype())
-                .populationSize(populationSize)
-                .executor(Concurrency.SERIAL_EXECUTOR)
-                .evaluator(myEvaluator)
-                .offspringFraction(0.8)
-                .maximalPhenotypeAge(1000)
-                .survivorsSelector(TournamentSelector())
-                .offspringSelector(TournamentSelector())
-                .alterers(
-                        // 81 genes
-                        MultiPointCrossover(0.1),
+            .builder(fitness, EvolvedGameDescription.sampleGenotype())
+            .populationSize(populationSize)
+            .executor(Concurrency.SERIAL_EXECUTOR)
+            .evaluator(myEvaluator)
+            .offspringFraction(0.8)
+            .maximalPhenotypeAge(1000)
+            .survivorsSelector(TournamentSelector())
+            .offspringSelector(TournamentSelector())
+            .alterers(
+                // 81 genes
+                MultiPointCrossover(0.1),
 //                        SwapMutator(0.01)
-                        GaussianMutator<DoubleGene, Double>(1.0 / 81),
-                        GaussianMutator<DoubleGene, Double>(0.05)
-                )
-                .build()
+                GaussianMutator<DoubleGene, Double>(1.0 / 81),
+                GaussianMutator<DoubleGene, Double>(0.05)
+            )
+            .build()
 
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
         val statistics = EvolutionStatistics.ofNumber<Double>()
@@ -315,16 +316,16 @@ class EvoGameRunner(
         }
 
         val result = stream
-                .limit(numGenerations)
-                .peek { result ->
-                    val best = result.bestPhenotype
+            .limit(numGenerations)
+            .peek { result ->
+                val best = result.bestPhenotype
 //                    println(EvolvedGameDescription(best.genotype))
-                    println("${DateUtils.timestampString()} Generation ${result.generation}: The fitness is ${best.fitness}")
-                }
-                .peek(csvPeeker)
-                .peek(statistics)
-                .peek { evoProgressAccumulator?.addData("game", it.bestFitness.toDouble()) }
-                .collect(collector)
+                println("${DateUtils.timestampString()} Generation ${result.generation}: The fitness is ${best.fitness}")
+            }
+            .peek(csvPeeker)
+            .peek(statistics)
+            .peek { evoProgressAccumulator?.addData("game", it.bestFitness.toDouble()) }
+            .collect(collector)
 
         csvPeeker.close()
 

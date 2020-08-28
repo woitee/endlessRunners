@@ -10,8 +10,8 @@ import cz.woitee.endlessRunners.game.levelGenerators.ColumnCopyingLevelGenerator
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
-import java.lang.Thread.sleep
 import org.junit.jupiter.api.Assertions.*
+import java.lang.Thread.sleep
 
 class ComputationStopperTest {
     @org.junit.jupiter.api.Test
@@ -42,10 +42,10 @@ class ComputationStopperTest {
 
     fun getImpossibleGame(playerController: PlayerController): Game {
         val game = Game(
-                ColumnCopyingLevelGenerator(arrayList(HeightBlocks) { SolidBlock() }),
-                playerController,
-                GamePanelVisualizer(),
-                gameDescription = DFSImpossibleGameDescription()
+            ColumnCopyingLevelGenerator(arrayList(HeightBlocks) { SolidBlock() }),
+            playerController,
+            GamePanelVisualizer(),
+            gameDescription = DFSImpossibleGameDescription()
         )
 
         return game

@@ -7,9 +7,9 @@ import cz.woitee.endlessRunners.utils.JavaSerializationUtils
 import io.jenetics.DoubleGene
 import io.jenetics.Phenotype
 import io.jenetics.engine.EvolutionResult
-import java.io.FileReader
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import java.io.FileReader
 
 /**
  * Main method for replaying results of a specific run of the evolution.

@@ -18,12 +18,12 @@ import cz.woitee.endlessRunners.game.objects.GameObjectColor
 class TestingGameDescription : GameDescription() {
     override val customObjects: ArrayList<GameObject> = arrayListOf(CustomBlock(0), CustomBlock(1))
     override val allActions: ArrayList<GameAction> = arrayListOf(
-            ConditionalAction(PlayerHasColor(GameObjectColor.YELLOW), NoAction, NoAction),
-            JumpAction(24.79751808363527),
-            ApplyGameEffectAction(Gravity(GameEffect.Target.PLAYER, -0.7487525106783748)),
-            ConditionalAction(PlayerHasColor(GameObjectColor.YELLOW), NoAction, NoAction)
+        ConditionalAction(PlayerHasColor(GameObjectColor.YELLOW), NoAction, NoAction),
+        JumpAction(24.79751808363527),
+        ApplyGameEffectAction(Gravity(GameEffect.Target.PLAYER, -0.7487525106783748)),
+        ConditionalAction(PlayerHasColor(GameObjectColor.YELLOW), NoAction, NoAction)
     )
     override val permanentEffects: ArrayList<GameEffect> = arrayListOf(
-            Gravity(GameEffect.Target.PLAYER, 0.55004845852142)
+        Gravity(GameEffect.Target.PLAYER, 0.55004845852142)
     )
 }

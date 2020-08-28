@@ -14,7 +14,7 @@ open class CrouchGameDescription : GameDescription() {
     override val permanentEffects = arrayListOf<GameEffect>(Gravity(GameEffect.Target.PLAYER, 100 * 1.3 / BlockHeight))
 
     override val allActions: ArrayList<GameAction> = arrayListOf(
-            JumpAction(25.0),
-            ChangeShapeHoldAction(2, 1)
+        JumpAction(25.0),
+        ChangeShapeHoldAction(2, 1)
     )
 }

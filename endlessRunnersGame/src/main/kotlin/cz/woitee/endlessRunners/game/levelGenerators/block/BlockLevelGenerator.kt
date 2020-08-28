@@ -19,20 +19,26 @@ class BlockLevelGenerator(val gameDescription: GameDescription, val mode: Mode =
     }
 
     var blocks = arrayListOf(
-            Block(gameDescription, arrayListOf(
-                    "    ####################",
-                    "########################"
-            )),
-            Block(gameDescription, arrayListOf(
-                    "                      1        ",
-                    "                      ##       ",
-                    "            #      ###### #    ",
-                    "               1############## ",
-                    "            ###################",
-                    "           0###################",
-                    "##       ######################",
-                    "###############################"
-            ))
+        Block(
+            gameDescription,
+            arrayListOf(
+                "    ####################",
+                "########################"
+            )
+        ),
+        Block(
+            gameDescription,
+            arrayListOf(
+                "                      1        ",
+                "                      ##       ",
+                "            #      ###### #    ",
+                "               1############## ",
+                "            ###################",
+                "           0###################",
+                "##       ######################",
+                "###############################"
+            )
+        )
     )
     var currentBlockIx = -1
     var currentBlockOffset = 0

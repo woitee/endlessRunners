@@ -8,76 +8,97 @@ import org.junit.jupiter.api.Assertions.*
 internal class BlockValidatorTest {
     @org.junit.jupiter.api.Test
     fun basicGoForward() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "P  P",
                 "P  P",
                 "####"
-        ), true)
+            ),
+            true
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun impossible() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "####",
                 "P #P",
                 "P #P",
                 "####"
-        ), false)
+            ),
+            false
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun stepUp() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "        P",
                 "P       P",
                 "P   #####",
                 "#########"
-        ), true)
+            ),
+            true
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun stepDown() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "P       ",
                 "P      P",
                 "####   P",
                 "########"
-        ), true)
+            ),
+            true
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun largeStepDown() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "P          ",
                 "P          ",
                 "####       ",
                 "####      P",
                 "####      P",
                 "###########"
-        ), true)
+            ),
+            true
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun crouchObstacle() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "   ###   ",
                 "   ###   ",
                 "P  ###  P",
                 "P       P",
                 "#########"
-        ), true)
+            ),
+            true
+        )
     }
 
     @org.junit.jupiter.api.Test
     fun comboDownUp() {
-        runTest(arrayListOf(
+        runTest(
+            arrayListOf(
                 "   ###        ",
                 "   ###        ",
                 "P  ###       P",
                 "P            P",
                 "#        #####",
                 "##############"
-        ), true)
+            ),
+            true
+        )
     }
 
     fun runTest(stringBlock: ArrayList<String>, expectedResult: Boolean, gameDescription: GameDescription = CrouchGameDescription()) {

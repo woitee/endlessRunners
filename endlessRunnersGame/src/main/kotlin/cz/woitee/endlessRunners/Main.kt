@@ -8,7 +8,7 @@ import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.wrappers.DisplayingWrapper
 import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
 
-fun main(args: Array<String>) {
+fun main() {
     // Just select the components! There is a lot of them prepared, but you can also make your own!
 
     // Choose how the game will be controlled

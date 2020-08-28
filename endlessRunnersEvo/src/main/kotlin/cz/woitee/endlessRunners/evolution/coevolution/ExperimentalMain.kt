@@ -4,6 +4,7 @@ import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
+import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.CanabalGameDescription
@@ -19,14 +20,14 @@ fun main() {
     val seed = Random.nextLong()
     println("Seed is $seed")
 
-//    fullCoevolution(seed)
-    checkFitnessOfKnownGames()
+    fullCoevolution(seed)
+//    checkFitnessOfKnownGames()
 }
 
 fun fullCoevolution(seed: Long) {
     val numIterations = 20
     val numBlocks = 7
-    val coevolver = Coevolver(seed)
+    val coevolver = Coevolver(numBlocks, 30, 50, 50, seed)
     val runner = CoevolutionRunner()
 
     for (i in 1..numIterations) {
@@ -38,7 +39,7 @@ fun fullCoevolution(seed: Long) {
         // =============== //
 
         print("evolving blocks ($numBlocks): ")
-        coevolver.evolveBlocks(30, 30, numBlocks, true)
+        coevolver.evolveBlocks(30, true)
         coevolver.saveToFile("out/snapshots/$paddedI-1.snap")
 
         // =================== //
@@ -47,9 +48,9 @@ fun fullCoevolution(seed: Long) {
 
         println("Evolving controller")
         val controllerGenerations = if (i == numIterations) 200L else 50L
-        coevolver.evolveController(controllerGenerations, 50)
+        coevolver.evolveController(controllerGenerations)
         coevolver.saveToFile("out/snapshots/$paddedI-2.snap")
-        println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
+        println("Controller fitness: ${coevolver.controllerEvoState!!.bestFitness}")
 
         // ========================= //
         // Evolving game description //
@@ -61,9 +62,9 @@ fun fullCoevolution(seed: Long) {
             println(coevolver.currentBestGameDescription)
 //            runner.runGame(coevolver.currentBestTriple(), 30.0)
             println("Evolving game description")
-            coevolver.evolveDescription(50, 50).printReasoning()
+            coevolver.evolveDescription(50).printReasoning()
             coevolver.saveToFile("out/snapshots/$paddedI-3.snap")
-            println("Game Description fitness: ${coevolver.gameDescriptionPopulation!!.bestFitness}")
+            println("Game Description fitness: ${coevolver.gameDescriptionEvoState!!.bestFitness}")
         }
     }
 

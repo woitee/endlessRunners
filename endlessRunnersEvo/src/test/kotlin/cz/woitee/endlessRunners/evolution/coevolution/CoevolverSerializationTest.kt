@@ -8,8 +8,8 @@ class CoevolverSerializationTest {
     fun testSeeding() {
         val seed = Random.Default.nextLong()
 
-        val coevolver = Coevolver(seed)
-        val coevolver2 = Coevolver(seed)
+        val coevolver = Coevolver(7, 30, 10, 10, seed)
+        val coevolver2 = Coevolver(7, 30, 10, 10, seed)
 
         repeat(2) {
             fullIteration(coevolver)
@@ -23,12 +23,12 @@ class CoevolverSerializationTest {
     fun testSerializing() {
         val seed = Random.Default.nextLong()
 
-        val coevolver = Coevolver(seed)
+        val coevolver = Coevolver(7, 30, 10, 10, seed)
         fullIteration(coevolver)
 
         // Get copy of coevolver via serialization
         val byteArray = coevolver.toByteArray()
-        val coevolver2 = Coevolver()
+        val coevolver2 = Coevolver(7, 30, 10, 10)
         coevolver2.fromByteArray(byteArray)
 
         // They should be the same
@@ -42,14 +42,14 @@ class CoevolverSerializationTest {
     }
 
     private fun fullIteration(coevolver: Coevolver) {
-        coevolver.evolveBlocks(5, 30, 4)
-        coevolver.evolveController(5, 10)
-        coevolver.evolveDescription(5, 10)
+        coevolver.evolveBlocks(5)
+        coevolver.evolveController(5)
+        coevolver.evolveDescription(5)
     }
 
     private fun assertSameResults(coevolver: Coevolver, coevolver2: Coevolver) {
-        assertEquals(coevolver.blockPopulations[0].bestFitness, coevolver2.blockPopulations[0].bestFitness)
-        assertEquals(coevolver.controllerPopulation!!.bestFitness, coevolver2.controllerPopulation!!.bestFitness)
-        assertEquals(coevolver.gameDescriptionPopulation!!.bestFitness, coevolver2.gameDescriptionPopulation!!.bestFitness)
+        assertEquals(coevolver.blockEvoStates[0]!!.bestFitness, coevolver2.blockEvoStates[0]!!.bestFitness)
+        assertEquals(coevolver.controllerEvoState!!.bestFitness, coevolver2.controllerEvoState!!.bestFitness)
+        assertEquals(coevolver.gameDescriptionEvoState!!.bestFitness, coevolver2.gameDescriptionEvoState!!.bestFitness)
     }
 }

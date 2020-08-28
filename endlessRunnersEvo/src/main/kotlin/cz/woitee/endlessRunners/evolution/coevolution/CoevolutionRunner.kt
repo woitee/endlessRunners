@@ -53,18 +53,18 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param gameDescription GameDescription to coevolve for
      * */
     fun coevolveBlocksAndController(gameDescription: GameDescription) {
-        val coevolver = Coevolver(seed)
         val numBlocks = 7
+        val coevolver = Coevolver(numBlocks, 30, 50, 0, seed)
 
         for (i in 1..numIterations) {
             println("ITERATION $i")
 
             print("evolving blocks ($numBlocks): ")
-            coevolver.evolveBlocks(30, numBlocks, 30, true)
+            coevolver.evolveBlocks(30, true)
 
             println("evolving controller")
-            coevolver.evolveController(50, 50)
-            println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
+            coevolver.evolveController(50)
+            println("Controller fitness: ${coevolver.controllerEvoState!!.bestFitness}")
         }
 
         val evoBlockRunner = EvoBlockRunner(gameDescription, { coevolver.currentBestController })
@@ -109,7 +109,7 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * */
     fun coevolveDescriptionBlocksAndController(): CoevolvedTriple {
         val numBlocks = 7
-        val coevolver = Coevolver(seed)
+        val coevolver = Coevolver(numBlocks, 30, 50, 50, seed)
 
         for (i in 1..numIterations) {
 
@@ -120,15 +120,15 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
             // =============== //
 
             print("evolving blocks ($numBlocks): ")
-            coevolver.evolveBlocks(30, 30, numBlocks, true)
+            coevolver.evolveBlocks(30, true)
 
             // =================== //
             // Evolving controller //
             // =================== //
 
             println("Evolving controller")
-            coevolver.evolveController(50, 50)
-            println("Controller fitness: ${coevolver.controllerPopulation!!.bestFitness}")
+            coevolver.evolveController(50)
+            println("Controller fitness: ${coevolver.controllerEvoState!!.bestFitness}")
 
             // ========================= //
             // Evolving game description //
@@ -138,8 +138,8 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
                 println("Not evolving game description in the last iteration, we want to end with best controller and blocks for a given game")
             } else {
                 println("Evolving game description")
-                coevolver.evolveDescription(20, 50)
-                println("Game Description fitness: ${coevolver.gameDescriptionPopulation!!.bestFitness}")
+                coevolver.evolveDescription(20)
+                println("Game Description fitness: ${coevolver.gameDescriptionEvoState!!.bestFitness}")
             }
         }
 

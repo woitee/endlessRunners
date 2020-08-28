@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Play a game and create a log for replay.
  */
-fun main(args: Array<String>) {
+fun main() {
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()
 

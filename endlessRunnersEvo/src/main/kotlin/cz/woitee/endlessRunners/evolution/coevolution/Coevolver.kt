@@ -9,10 +9,7 @@ import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.evolution.utils.DateUtils
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
-import cz.woitee.endlessRunners.utils.MySerializable
-import cz.woitee.endlessRunners.utils.SerializableRandom
-import cz.woitee.endlessRunners.utils.addOrPut
-import cz.woitee.endlessRunners.utils.except
+import cz.woitee.endlessRunners.utils.*
 import io.jenetics.DoubleGene
 import io.jenetics.Genotype
 import io.jenetics.IntegerGene
@@ -23,13 +20,28 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.random.Random
 
-class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
+typealias IntPopulation = Iterable<Genotype<IntegerGene>>
+typealias DoublePopulation = Iterable<Genotype<DoubleGene>>
+
+class Coevolver(
+    val numBlocks: Int,
+    val blockPopulationSize: Int,
+    val controllerPopulationSize: Int,
+    val gameDescriptionPopulationSize: Int,
+    val seed: Long = Random.Default.nextLong()
+) : MySerializable {
+
     val timestamp = DateUtils.timestampString()
     private var random = SerializableRandom(seed)
 
-    val blockPopulations = ArrayList<EvolutionResult<IntegerGene, Int>>()
-    var controllerPopulation: EvolutionResult<DoubleGene, Double>? = null
-    var gameDescriptionPopulation: EvolutionResult<DoubleGene, Double>? = null
+    val blockEvoStates = arrayList<EvolutionResult<IntegerGene, Int>?>(numBlocks) { null }
+    var controllerEvoState: EvolutionResult<DoubleGene, Double>? = null
+    var gameDescriptionEvoState: EvolutionResult<DoubleGene, Double>? = null
+
+    // Populations set to be used next time
+    val nextBlockPopulations: ArrayList<IntPopulation?> = arrayList(numBlocks) { null }
+    var nextControllerPopulation: DoublePopulation? = null
+    var nextGameDescriptionPopulation: DoublePopulation? = null
 
     // Evolved blocks
     val evolvedBlocks = ArrayList<HeightBlock>()
@@ -46,32 +58,31 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
         currentBestGameDescription = EvolvedGameDescription(EvolvedGameDescription.sampleGenotype())
     }
 
-    fun evolveBlocks(numGenerations: Long, populationSize: Int, numBlocks: Int, printStats: Boolean = false): List<HeightBlock> {
+    fun evolveBlocks(numGenerations: Long, printStats: Boolean = false): List<HeightBlock> {
         val evoBlockRunner = EvoBlockRunner(
             currentBestGameDescription,
             { EvolvedPlayerController(currentBestController.genotype) },
             numGenerations,
-            populationSize,
+            blockPopulationSize,
             false,
             csvLoggingPrefix = "coevo_$timestamp/",
             seed = random.nextLong(),
             evoProgressAccumulator = evoProgressAccumulator
         )
 
-        val firstIteration = blockPopulations.isEmpty()
-
         for (j in 0 until numBlocks) {
             evoBlockRunner.accumulatorKey = "-$j"
             val otherBlocks = evolvedBlocks.except(j)
-            val blockResult = if (firstIteration) {
-                evoBlockRunner.evolveToResult(otherBlocks, null, 0)
-            } else {
-                evoBlockRunner.evolveToResult(otherBlocks, blockPopulations[j].genotypes, blockPopulations[j].generation)
-            }
+            val blockResult = evoBlockRunner.evolveToResult(
+                otherBlocks,
+                nextBlockPopulations[j],
+                blockEvoStates[j]?.generation ?: 0
+            )
 
             val block = evoBlockRunner.genotype2block(blockResult.bestPhenotype.genotype)
             evolvedBlocks.addOrPut(j, block)
-            blockPopulations.addOrPut(j, blockResult)
+            blockEvoStates.addOrPut(j, blockResult)
+            nextBlockPopulations.addOrPut(j, blockResult.genotypes)
         }
 
         currentBestBlocks.clear()
@@ -79,7 +90,7 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
         currentBestBlocks.addAll(evolvedBlocks)
 
         if (printStats) {
-            println("Avg block fitness: ${blockPopulations.map { it.bestFitness }.average()}")
+            println("Avg block fitness: ${blockEvoStates.map { it!!.bestFitness }.average()}")
 
             for ((j, block) in currentBestBlocks.withIndex()) {
                 println("block $j attributes: ${evoBlockRunner.getFitnessValues(block, currentBestBlocks.except(j))}")
@@ -88,38 +99,42 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
 
         return evolvedBlocks
     }
-    fun evolveController(numGenerations: Long, populationSize: Int) {
+    fun evolveController(numGenerations: Long) {
         val evoControllerRunner = EvoControllerRunner(
             currentBestGameDescription,
             { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
             csvLoggingPrefix = "coevo_$timestamp/",
             numGenerations = numGenerations,
-            populationSize = populationSize,
+            populationSize = controllerPopulationSize,
             seed = random.nextLong(),
             evoProgressAccumulator = evoProgressAccumulator
         )
 
-        controllerPopulation = evoControllerRunner.evolveToResult(
-            controllerPopulation?.genotypes,
-            controllerPopulation?.generation ?: 0
+        controllerEvoState = evoControllerRunner.evolveToResult(
+            nextControllerPopulation,
+            controllerEvoState?.generation ?: 0
         )
 
-        currentBestController = EvolvedPlayerController(controllerPopulation!!.bestPhenotype.genotype)
+        nextControllerPopulation = controllerEvoState!!.genotypes
+
+        currentBestController = EvolvedPlayerController(controllerEvoState!!.bestPhenotype.genotype)
     }
-    fun evolveDescription(numGenerations: Long, populationSize: Int): EvoGameRunner.FitnessWithReasons {
+    fun evolveDescription(numGenerations: Long): EvoGameRunner.FitnessWithReasons {
         val evoGameRunner = EvoGameRunner(
             { EvolvedPlayerController(currentBestController.genotype) },
             { EvolvedPlayerController(currentBestController.genotype) },
             currentBestBlocks,
             numGenerations = numGenerations,
-            populationSize = populationSize,
+            populationSize = gameDescriptionPopulationSize,
             csvLoggingPrefix = "coevo_$timestamp/",
             seed = random.nextLong(),
             evoProgressAccumulator = evoProgressAccumulator
         )
 
-        gameDescriptionPopulation = evoGameRunner.evolveToResult(gameDescriptionPopulation?.genotypes, gameDescriptionPopulation?.generation ?: 0)
-        currentBestGameDescription = EvolvedGameDescription(gameDescriptionPopulation!!.bestPhenotype.genotype)
+        gameDescriptionEvoState = evoGameRunner.evolveToResult(nextGameDescriptionPopulation, gameDescriptionEvoState?.generation ?: 0)
+
+        nextGameDescriptionPopulation = gameDescriptionEvoState!!.genotypes
+        currentBestGameDescription = EvolvedGameDescription(gameDescriptionEvoState!!.bestPhenotype.genotype)
 
         return evoGameRunner.fitnessWithReasoning(currentBestGameDescription)
     }
@@ -131,12 +146,12 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
     override fun writeObject(oos: ObjectOutputStream): Coevolver {
         oos.writeObject(random)
 
-        oos.writeInt(blockPopulations.size)
-        for (populations in blockPopulations) {
+        oos.writeInt(blockEvoStates.size)
+        for (populations in blockEvoStates) {
             oos.writeObject(populations)
         }
-        oos.writeObject(controllerPopulation)
-        oos.writeObject(gameDescriptionPopulation)
+        oos.writeObject(controllerEvoState)
+        oos.writeObject(gameDescriptionEvoState)
 
         for (block in evolvedBlocks) {
             oos.writeObject(block)
@@ -151,12 +166,12 @@ class Coevolver(val seed: Long = Random.Default.nextLong()) : MySerializable {
 
         val numBlocks = ois.readInt()
 
-        blockPopulations.clear()
+        blockEvoStates.clear()
         repeat(numBlocks) {
-            blockPopulations.add(ois.readObject() as EvolutionResult<IntegerGene, Int>)
+            blockEvoStates.add(ois.readObject() as EvolutionResult<IntegerGene, Int>)
         }
-        controllerPopulation = ois.readObject() as EvolutionResult<DoubleGene, Double>?
-        gameDescriptionPopulation = ois.readObject() as EvolutionResult<DoubleGene, Double>
+        controllerEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>?
+        gameDescriptionEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>
 
         evolvedBlocks.clear()
         repeat(numBlocks) {

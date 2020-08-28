@@ -12,7 +12,7 @@ import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 /**
  * Manually launching test, to see if they still behave correctly.
  */
-fun main(args: Array<String>) {
+fun main() {
     visualizeDelayedTwinDFS()
 }
 

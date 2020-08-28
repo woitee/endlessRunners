@@ -8,7 +8,7 @@ import cz.woitee.endlessRunners.game.playerControllers.FromRecordingPlayerContro
 import java.util.*
 
 /** Plays a replay from a log file (sent e.g. in the experiment) */
-fun main(args: Array<String>) {
+fun main() {
     val replayPath: String = "RecordingGame12018_03_05-17_53_51.dmp"
     val gameDescription = CrouchGameDescription()
     val visualiser: GamePanelVisualizer? = GamePanelVisualizer()

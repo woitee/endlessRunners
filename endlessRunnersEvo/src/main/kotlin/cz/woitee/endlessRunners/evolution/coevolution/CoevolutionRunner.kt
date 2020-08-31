@@ -1,5 +1,6 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
+import cz.woitee.endlessRunners.evolution.charts.MultiCharter
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController
@@ -153,9 +154,15 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @triple the result to run
      * @seconds time to run for. If negative, the game runs endlessly.
      */
-    fun runGame(triple: CoevolvedTriple, seconds: Double = -1.0, visualizeActions: Boolean = true) {
+    fun runGame(
+            triple: CoevolvedTriple,
+            seconds: Double = -1.0,
+            visualizeActions: Boolean = true,
+            frameTo: MultiCharter? = null
+
+    ) {
         val controller = if (visualizeActions) DisplayingWrapper(triple.controller) else triple.controller
-        runGame(triple.description, triple.blocks, controller, seconds)
+        runGame(triple.description, triple.blocks, controller, seconds, frameTo)
     }
 
     /**
@@ -166,12 +173,24 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param playerController The PlayerController to use for running
      * @param seconds Time to run for. If negative, will run endlessly.
      */
-    fun runGame(gameDescription: GameDescription, bestBlocks: ArrayList<HeightBlock>, playerController: PlayerController, seconds: Double = -1.0) {
+    fun runGame(
+            gameDescription: GameDescription,
+            bestBlocks: ArrayList<HeightBlock>,
+            playerController: PlayerController,
+            seconds: Double = -1.0,
+            frameTo: MultiCharter? = null
+    ) {
         val evoBlockRunner = EvoBlockRunner(gameDescription, { NoActionPlayerController() })
-        val allBlocks = ArrayList<HeightBlock>(bestBlocks)
+        val allBlocks = ArrayList(bestBlocks)
         allBlocks.addAll(evoBlockRunner.defaultBlocks)
 
-        val gamePanelVisualizer = GamePanelVisualizer(timeProportionedDrawing = false, debugging = true)
+        val gamePanelVisualizer = if (frameTo == null) {
+            GamePanelVisualizer(timeProportionedDrawing = false, debugging = true)
+        } else {
+            GamePanelVisualizer(timeProportionedDrawing = false, debugging = true, showFrame = false).also {
+                frameTo.pushAdditionalPanel(it.panel)
+            }
+        }
 
         val game = Game(
             HeightBlockLevelGenerator(gameDescription, allBlocks),
@@ -202,5 +221,6 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
         )
 
         game.run(if (seconds > 0) (seconds * 1000).toLong() else -1L)
+        frameTo?.popAdditionalPanel()
     }
 }

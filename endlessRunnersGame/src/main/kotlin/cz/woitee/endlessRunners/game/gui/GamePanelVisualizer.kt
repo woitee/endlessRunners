@@ -82,15 +82,18 @@ open class GamePanelVisualizer(
 
         panel.background = Color.RED
         panel.preferredSize = Dimension(width, height)
+        panel.minimumSize = Dimension(width, height)
         panel.isVisible = true
 
         panel.isFocusable = true
         panel.requestFocus()
 
-        pane.add(panel)
+        if (showFrame) {
+            pane.add(panel)
 
-        frame.pack()
-        if (showFrame) frame.isVisible = true
+            frame.isVisible = true
+            frame.pack()
+        }
 
         return frame
     }

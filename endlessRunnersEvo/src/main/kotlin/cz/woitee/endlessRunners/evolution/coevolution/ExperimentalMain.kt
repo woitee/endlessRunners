@@ -39,9 +39,9 @@ fun fullCoevolution(seed: Long) {
 
     // Burn-in
     for (i in 1..burnInIterations) {
-        coevolver.evolveBlocks(60)
+        coevolver.evolveBlocks(30)
         coevolver.evolveController(100)
-//        runner.runGame(coevolver.currentBestTriple(), 15.0, true)
+        runner.runGame(coevolver.currentBestTriple(), 15.0, true, coevolver.evoProgressAccumulator.charter)
     }
 
     // Main coevolution
@@ -76,7 +76,7 @@ fun fullCoevolution(seed: Long) {
             println("Not evolving game description in the last iteration, we want to end with best controller and blocks for a given game")
         } else {
             println(coevolver.currentBestGameDescription)
-            runner.runGame(coevolver.currentBestTriple(), 15.0)
+            runner.runGame(coevolver.currentBestTriple(), 15.0, true, coevolver.evoProgressAccumulator.charter)
             println("Evolving game description")
             coevolver.evolveDescription(100).printReasoning()
             coevolver.saveToFile("out/snapshots/$paddedI-3.snap")

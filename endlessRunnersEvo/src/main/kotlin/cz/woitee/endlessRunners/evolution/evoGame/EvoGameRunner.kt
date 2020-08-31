@@ -301,8 +301,8 @@ class EvoGameRunner(
                 // 81 genes
                 MultiPointCrossover(0.1),
 //                        SwapMutator(0.01)
-                GaussianMutator<DoubleGene, Double>(1.0 / 81),
-                GaussianMutator<DoubleGene, Double>(0.05)
+                GaussianMutator(1.0 / 81),
+                GaussianMutator(0.05)
             )
             .build()
 

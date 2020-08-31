@@ -16,7 +16,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
         protected set
     var height: Int = height
         protected set
-    var grid = arrayList(width, { arrayList(height, factory) })
+    var grid = arrayList(width) { arrayList(height) { factory() } }
 
     operator fun get(x: Int, y: Int): T {
         try {
@@ -66,7 +66,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
     }
 
     fun shiftX(amount: Int) {
-        grid.shift(amount) { arrayList(height, factory) }
+        grid.shift(amount) { arrayList(height) { factory() } }
     }
 
     fun shiftY(amount: Int) {
@@ -76,7 +76,7 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
     }
 
     fun resizeWidth(targetWidth: Int) {
-        grid.resizeTo(targetWidth, { arrayList(height, factory) })
+        grid.resizeTo(targetWidth) { arrayList(height) { factory() } }
         this.width = targetWidth
     }
 

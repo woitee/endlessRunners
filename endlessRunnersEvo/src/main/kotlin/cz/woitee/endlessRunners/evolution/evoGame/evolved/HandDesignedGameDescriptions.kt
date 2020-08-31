@@ -17,7 +17,7 @@ fun speedGene(speed: Double) = doubleGene((speed - 1) / 30.0)
 fun scoreGene(score: Int) = doubleGene(((score + 100) / 10).toDouble() / 20)
 fun selectorGene(i: Int, count: Int) = doubleGene((i + 0.5) / count)
 fun collisionSelectorGene(i: Int, count: Int) = selectorGene(i, count) * 0.5 + 0.5
-fun gravityGene(strength: Double) = doubleGene(strength / 2)
+fun gravityGene(strength: Double) = doubleGene(strength / 4)
 fun jumpGene(strength: Double) = doubleGene((strength - 1) / 50.0)
 fun customObjectGene(isSolid: Boolean) = doubleGene(if (isSolid) 0.0 else 1.0)
 
@@ -31,7 +31,7 @@ operator fun DoubleGene.div(divisor: Double): DoubleGene =
 val unusedGene = doubleGene(0.0)
 val conditional = doubleGene(0.9)
 
-fun bitTriEvolvedGameDescription(): Genotype<DoubleGene> {
+fun bitTriEvolvedGameDescription(): EvolvedGameDescription {
     val sampleGenotype = EvolvedGameDescription.sampleGenotype()
 
     val newChromosomes = ArrayList<Chromosome<DoubleGene>>()
@@ -174,16 +174,16 @@ fun bitTriEvolvedGameDescription(): Genotype<DoubleGene> {
     )
 
     var i = 0
-    return Genotype.of(
+    return EvolvedGameDescription(Genotype.of(
         {
             val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
             ++i
             chromosome
         },
         8
-    )
+    ))
 }
-fun chameleonEvolvedGameDescription(): Genotype<DoubleGene> {
+fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
     val sampleGenotype = EvolvedGameDescription.sampleGenotype()
 
     val newChromosomes = ArrayList<Chromosome<DoubleGene>>()
@@ -296,19 +296,18 @@ fun chameleonEvolvedGameDescription(): Genotype<DoubleGene> {
     )
 
     var i = 0
-    return Genotype.of(
+    return EvolvedGameDescription(Genotype.of(
         {
             val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
             ++i
             chromosome
         },
         8
-    )
+    ))
 }
 
 fun main() {
-    val genotype = chameleonEvolvedGameDescription()
-    val gameDescription = EvolvedGameDescription(genotype)
+    val gameDescription = chameleonEvolvedGameDescription()
     val originalGameDescription = ChameleonGameDescription()
 
     val controllerRunner = EvoControllerRunner(

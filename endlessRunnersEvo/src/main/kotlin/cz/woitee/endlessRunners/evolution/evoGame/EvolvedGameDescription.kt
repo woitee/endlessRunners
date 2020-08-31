@@ -82,7 +82,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         val collisionEffectsSpec = ChromosomeSpec(1, 5, 4) // three additional only for conditional effects
         val permanentEffectsSpec = ChromosomeSpec(1, 3)
         // player collision with any custom object
-        val collisionMappingSpec = ChromosomeSpec(min(1, customObjectsSpec.min), customObjectsSpec.max, 3) // we only separate Right, Up and Down collisions
+        val collisionMappingSpec = ChromosomeSpec(min(1, customObjectsSpec.min), 1 + customObjectsSpec.max, 3) // we only separate Right, Up and Down collisions
         val globalVariablesSpec = ChromosomeSpec(1, 1)
 
         /**
@@ -179,7 +179,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         for (genePack in GenePack(genotype[5], permanentEffectsSpec.numAttributes)) {
             val gene = genePack.gene(0)
             val permEffect = when (genePack.currentIndex) {
-                0 -> Gravity(GameEffect.Target.PLAYER, gene * 2)
+                0 -> Gravity(GameEffect.Target.PLAYER, gene * 4)
                 else -> {
                     val candidate = selectByGene(allEffects, gene)
                     if (candidate !is GameOver) candidate else null
@@ -427,6 +427,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
             if (entry.directionFlags.asFlagsContains(Direction4.RIGHT) && containsMoveToContact(collisionEffect)) continue
             collisionEffects[entry] = collisionEffect
         }
+        // Collision in direction RIGHT with solid block should always be game over
+        collisionEffects[BaseCollisionHandler.CollisionHandlerEntry(GameObjectClass.PLAYER, GameObjectClass.SOLIDBLOCK, Direction4.RIGHT)] = ApplyGameEffect(GameOver())
     }
 
     // ================================
@@ -462,26 +464,26 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.appendln("EvolvedGameDescription (${customObjects.count()} custom objects)")
-        sb.appendln("======")
-        sb.appendln("Starting speed is $playerStartingSpeed")
-        sb.appendln("ACTIONS")
+        sb.appendLine("EvolvedGameDescription (${customObjects.count()} custom objects)")
+        sb.appendLine("======")
+        sb.appendLine("Starting speed is $playerStartingSpeed")
+        sb.appendLine("ACTIONS")
         for (action in allActions) {
-            sb.appendln(action.toString())
+            sb.appendLine(action.toString())
         }
-        sb.appendln("EFFECTS")
+        sb.appendLine("EFFECTS")
         for (effect in allEffects) {
-            sb.appendln(effect)
+            sb.appendLine(effect)
         }
-        sb.appendln("PERMANENT EFFECTS")
+        sb.appendLine("PERMANENT EFFECTS")
         for (effect in permanentEffects) {
-            sb.appendln(effect)
+            sb.appendLine(effect)
         }
-        sb.appendln("COLLISION MAPPING")
+        sb.appendLine("COLLISION MAPPING")
         for ((entry, effect) in collisionEffects.entries) {
-            sb.appendln("$entry -> $effect")
+            sb.appendLine("$entry -> $effect")
         }
-        sb.appendln()
+        sb.appendLine()
 
         return sb.toString()
     }

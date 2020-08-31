@@ -12,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom
 /**
  * Initializes a new ArrayList of given size by calling the factory.
  */
-fun <T> arrayList(size: Int, factory: () -> T): ArrayList<T> {
+fun <T> arrayList(size: Int, factory: (Int) -> T): ArrayList<T> {
     val res = ArrayList<T>(size)
-    for (i in 1 .. size) {
-        res.add(factory())
+    for (i in 0 until size) {
+        res.add(factory(i))
     }
     return res
 }

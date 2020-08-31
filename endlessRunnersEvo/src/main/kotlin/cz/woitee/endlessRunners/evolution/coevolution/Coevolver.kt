@@ -76,7 +76,7 @@ class Coevolver(
             val blockResult = evoBlockRunner.evolveToResult(
                 otherBlocks,
                 nextBlockPopulations[j],
-                blockEvoStates[j]?.generation ?: 0
+                blockEvoStates[j]?.generation ?: 1
             )
 
             val block = evoBlockRunner.genotype2block(blockResult.bestPhenotype.genotype)
@@ -112,7 +112,7 @@ class Coevolver(
 
         controllerEvoState = evoControllerRunner.evolveToResult(
             nextControllerPopulation,
-            controllerEvoState?.generation ?: 0
+            controllerEvoState?.generation ?: 1
         )
 
         nextControllerPopulation = controllerEvoState!!.genotypes
@@ -131,7 +131,7 @@ class Coevolver(
             evoProgressAccumulator = evoProgressAccumulator
         )
 
-        gameDescriptionEvoState = evoGameRunner.evolveToResult(nextGameDescriptionPopulation, gameDescriptionEvoState?.generation ?: 0)
+        gameDescriptionEvoState = evoGameRunner.evolveToResult(nextGameDescriptionPopulation, gameDescriptionEvoState?.generation ?: 1)
 
         nextGameDescriptionPopulation = gameDescriptionEvoState!!.genotypes
         currentBestGameDescription = EvolvedGameDescription(gameDescriptionEvoState!!.bestPhenotype.genotype)

@@ -143,6 +143,11 @@ class Coevolver(
         return CoevolvedTriple(currentBestBlocks, currentBestController, currentBestGameDescription)
     }
 
+    fun runGame(maxTime: Double = -1.0) {
+        val runner = CoevolutionRunner()
+        runner.runGame(currentBestTriple(), maxTime, true, evoProgressAccumulator.charter)
+    }
+
     override fun writeObject(oos: ObjectOutputStream): Coevolver {
         oos.writeObject(random)
 

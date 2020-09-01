@@ -193,7 +193,8 @@ fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
     newChromosomes.add(
         sampleGenotype[0].newInstance(
             ISeq.of(
-                speedGene(20.0)
+//                speedGene(20.0)
+                    speedGene(12.0)
             )
         )
     )
@@ -236,14 +237,13 @@ fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
 // Conditional(GREEN, nothing, GameOver)
                 conditional,
                 selectorGene(0, 1),
-// -- selecting from 1 since unassigned are filtered out
                 doubleGene(0.75),
-                selectorGene(0, 1) * 0.5,
+                selectorGene(0, 3) * 0.5,
 // Conditional(GREEN, GameOver, nothing)
                 conditional,
                 selectorGene(0, 1),
 // -- selecting from 2 since unassigned are filtered out
-                selectorGene(0, 2) * 0.5,
+                selectorGene(0, 3) * 0.5,
                 doubleGene(0.75)
             )
         )

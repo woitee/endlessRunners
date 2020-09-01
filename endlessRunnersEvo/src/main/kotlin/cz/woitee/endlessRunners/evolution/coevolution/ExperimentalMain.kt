@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.evolution.coevolution
 
 import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
+import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockMethods
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
@@ -15,11 +16,14 @@ import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
 import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
+import cz.woitee.endlessRunners.gameLaunchers.slowChameleonGameDefaultBlocks
+import cz.woitee.endlessRunners.utils.addOrPut
 import cz.woitee.endlessRunners.utils.arrayList
 import kotlin.random.Random
 
 fun main() {
-    val seed = Random.nextLong()
+//    val seed = Random.nextLong()
+    val seed = 42L
     println("Seed is $seed")
 
     fullCoevolution(seed)
@@ -31,16 +35,22 @@ fun fullCoevolution(seed: Long) {
     val burnInIterations = 5
     val numBlocks = 7
     val coevolver = Coevolver(numBlocks, 30, 50, 50, seed)
-    val runner = CoevolutionRunner()
+    val visualizationRunTime = 15.0
 
     // Voluntary seeding
-    coevolver.seedWithGameDescription(chameleonEvolvedGameDescription(), 1.0)
+    val percentage = 1.0
+    coevolver.seedWithGameDescription(chameleonEvolvedGameDescription(), percentage)
+    coevolver.seedWithBlocks(slowChameleonGameDefaultBlocks(coevolver.currentBestGameDescription), percentage)
 
-    // Burn-in
+    // Burn-in 1
+    coevolver.evolveController(1000)
+    coevolver.runGame(visualizationRunTime)
+
+    // Burn-in 2
     for (i in 1..burnInIterations) {
         coevolver.evolveBlocks(30)
         coevolver.evolveController(100)
-        runner.runGame(coevolver.currentBestTriple(), 15.0, true, coevolver.evoProgressAccumulator.charter)
+        coevolver.runGame(visualizationRunTime)
     }
 
     // Main coevolution
@@ -75,7 +85,7 @@ fun fullCoevolution(seed: Long) {
             println("Not evolving game description in the last iteration, we want to end with best controller and blocks for a given game")
         } else {
             println(coevolver.currentBestGameDescription)
-            runner.runGame(coevolver.currentBestTriple(), 15.0, true, coevolver.evoProgressAccumulator.charter)
+            coevolver.runGame(visualizationRunTime)
             println("Evolving game description")
             coevolver.evolveDescription(100).printReasoning()
             coevolver.saveToFile("out/snapshots/$paddedI-3.snap")
@@ -84,7 +94,7 @@ fun fullCoevolution(seed: Long) {
     }
 
     println("Coevolution finished")
-    runner.runGame(coevolver.currentBestTriple())
+    coevolver.runGame()
 }
 
 fun checkFitnessOfKnownGames() {
@@ -178,4 +188,23 @@ fun Coevolver.seedWithGameDescription(evolvedGameDescription: EvolvedGameDescrip
 
     nextGameDescriptionPopulation = population
     currentBestGameDescription = evolvedGameDescription
+}
+
+fun Coevolver.seedWithBlocks(blocks: ArrayList<HeightBlock>, percentage: Double) {
+    val gameDescription = currentBestGameDescription
+    val methods = EvoBlockMethods(gameDescription, { currentBestController })
+
+    blocks.forEachIndexed { i, block ->
+        currentBestBlocks.addOrPut(i, block)
+        nextBlockPopulations.addOrPut(
+            i,
+            arrayList(blockPopulationSize) { j ->
+                if (j.toDouble() / blockPopulationSize < percentage) {
+                    methods.block2genotype(block)
+                } else {
+                    methods.sampleGenotype()
+                }
+            }
+        )
+    }
 }

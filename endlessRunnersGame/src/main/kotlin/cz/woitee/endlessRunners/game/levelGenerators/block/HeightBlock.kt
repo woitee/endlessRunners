@@ -4,6 +4,7 @@ import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.geom.Vector2Int
 import nl.pvdberg.hashkode.compareFields
+import nl.pvdberg.hashkode.hashKode
 
 /**
  * A HeightBlock - representation of a chunk of the game, where the Player can start at any height on the left,
@@ -58,4 +59,6 @@ class HeightBlock : Block {
         equal = one.startHeight == two.startHeight
                 && super.equals(other)
     }
+
+    override fun hashCode() = hashKode(startHeight, endHeight, super.hashCode())
 }

@@ -5,6 +5,7 @@ import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.geom.Vector2Int
 import nl.pvdberg.hashkode.compareFields
+import nl.pvdberg.hashkode.hashKode
 import java.io.Serializable
 
 /**
@@ -37,4 +38,6 @@ open class Block(val width: Int, val height: Int) : Serializable {
     override fun equals(other: Any?) = compareFields(other) {
         equal = one.definition == two.definition
     }
+
+    override fun hashCode() = hashKode(definition)
 }

@@ -7,6 +7,7 @@ import cz.woitee.endlessRunners.geom.Vector2Double
 import cz.woitee.endlessRunners.utils.MySerializable
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
+import nl.pvdberg.hashkode.compareFields
 import java.io.*
 import java.util.*
 import kotlin.jvm.Transient
@@ -104,6 +105,13 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) : MySerializ
         }
 
     abstract fun makeCopy(): GameObject
+
+    override fun equals(other: Any?) = compareFields(other) {
+        equal = one.gameObjectClass == two.gameObjectClass &&
+                one.x == two.x &&
+                one.y == two.y &&
+                one.isSolid == two.isSolid
+    }
 
     override fun toString(): String {
         return "GameObject($dumpChar)"

@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.evolution.grandEvo
 
 import cz.woitee.endlessRunners.evolution.alterers.LargeBlockMutator
+import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockFitnesses
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockMethods
 import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
@@ -30,13 +31,13 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
         return evoMethods.genotype2block(GenotypeConverter.doubleGenotype2intGenotype(evoResult.bestPhenotype.genotype, true))
     }
     fun evolveBlockViaDoublesEvolutionResult(playerControllerFactory: () -> PlayerController): EvolutionResult<DoubleGene, Double> {
-        val evoMethods = EvoBlockMethods(gameDescription, playerControllerFactory)
+        val evoFitnesses = EvoBlockFitnesses(gameDescription, playerControllerFactory)
 
-        val genotype = GenotypeConverter.intGenotype2doubleGenotype(evoMethods.sampleGenotype())
+        val genotype = GenotypeConverter.intGenotype2doubleGenotype(evoFitnesses.sampleGenotype())
 
         val fitness: Function<Genotype<DoubleGene>, Double> = Function {
             gt: Genotype<DoubleGene> ->
-            evoMethods.fitness3(GenotypeConverter.doubleGenotype2intGenotype(gt, true)).toDouble()
+            evoFitnesses.fitness3(GenotypeConverter.doubleGenotype2intGenotype(gt, true)).toDouble()
         }
 
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
@@ -51,7 +52,7 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
             .alterers(
                 GaussianMutator<DoubleGene, Double>(1.0 / genotype.geneCount()),
                 MultiPointCrossover(0.2),
-                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
+                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoFitnesses.blockDimension)
             )
             .build()
 
@@ -75,17 +76,17 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
     fun evolveBlocksEvolutionResult(playerControllerFactory: () -> PlayerController): ArrayList<EvolutionResult<DoubleGene, Double>> {
         val numBlocks = 7
 
-        val evoMethods = EvoBlockMethods(gameDescription, playerControllerFactory)
+        val evoFitnesses = EvoBlockFitnesses(gameDescription, playerControllerFactory)
         val genotypes = ArrayList<Genotype<DoubleGene>>()
 
         val fitnessParts = ArrayList<GenotypeCombiner.FitnessPart>()
         for (i in 1..numBlocks) {
-            genotypes.add(GenotypeConverter.intGenotype2doubleGenotype(evoMethods.sampleGenotype()))
+            genotypes.add(GenotypeConverter.intGenotype2doubleGenotype(evoFitnesses.sampleGenotype()))
             fitnessParts.add(
                 GenotypeCombiner.FitnessPart(
                     Function {
                         gt: Genotype<DoubleGene> ->
-                        evoMethods.fitness3(GenotypeConverter.doubleGenotype2intGenotype(gt, true)).toDouble()
+                        evoFitnesses.fitness3(GenotypeConverter.doubleGenotype2intGenotype(gt, true)).toDouble()
                     },
                     1.0
                 )
@@ -105,7 +106,7 @@ class GrandEvoRunner(val gameDescription: GameDescription) {
             .alterers(
                 GaussianMutator<DoubleGene, Double>(1.0 / combiner.factory.geneCount()),
                 MultiPointCrossover(0.2),
-                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoMethods.blockDimension)
+                LargeBlockMutator<DoubleGene, Double>(0.03, 1, 3, evoFitnesses.blockDimension)
             )
             .build()
 

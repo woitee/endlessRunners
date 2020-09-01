@@ -174,14 +174,16 @@ fun bitTriEvolvedGameDescription(): EvolvedGameDescription {
     )
 
     var i = 0
-    return EvolvedGameDescription(Genotype.of(
-        {
-            val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
-            ++i
-            chromosome
-        },
-        8
-    ))
+    return EvolvedGameDescription(
+        Genotype.of(
+            {
+                val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
+                ++i
+                chromosome
+            },
+            8
+        )
+    )
 }
 fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
     val sampleGenotype = EvolvedGameDescription.sampleGenotype()
@@ -296,14 +298,16 @@ fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
     )
 
     var i = 0
-    return EvolvedGameDescription(Genotype.of(
-        {
-            val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
-            ++i
-            chromosome
-        },
-        8
-    ))
+    return EvolvedGameDescription(
+        Genotype.of(
+            {
+                val chromosome = if (i < newChromosomes.size) newChromosomes[i] else sampleGenotype[i]
+                ++i
+                chromosome
+            },
+            8
+        )
+    )
 }
 
 fun main() {

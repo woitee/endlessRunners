@@ -3,6 +3,7 @@ package cz.woitee.endlessRunners.game.levelGenerators.block
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.objects.GameObjectClass
 import cz.woitee.endlessRunners.geom.Vector2Int
+import nl.pvdberg.hashkode.compareFields
 
 /**
  * A HeightBlock - representation of a chunk of the game, where the Player can start at any height on the left,
@@ -14,6 +15,11 @@ class HeightBlock : Block {
     var endHeight: Int = 0
     val heightDiff: Int
         get() = endHeight - startHeight
+
+    val goesUp: Boolean
+        get() = endHeight > startHeight
+    val goesDown: Boolean
+        get() = endHeight < startHeight
 
     constructor(width: Int, height: Int) : super(width, height)
     constructor(gameDescription: GameDescription, stringBlock: List<String>) : super(gameDescription, stringBlock) {
@@ -46,5 +52,10 @@ class HeightBlock : Block {
             chars[abs] = 'P'
         }
         return String(chars)
+    }
+
+    override fun equals(other: Any?) = compareFields(other) {
+        equal = one.startHeight == two.startHeight
+                && super.equals(other)
     }
 }

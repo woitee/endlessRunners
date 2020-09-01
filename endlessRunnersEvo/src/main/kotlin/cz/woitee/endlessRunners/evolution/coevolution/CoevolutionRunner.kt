@@ -155,10 +155,10 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @seconds time to run for. If negative, the game runs endlessly.
      */
     fun runGame(
-            triple: CoevolvedTriple,
-            seconds: Double = -1.0,
-            visualizeActions: Boolean = true,
-            frameTo: MultiCharter? = null
+        triple: CoevolvedTriple,
+        seconds: Double = -1.0,
+        visualizeActions: Boolean = true,
+        frameTo: MultiCharter? = null
 
     ) {
         val controller = if (visualizeActions) DisplayingWrapper(triple.controller) else triple.controller
@@ -174,11 +174,11 @@ class CoevolutionRunner(val numIterations: Int = 20, val seed: Long = Random().n
      * @param seconds Time to run for. If negative, will run endlessly.
      */
     fun runGame(
-            gameDescription: GameDescription,
-            bestBlocks: ArrayList<HeightBlock>,
-            playerController: PlayerController,
-            seconds: Double = -1.0,
-            frameTo: MultiCharter? = null
+        gameDescription: GameDescription,
+        bestBlocks: ArrayList<HeightBlock>,
+        playerController: PlayerController,
+        seconds: Double = -1.0,
+        frameTo: MultiCharter? = null
     ) {
         val evoBlockRunner = EvoBlockRunner(gameDescription, { NoActionPlayerController() })
         val allBlocks = ArrayList(bestBlocks)

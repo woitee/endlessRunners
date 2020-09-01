@@ -4,6 +4,7 @@ import cz.woitee.endlessRunners.game.Grid2D
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.objects.GameObject
 import cz.woitee.endlessRunners.geom.Vector2Int
+import nl.pvdberg.hashkode.compareFields
 import java.io.Serializable
 
 /**
@@ -31,5 +32,9 @@ open class Block(val width: Int, val height: Int) : Serializable {
             stringBuilder.append("\n")
         }
         return stringBuilder.toString()
+    }
+
+    override fun equals(other: Any?) = compareFields(other) {
+        equal = one.definition == two.definition
     }
 }

@@ -1,6 +1,7 @@
 package cz.woitee.endlessRunners.evolution.evoBlock
 
 import cz.woitee.endlessRunners.game.descriptions.CrouchGameDescription
+import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import org.junit.jupiter.api.Assertions.*
@@ -36,5 +37,45 @@ class EvoBlockMethodsTest {
         assertEquals(0, block.endHeight)
         assertEquals('#', block.definition[0, 0]?.dumpChar)
         assertEquals(null, block.definition[0, 1]?.dumpChar)
+    }
+
+    @org.junit.jupiter.api.Test
+    fun testBlockEncoding() {
+        val gameDescription = BitTriGameDescription()
+        val evoMethods = EvoBlockMethods(
+                gameDescription,
+                { DFSPlayerController() },
+                5,
+                5
+        )
+
+        val block1 = HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "    P",
+                "0   P",
+                "P   #",
+                "P123#",
+                "#####"
+            )
+        )
+
+        val block2 = HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P    ",
+                "P   0",
+                "#   P",
+                "#123P",
+                "#####"
+            )
+        )
+
+        for (block in arrayOf(block1, block2)) {
+            val genotype = evoMethods.block2genotype(block)
+
+            val newBlock = evoMethods.genotype2block(genotype)
+            assertEquals(block, newBlock)
+        }
     }
 }

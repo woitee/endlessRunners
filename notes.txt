@@ -1,8 +1,12 @@
 TODO:
 
- - measure fitness of both ready-games
- - prepare both ready games as individuals
+ - seed blocks into genotypes
+ - make game starting speed to be a fraction of block speed
+ - fix blocks generation to create more reasonable blocks
+ - attempt to improve game generation to contain more "used" rules
 
+TODO later:
+ - novelty search among already generated games
 
 BitTri - 4223.71
 Chameleon - 6707.2

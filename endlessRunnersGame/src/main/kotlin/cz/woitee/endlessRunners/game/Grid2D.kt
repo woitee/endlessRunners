@@ -4,6 +4,7 @@ import cz.woitee.endlessRunners.geom.Vector2Int
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
+import nl.pvdberg.hashkode.compareFields
 import java.io.Serializable
 import java.util.*
 
@@ -124,5 +125,15 @@ class Grid2D<T>(width: Int, height: Int, val factory: () -> T) : Serializable {
                 println()
             }
         )
+    }
+
+    override fun equals(other: Any?) = compareFields(other) {
+        if (one.width != two.width || one.height != two.height) return false
+
+        for (x in 0 until width) {
+            if (one.grid[x] != two.grid[x]) return false
+        }
+
+        return true
     }
 }

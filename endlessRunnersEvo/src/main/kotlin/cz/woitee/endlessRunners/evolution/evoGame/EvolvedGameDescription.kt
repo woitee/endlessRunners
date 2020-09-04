@@ -1,5 +1,7 @@
 package cz.woitee.endlessRunners.evolution.evoGame
 
+import cz.woitee.endlessRunners.evolution.utils.MathUtils
+import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.actions.*
 import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
@@ -114,6 +116,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
     override val permanentEffects = ArrayList<GameEffect>()
     val allConditions = ArrayList<GameCondition>()
 
+    private val possibleSpeeds: List<Int> = MathUtils.allDivisorsOf(BlockWidth * 10)
+
     init {
         // Parsing the genes to the various parameters of a game description
 
@@ -121,7 +125,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         for (genePack in GenePack(genotype[0], globalVariablesSpec.numAttributes)) {
             val gene = genePack.gene(0)
             when (genePack.currentIndex) {
-                0 -> playerStartingSpeed = 1.0 + 30.0 * gene
+                0 -> playerStartingSpeed = roundPlayerSpeed(1.0 + 30.0 * gene)
             }
         }
         // Chromosome 2 - Custom Objects (gene determines solidness of object)
@@ -436,6 +440,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
     // ||  PROTECTED FUNCTIONS ZONE  ||
     // ||                            ||
     // ================================
+
+    protected fun roundPlayerSpeed(speed: Double) = possibleSpeeds.minByOrNull { Math.abs(it - speed) }!!.toDouble()
 
     /**
      * This method creates a conditional (effect | action | collisionEffect) from 3 genes, list where to find other objects

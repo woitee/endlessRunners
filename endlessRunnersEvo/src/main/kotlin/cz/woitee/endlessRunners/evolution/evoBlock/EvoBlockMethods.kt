@@ -31,7 +31,7 @@ open class EvoBlockMethods(
     val width: Int = 9,
     val height: Int = 7,
     val seed: Long = Random().nextLong(),
-    val allowHoles: Boolean = false,
+    val allowHoles: Boolean = true,
     val computationStopper: ComputationStopper = ComputationStopper()
 ) {
     /**
@@ -52,9 +52,10 @@ open class EvoBlockMethods(
      */
     fun sampleGenotype(): Genotype<IntegerGene> {
         val customBlocks = gameDescription.customObjects.count()
+        val genotypeHeight = if (allowHoles) height else height - 1
         return Genotype.of(
             IntegerChromosome.of(0, maxPlayerHeight + 1, 2),
-            IntegerChromosome.of(0, customBlocks + 1, width * (height - 1))
+            IntegerChromosome.of(0, customBlocks + 1, width * genotypeHeight)
         )
     }
 
@@ -79,7 +80,7 @@ open class EvoBlockMethods(
 
         genotype[1].forEachIndexed { i, gene ->
             val x = i % width
-            val y = i / width + 1
+            val y = i / width + (if (allowHoles) 1 else 0)
 
             block.definition[x, y] = when (gene.allele) {
                 0 -> null
@@ -104,7 +105,9 @@ open class EvoBlockMethods(
     fun block2genotype(block: HeightBlock): Genotype<IntegerGene> {
         val geneSeq = ArrayList<Int>()
 
-        for (y in 1 until block.height) {
+        val startHeight = if (allowHoles) 0 else 1
+
+        for (y in startHeight until block.height) {
             for (x in 0 until block.width) {
                 geneSeq.add(
                     when (block.definition[x, y]?.gameObjectClass) {

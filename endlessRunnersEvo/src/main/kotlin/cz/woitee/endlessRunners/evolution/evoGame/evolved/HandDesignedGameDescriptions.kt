@@ -242,7 +242,6 @@ fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
 // Conditional(GREEN, GameOver, nothing)
                 conditional,
                 selectorGene(0, 1),
-// -- selecting from 2 since unassigned are filtered out
                 selectorGene(0, 3) * 0.5,
                 doubleGene(0.75)
             )

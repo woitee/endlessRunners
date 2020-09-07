@@ -183,7 +183,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         for (genePack in GenePack(genotype[5], permanentEffectsSpec.numAttributes)) {
             val gene = genePack.gene(0)
             val permEffect = when (genePack.currentIndex) {
-                0 -> Gravity(GameEffect.Target.PLAYER, gene * 4)
+                0 -> Gravity(GameEffect.Target.PLAYER, gene * 8)
                 else -> {
                     val candidate = selectByGene(allEffects, gene)
                     if (candidate !is GameOver) candidate else null
@@ -259,8 +259,8 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
      */
     fun getNonTimedEffectFromGenes(gene1: Double, gene2: Double): GameEffect {
         return when {
-            // Gravity (with strength -2 to +6)
-            gene1 < 0.2 -> Gravity(GameEffect.Target.PLAYER, -2 + gene2 * 6)
+            // Gravity (with strength -2 to +8)
+            gene1 < 0.2 -> Gravity(GameEffect.Target.PLAYER, -2 + gene2 * 10)
             // SpeedChange (either absolute from 12 to 36, or relative of -5 to +5)
             gene1 < 0.4 -> {
                 if (gene2 < 0.5) SpeedChange(GameEffect.Target.PLAYER, 12.0 + gene2 * 48)

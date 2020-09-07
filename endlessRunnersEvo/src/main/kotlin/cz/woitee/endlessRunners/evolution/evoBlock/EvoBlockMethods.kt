@@ -28,7 +28,7 @@ import kotlin.math.min
 open class EvoBlockMethods(
     val gameDescription: GameDescription,
     val playerControllerFactory: () -> PlayerController,
-    val width: Int = 9,
+    val width: Int = 10,
     val height: Int = 7,
     val seed: Long = Random().nextLong(),
     val allowHoles: Boolean = true,
@@ -55,7 +55,7 @@ open class EvoBlockMethods(
         val genotypeHeight = if (allowHoles) height else height - 1
         return Genotype.of(
             IntegerChromosome.of(0, maxPlayerHeight + 1, 2),
-            IntegerChromosome.of(0, customBlocks + 1, width * genotypeHeight)
+            IntegerChromosome.of(0, customBlocks + 1, (width - 1) * genotypeHeight)
         )
     }
 
@@ -72,15 +72,22 @@ open class EvoBlockMethods(
         block.startHeight = playerHeights.getGene(0).allele
         block.endHeight = playerHeights.getGene(1).allele
 
+        // If holes aren't allowed, add SolidBlock floor
         if (!allowHoles) {
             for (x in 0 until width) {
                 block.definition[x, 0] = SolidBlock()
             }
         }
 
+        // The last column in blocks doesn't count, so it is not encoded in genotype
+        val genotypeWidth = width - 1
+        for (y in 0 until height) {
+            block.definition[block.width - 1, y] = if (y < block.endHeight) SolidBlock() else null
+        }
+
         genotype[1].forEachIndexed { i, gene ->
-            val x = i % width
-            val y = i / width + (if (allowHoles) 1 else 0)
+            val x = i % genotypeWidth
+            val y = i / genotypeWidth + (if (allowHoles) 0 else 1)
 
             block.definition[x, y] = when (gene.allele) {
                 0 -> null
@@ -102,15 +109,17 @@ open class EvoBlockMethods(
         return block
     }
 
-    fun block2genotype(block: HeightBlock): Genotype<IntegerGene> {
+    fun block2genotype(block: HeightBlock, padded: Boolean = true): Genotype<IntegerGene> {
+        val localBlock = if (!padded) block else padBlock(block, Vector2Int(width, height))
+
         val geneSeq = ArrayList<Int>()
 
         val startHeight = if (allowHoles) 0 else 1
 
-        for (y in startHeight until block.height) {
-            for (x in 0 until block.width) {
+        for (y in startHeight until localBlock.height) {
+            for (x in 0 until localBlock.width - 1) {
                 geneSeq.add(
-                    when (block.definition[x, y]?.gameObjectClass) {
+                    when (localBlock.definition[x, y]?.gameObjectClass) {
                         GameObjectClass.SOLIDBLOCK -> 1
                         GameObjectClass.CUSTOM0 -> 2
                         GameObjectClass.CUSTOM1 -> 3
@@ -125,11 +134,31 @@ open class EvoBlockMethods(
         val customObjects = gameDescription.customObjects.count()
         return Genotype.of(
             IntegerChromosome.of(
-                IntegerGene.of(block.startHeight, 0, maxPlayerHeight),
-                IntegerGene.of(block.endHeight, 0, maxPlayerHeight)
+                IntegerGene.of(localBlock.startHeight, 0, maxPlayerHeight),
+                IntegerGene.of(localBlock.endHeight, 0, maxPlayerHeight)
             ),
             IntegerChromosome.of(geneSeq.map { IntegerGene.of(it, 0, customObjects + 1) })
         )
+    }
+
+    fun padBlock(block: HeightBlock, targetDimensions: Vector2Int): HeightBlock {
+        if (block.dimensions == targetDimensions) return block
+
+        val newBlock = HeightBlock(targetDimensions.x, targetDimensions.y)
+
+        for (y in 0 until block.height) {
+            for (x in 0 until block.width) {
+                newBlock.definition[x, y] = block.definition[x, y]?.makeCopy()
+            }
+            for (x in block.width until targetDimensions.x) {
+                newBlock.definition[x, y] = block.definition[block.width - 1, y]?.makeCopy()
+            }
+        }
+
+        newBlock.startHeight = block.startHeight
+        newBlock.endHeight = block.endHeight
+
+        return newBlock
     }
 
     /**

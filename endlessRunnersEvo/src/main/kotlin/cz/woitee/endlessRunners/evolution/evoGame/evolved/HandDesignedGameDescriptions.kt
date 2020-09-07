@@ -17,7 +17,7 @@ fun speedGene(speed: Double) = doubleGene((speed - 1) / 30.0)
 fun scoreGene(score: Int) = doubleGene(((score + 100) / 10).toDouble() / 20)
 fun selectorGene(i: Int, count: Int) = doubleGene((i + 0.5) / count)
 fun collisionSelectorGene(i: Int, count: Int) = selectorGene(i, count) * 0.5 + 0.5
-fun gravityGene(strength: Double) = doubleGene(strength / 4)
+fun gravityGene(strength: Double) = doubleGene(strength / 8)
 fun jumpGene(strength: Double) = doubleGene((strength - 1) / 50.0)
 fun customObjectGene(isSolid: Boolean) = doubleGene(if (isSolid) 0.0 else 1.0)
 

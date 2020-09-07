@@ -42,7 +42,7 @@ class EvoBlockRunner(
     val csvLoggingPrefix: String = "",
     seed: Long = Random().nextLong(),
     val evoProgressAccumulator: EvoProgressAccumulator? = null
-) : EvoBlockFitnesses(gameDescription, playerControllerFactory, seed = seed) {
+) : EvoBlockFitnesses(gameDescription, playerControllerFactory, seed = seed, allowHoles = true) {
 
     init {
         RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))

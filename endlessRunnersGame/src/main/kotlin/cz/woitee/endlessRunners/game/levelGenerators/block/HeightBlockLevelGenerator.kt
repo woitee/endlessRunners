@@ -119,14 +119,14 @@ open class HeightBlockLevelGenerator(
     }
 
     override fun generateNextColumn(gameState: GameState): ArrayList<GameObject?> {
-        if (currentBlockIx < 0 || currentBlockOffset >= blocks[currentBlockIx].width) {
+        if (currentBlockIx < 0 || currentBlockOffset >= blocks[currentBlockIx].width - 1) {
             selectNextBlock(gameState)
         }
 
         val col = arrayList<GameObject?>(HeightBlocks) { null }
 
         for (y in 0 until currentBlockY) {
-            col[y] = SolidBlock()
+            col[y] = currentBlock.definition[currentBlockOffset, 0]?.makeCopy()
         }
         for (y in currentBlockY until currentBlockY + currentBlock.height) {
             col[y] = currentBlock.definition[currentBlockOffset, y - currentBlockY]?.makeCopy()

@@ -114,8 +114,8 @@ object EvoBlockUtils {
      * @param planB: Second plan
      */
     fun numDifferences(planA: BlockValidator.ActionPlan, planB: BlockValidator.ActionPlan): Int {
-        val reducedA = planA.actions.filter { it != null }
-        val reducedB = planB.actions.filter { it != null }
+        val reducedA = planA.actions.filterNotNull()
+        val reducedB = planB.actions.filterNotNull()
 
         val maxLen = max(reducedA.count(), reducedB.count())
         val minLen = min(reducedA.count(), reducedB.count())

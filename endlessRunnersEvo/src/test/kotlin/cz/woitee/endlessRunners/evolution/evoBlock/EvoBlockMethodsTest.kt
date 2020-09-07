@@ -64,7 +64,7 @@ class EvoBlockMethodsTest {
             gameDescription,
             arrayListOf(
                 "P    ",
-                "P   0",
+                "P    ",
                 "#   P",
                 "#123P",
                 "#####"
@@ -77,5 +77,34 @@ class EvoBlockMethodsTest {
             val newBlock = evoMethods.genotype2block(genotype)
             assertEquals(block, newBlock)
         }
+    }
+
+    @org.junit.jupiter.api.Test
+    fun testBlockPadding() {
+        val gameDescription = BitTriGameDescription()
+        val evoMethods = EvoBlockMethods(
+                gameDescription,
+                { DFSPlayerController() },
+                7,
+                7
+        )
+
+        val block = HeightBlock(gameDescription, arrayListOf(
+                "P  P",
+                "P  P",
+                "####"
+        ))
+
+        val paddedBlock = HeightBlock(gameDescription, arrayListOf(
+                "       ",
+                "P     P",
+                "P     P",
+                "#######"
+        ))
+
+        assertEquals(
+                paddedBlock,
+                evoMethods.padBlock(block, paddedBlock.dimensions)
+        )
     }
 }

@@ -27,18 +27,18 @@ fun bitTriGameDefaultBlocks(gameDescription: GameDescription): ArrayList<HeightB
         HeightBlock(
             gameDescription,
             arrayListOf(
-                "P     P",
-                "P  1  P",
-                "#######"
+                "P      P",
+                "P  1   P",
+                "########"
             )
         ),
         HeightBlock(
             gameDescription,
             arrayListOf(
-                "      P",
-                "P     P",
-                "P   ###",
-                "#######"
+                "       P",
+                "P      P",
+                "P   ####",
+                "########"
             )
         ),
         HeightBlock(
@@ -53,11 +53,11 @@ fun bitTriGameDefaultBlocks(gameDescription: GameDescription): ArrayList<HeightB
         HeightBlock(
             gameDescription,
             arrayListOf(
-                "#######",
-                " ##### ",
-                "P ### P",
-                "P     P",
-                "#######"
+                "####### ",
+                " #####  ",
+                "P ###  P",
+                "P      P",
+                "########"
             )
         ),
         HeightBlock(

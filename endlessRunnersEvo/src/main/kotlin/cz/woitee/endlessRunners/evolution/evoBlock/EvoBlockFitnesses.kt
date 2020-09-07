@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 open class EvoBlockFitnesses(
     gameDescription: GameDescription,
     playerControllerFactory: () -> PlayerController,
-    width: Int = 9,
+    width: Int = 10,
     height: Int = 7,
     seed: Long = Random().nextLong(),
     allowHoles: Boolean = false,
@@ -38,7 +38,8 @@ open class EvoBlockFitnesses(
     ) {
         override fun toString(): String {
             return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness," +
-                "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan)\n" +
+                "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan," +
+                "minPlanDiff=$minimumPlanDifferenceFromOthers)\n" +
                 block.toString()
         }
     }
@@ -101,8 +102,8 @@ open class EvoBlockFitnesses(
             EvoBlockUtils.calculateDifficulty(plan.actions),
             (block.goesUp && numUpBlocks < numDownBlocks) || (block.goesDown && numDownBlocks < numUpBlocks),
             numCustomObjects,
-            otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.min() ?: 0,
-            otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.min() ?: 0,
+            otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.minOrNull() ?: 0,
+            otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.minOrNull() ?: 0,
             plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButton.index.toString() ?: "" }
         )
     }
@@ -139,7 +140,7 @@ open class EvoBlockFitnesses(
      * Another fitness function, additionaly caring about the difficulty (number of actions used) of the block.
      */
     // Fitness 3 deals with winnability, smoothness and difficulty (required number of actions)
-    val fitness3: java.util.function.Function<Genotype<IntegerGene>, Int> = Function { genotype: Genotype<IntegerGene> -> EvoBlockFitnesses(this).fitness3(genotype) }
+    val fitness3: Function<Genotype<IntegerGene>, Int> = Function { genotype: Genotype<IntegerGene> -> EvoBlockFitnesses(this).fitness3(genotype) }
     fun fitness3(genotype: Genotype<IntegerGene>): Int {
         val block = methods.genotype2block(genotype)
         return fitness3(block)
@@ -152,7 +153,7 @@ open class EvoBlockFitnesses(
 
     protected fun fitness3(values: FitnessValues): Int {
         val tooManyCustomPenalty = if (values.numCustomObjects <= 4) 0 else (values.numCustomObjects - 4) * 100
-        val successBenefit = if (values.success) 500 else 0
+        val successBenefit = if (values.success) 2000 else 0
 
         return successBenefit +
             values.maxPlayerX.roundToInt() * 12 +
@@ -164,7 +165,7 @@ open class EvoBlockFitnesses(
     /**
      * The most advanced fitness function, also punishing the block for being too similiar to others.
      */
-    val fitness4: java.util.function.Function<Genotype<IntegerGene>, Int> = Function { genotype: Genotype<IntegerGene> -> EvoBlockFitnesses(this).fitness4(genotype) }
+    val fitness4: Function<Genotype<IntegerGene>, Int> = Function { genotype: Genotype<IntegerGene> -> EvoBlockFitnesses(this).fitness4(genotype) }
     fun fitness4(genotype: Genotype<IntegerGene>): Int {
         val block = methods.genotype2block(genotype)
         return fitness4(block)
@@ -176,6 +177,8 @@ open class EvoBlockFitnesses(
 
         val diffPenalty = if (values.minimumDifferencesFromOthers >= 3) 0 else 3 - values.minimumDifferencesFromOthers
 
-        return fit3 - diffPenalty * 200 + if (values.contributingToMinority) 500 else 0
+        val differentPlanBenefit = if (values.minimumPlanDifferenceFromOthers > 0) 500 else 0
+
+        return fit3 - diffPenalty * 200 + differentPlanBenefit + if (values.contributingToMinority) 500 else 0
     }
 }

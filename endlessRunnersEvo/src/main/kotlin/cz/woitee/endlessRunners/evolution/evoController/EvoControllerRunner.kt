@@ -172,6 +172,8 @@ class EvoControllerRunner(
                 if (blockValidator.validate(block)) blockFitness -= 500
             }
         }
+        // TODO - fix this
+        blockFitness = 0
 
         val gameStateTracking = GameStateTracking()
 

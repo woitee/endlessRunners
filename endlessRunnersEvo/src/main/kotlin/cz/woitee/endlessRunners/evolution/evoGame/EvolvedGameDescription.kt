@@ -2,6 +2,7 @@ package cz.woitee.endlessRunners.evolution.evoGame
 
 import cz.woitee.endlessRunners.evolution.utils.MathUtils
 import cz.woitee.endlessRunners.game.BlockWidth
+import cz.woitee.endlessRunners.game.GameFPS
 import cz.woitee.endlessRunners.game.actions.*
 import cz.woitee.endlessRunners.game.actions.abstract.GameAction
 import cz.woitee.endlessRunners.game.actions.composite.ConditionalAction
@@ -25,6 +26,7 @@ import io.jenetics.DoubleGene
 import io.jenetics.Genotype
 import io.jenetics.util.IntRange
 import java.util.ArrayList
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -103,6 +105,9 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
                 collisionMappingSpec.toChromosome()
             )
         }
+
+        // Only speeds that will traverse exactly 2 blocks in a number of updates are allowed
+        val possibleSpeeds: List<Double> = (1 .. 100).map { GameFPS / (2.0 * it) }
     }
 
     override val customObjects = ArrayList<GameObject>()
@@ -115,8 +120,6 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
     )
     override val permanentEffects = ArrayList<GameEffect>()
     val allConditions = ArrayList<GameCondition>()
-
-    private val possibleSpeeds: List<Int> = MathUtils.allDivisorsOf(BlockWidth * 10)
 
     init {
         // Parsing the genes to the various parameters of a game description
@@ -441,7 +444,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
     // ||                            ||
     // ================================
 
-    protected fun roundPlayerSpeed(speed: Double) = possibleSpeeds.minByOrNull { Math.abs(it - speed) }!!.toDouble()
+    protected fun roundPlayerSpeed(speed: Double) = possibleSpeeds.minByOrNull { abs(it - speed) }!!.toDouble()
 
     /**
      * This method creates a conditional (effect | action | collisionEffect) from 3 genes, list where to find other objects

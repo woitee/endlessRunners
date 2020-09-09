@@ -5,7 +5,6 @@ import cz.woitee.endlessRunners.game.HeightBlocks
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.LevelGenerator
 import cz.woitee.endlessRunners.game.objects.GameObject
-import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.randomElement
 import java.util.ArrayList

@@ -5,7 +5,6 @@ import cz.woitee.endlessRunners.utils.arrayList
 import cz.woitee.endlessRunners.utils.resizeTo
 import cz.woitee.endlessRunners.utils.shift
 import nl.pvdberg.hashkode.compareFields
-import nl.pvdberg.hashkode.hashKode
 import java.io.Serializable
 import java.util.*
 

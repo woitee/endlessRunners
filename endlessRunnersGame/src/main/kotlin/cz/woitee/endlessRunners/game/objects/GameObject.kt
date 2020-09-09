@@ -108,9 +108,9 @@ abstract class GameObject(var x: Double = 0.0, var y: Double = 0.0) : MySerializ
 
     override fun equals(other: Any?) = compareFields(other) {
         equal = one.gameObjectClass == two.gameObjectClass &&
-                one.x == two.x &&
-                one.y == two.y &&
-                one.isSolid == two.isSolid
+            one.x == two.x &&
+            one.y == two.y &&
+            one.isSolid == two.isSolid
     }
 
     override fun toString(): String {

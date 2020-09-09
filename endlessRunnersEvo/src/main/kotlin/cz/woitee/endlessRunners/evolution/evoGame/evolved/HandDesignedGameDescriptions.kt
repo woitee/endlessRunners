@@ -194,7 +194,7 @@ fun chameleonEvolvedGameDescription(): EvolvedGameDescription {
         sampleGenotype[0].newInstance(
             ISeq.of(
 //                speedGene(20.0)
-                    speedGene(12.0)
+                speedGene(12.0)
             )
         )
     )

@@ -56,8 +56,8 @@ class HeightBlock : Block {
     }
 
     override fun equals(other: Any?) = compareFields(other) {
-        equal = one.startHeight == two.startHeight
-                && super.equals(other)
+        equal = one.startHeight == two.startHeight &&
+            super.equals(other)
     }
 
     override fun hashCode() = hashKode(startHeight, endHeight, super.hashCode())

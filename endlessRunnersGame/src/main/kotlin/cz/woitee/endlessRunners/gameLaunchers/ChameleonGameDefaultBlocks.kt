@@ -149,94 +149,94 @@ fun slowChameleonGameDefaultBlocks(gameDescription: GameDescription): ArrayList<
                 "000000000",
             )
         ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
-            HeightBlock(
-                    gameDescription,
-                    arrayListOf(
-                            "P       P",
-                            "P       P",
-                            "000000000",
-                    )
-            ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
+        HeightBlock(
+            gameDescription,
+            arrayListOf(
+                "P       P",
+                "P       P",
+                "000000000",
+            )
+        ),
         HeightBlock(
             gameDescription,
             arrayListOf(

@@ -6,7 +6,6 @@ import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
-import cz.woitee.endlessRunners.evolution.evoGame.evolved.bitTriEvolvedGameDescription
 import cz.woitee.endlessRunners.evolution.evoGame.evolved.chameleonEvolvedGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription

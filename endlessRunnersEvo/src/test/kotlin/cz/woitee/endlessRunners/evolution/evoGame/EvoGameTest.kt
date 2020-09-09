@@ -1,13 +1,12 @@
 package cz.woitee.endlessRunners.evolution.evoGame
 
-import cz.woitee.endlessRunners.evolution.evoGame.evolved.bitTriEvolvedGameDescription
 import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.DummyObjects
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
-import kotlin.math.abs
 import org.junit.jupiter.api.Assertions.*
+import kotlin.math.abs
 
 class EvoGameTest {
     @org.junit.jupiter.api.Test
@@ -18,10 +17,10 @@ class EvoGameTest {
             gameDescription.playerStartingSpeed = playerSpeed
 
             val game = Game(
-                    FlatLevelGenerator(),
-                    NoActionPlayerController(),
-                    null,
-                    gameDescription = gameDescription
+                FlatLevelGenerator(),
+                NoActionPlayerController(),
+                null,
+                gameDescription = gameDescription
             )
             game.init()
             val player = game.gameState.player
@@ -32,6 +31,8 @@ class EvoGameTest {
                 game.update()
                 playerXs.add(player.x - startX)
             }
+            game.update()
+            playerXs.add(player.x - startX)
             println("speed is ${playerXs[1] - playerXs[0]} px, ${player.xspeed} blocks")
 
             val epsilon = 0.0001
@@ -40,6 +41,5 @@ class EvoGameTest {
 
             assertEquals(target, closest, epsilon)
         }
-
     }
 }

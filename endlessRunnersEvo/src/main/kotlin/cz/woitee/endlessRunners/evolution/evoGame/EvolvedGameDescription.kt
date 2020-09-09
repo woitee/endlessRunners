@@ -1,7 +1,5 @@
 package cz.woitee.endlessRunners.evolution.evoGame
 
-import cz.woitee.endlessRunners.evolution.utils.MathUtils
-import cz.woitee.endlessRunners.game.BlockWidth
 import cz.woitee.endlessRunners.game.GameFPS
 import cz.woitee.endlessRunners.game.actions.*
 import cz.woitee.endlessRunners.game.actions.abstract.GameAction
@@ -107,7 +105,7 @@ class EvolvedGameDescription(val genotype: Genotype<DoubleGene>, val limitForDFS
         }
 
         // Only speeds that will traverse exactly 2 blocks in a number of updates are allowed
-        val possibleSpeeds: List<Double> = (1 .. 100).map { GameFPS / (2.0 * it) }
+        val possibleSpeeds: List<Double> = (1 .. 100).map { GameFPS.toDouble() / it }
     }
 
     override val customObjects = ArrayList<GameObject>()

@@ -5,7 +5,6 @@ import cz.woitee.endlessRunners.game.descriptions.imitators.ImpossibleGameDescri
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
-import cz.woitee.endlessRunners.game.playerControllers.KeyboardPlayerController
 
 /**
  * Runs the Impossible game with a keyboard controller.

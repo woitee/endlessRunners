@@ -20,19 +20,19 @@ class ImpossibleGameDescription : GameDescription() {
     override var playerStartingSpeed = 12.0
 
     override val allActions = arrayListOf<GameAction>(
-            JumpAction(27.5)
+        JumpAction(27.5)
     )
     override val permanentEffects = arrayListOf<GameEffect>(Gravity(GameEffect.Target.PLAYER, 230 * 0.7 / BlockHeight))
 
     override val collisionEffects = hashMapOf<BaseCollisionHandler.CollisionHandlerEntry, ICollisionEffect>(
-            // Collision with red block results in death
-            Pair(
-                    BaseCollisionHandler.CollisionHandlerEntry(
-                            GameObjectClass.PLAYER,
-                            GameObjectClass.CUSTOM1,
-                            Direction4.any()
-                    ),
-                    ApplyGameEffect(GameOver())
-            )
+        // Collision with red block results in death
+        Pair(
+            BaseCollisionHandler.CollisionHandlerEntry(
+                GameObjectClass.PLAYER,
+                GameObjectClass.CUSTOM1,
+                Direction4.any()
+            ),
+            ApplyGameEffect(GameOver())
+        )
     )
 }

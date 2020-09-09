@@ -23,11 +23,12 @@ internal class CopyUtilsTest {
         val playerCopy = Player(0.0, 0.0)
         playerCopy.gameState = player.gameState
         CopyUtils.copyBySerialization(player, playerCopy)
+
         assertEquals(player.x, playerCopy.x)
         assertEquals(player.y, playerCopy.y)
         assertEquals(player.xspeed, playerCopy.yspeed)
         assertEquals(player.yspeed, playerCopy.yspeed)
-        assertNotEquals(player, playerCopy)
+        assertNotSame(player, playerCopy)
     }
 
     @org.junit.jupiter.api.Test
@@ -74,7 +75,7 @@ internal class CopyUtilsTest {
             assertEquals(gameState.buttons[i].pressedGameTime, copy.buttons[i].pressedGameTime)
         }
 
-        assertNotEquals(gameState.player, copy.player)
+        assertNotSame(gameState.player, copy.player)
         assertEquals(gameState.player.x, copy.player.x)
         for (gameObject in copy.gameObjects) {
             if (gameObject.gameObjectClass == GameObjectClass.PLAYER) {
@@ -120,9 +121,8 @@ internal class CopyUtilsTest {
 
     fun assertSimiliarButtonModel(buttonModel: ButtonModel, modelCopy: ButtonModel) {
         assertNotEquals(buttonModel, modelCopy)
-        assertNotEquals(buttonModel.currentState, modelCopy.currentState)
-        assertNotEquals(buttonModel.delayedState, modelCopy.delayedState)
-        assertNotEquals(modelCopy.currentState, modelCopy.delayedState)
+        assertEquals(buttonModel.currentState, modelCopy.currentState)
+        assertEquals(buttonModel.delayedState, modelCopy.delayedState)
         assertSimiliarGameState(buttonModel.currentState, modelCopy.currentState)
         assertSimiliarGameState(buttonModel.delayedState, modelCopy.delayedState)
 

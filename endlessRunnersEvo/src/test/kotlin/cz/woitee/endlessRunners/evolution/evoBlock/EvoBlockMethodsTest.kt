@@ -43,10 +43,10 @@ class EvoBlockMethodsTest {
     fun testBlockEncoding() {
         val gameDescription = BitTriGameDescription()
         val evoMethods = EvoBlockMethods(
-                gameDescription,
-                { DFSPlayerController() },
-                5,
-                5
+            gameDescription,
+            { DFSPlayerController() },
+            5,
+            5
         )
 
         val block1 = HeightBlock(
@@ -83,28 +83,34 @@ class EvoBlockMethodsTest {
     fun testBlockPadding() {
         val gameDescription = BitTriGameDescription()
         val evoMethods = EvoBlockMethods(
-                gameDescription,
-                { DFSPlayerController() },
-                7,
-                7
+            gameDescription,
+            { DFSPlayerController() },
+            7,
+            7
         )
 
-        val block = HeightBlock(gameDescription, arrayListOf(
+        val block = HeightBlock(
+            gameDescription,
+            arrayListOf(
                 "P  P",
                 "P  P",
                 "####"
-        ))
+            )
+        )
 
-        val paddedBlock = HeightBlock(gameDescription, arrayListOf(
+        val paddedBlock = HeightBlock(
+            gameDescription,
+            arrayListOf(
                 "       ",
                 "P     P",
                 "P     P",
                 "#######"
-        ))
+            )
+        )
 
         assertEquals(
-                paddedBlock,
-                evoMethods.padBlock(block, paddedBlock.dimensions)
+            paddedBlock,
+            evoMethods.padBlock(block, paddedBlock.dimensions)
         )
     }
 }

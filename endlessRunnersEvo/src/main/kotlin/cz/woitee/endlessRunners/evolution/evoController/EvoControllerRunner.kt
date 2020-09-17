@@ -169,11 +169,9 @@ class EvoControllerRunner(
         if (levelGenerator is HeightBlockLevelGenerator) {
             val blockValidator = BlockValidator(gameDescription, { controller })
             for (block in levelGenerator.blocks) {
-                if (blockValidator.validate(block)) blockFitness -= 500
+                if (blockValidator.validate(block)) blockFitness -= 300
             }
         }
-        // TODO - fix this
-        blockFitness = 0
 
         val gameStateTracking = GameStateTracking()
 

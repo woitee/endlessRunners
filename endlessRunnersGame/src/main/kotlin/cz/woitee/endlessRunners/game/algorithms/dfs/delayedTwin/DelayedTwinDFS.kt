@@ -298,7 +298,7 @@ class DelayedTwinDFS(
         if (buttonStateChange == null) {
             advanceBothStates()
         } else {
-            val buttonIx = buttonStateChange.gameButton.index
+            val buttonIx = buttonStateChange.gameButtonIx
 
             advanceBothStates(buttonIx, buttonStateChange.interactionType)
         }

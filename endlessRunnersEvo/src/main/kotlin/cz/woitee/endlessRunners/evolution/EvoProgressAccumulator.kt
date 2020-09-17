@@ -12,8 +12,7 @@ class EvoProgressAccumulator {
     val charter = MultiCharter()
 
     private var lastKey = ""
-    private val keyToNumGenerations = HashMap<String, Int>()
-    private val plotKeysToNumGenerations = HashMap<String, Int>()
+    private val keyToNumGenerations = HashMap<String, ArrayList<Int>>()
     private var currentNumGenerations = 0
 
     fun addData(key: String, bestFitness: Double) {
@@ -32,8 +31,10 @@ class EvoProgressAccumulator {
     private fun updateKeyCounting(key: String) {
         if (key != lastKey && lastKey != "") {
             if (!keyToNumGenerations.containsKey(lastKey)) {
-                keyToNumGenerations[lastKey] = currentNumGenerations
-                plotKeysToNumGenerations[lastKey.split("-")[0]] = currentNumGenerations
+                keyToNumGenerations[lastKey] = arrayListOf(currentNumGenerations)
+            } else {
+                val list = keyToNumGenerations[lastKey]!!
+                list.add(list.last() + currentNumGenerations)
             }
             currentNumGenerations = 0
         }
@@ -49,15 +50,22 @@ class EvoProgressAccumulator {
             val lineNames = ArrayList<String>()
             val yDatas = ArrayList<List<Double>>()
 
+            val secondaryKeys = ArrayList<String>()
+
             for ((key, list) in entriesByKey) {
-                if (key.split("-")[0] != plotKey) continue
+                val split = key.split("-")
+                if (split[0] != plotKey) continue
 
                 val yData = list.map { it.bestFitness }
                 yDatas.add(yData)
                 lineNames.add(key)
+
+                secondaryKeys.add(if (split.size > 1) split[1] else "")
             }
 
             val xData = List(yDatas[0].size) { it.toDouble() }
+            val bestSecondaryKey = secondaryKeys.minOrNull()!!
+            val bestKey = if (bestSecondaryKey == "") plotKey else "$plotKey-$bestSecondaryKey"
 
             charts.add(
                 ChartData(
@@ -67,7 +75,7 @@ class EvoProgressAccumulator {
                     lineNames,
                     xData,
                     yDatas,
-                    plotKeysToNumGenerations.getOrDefault(plotKey, 1000)
+                    keyToNumGenerations.getOrDefault(bestKey, emptyList())
                 )
             )
         }

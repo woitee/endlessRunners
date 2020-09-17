@@ -28,7 +28,7 @@ import kotlin.math.min
 open class EvoBlockMethods(
     val gameDescription: GameDescription,
     val playerControllerFactory: () -> PlayerController,
-    val width: Int = 10,
+    val width: Int = 9,
     val height: Int = 7,
     val seed: Long = Random().nextLong(),
     val allowHoles: Boolean = true,

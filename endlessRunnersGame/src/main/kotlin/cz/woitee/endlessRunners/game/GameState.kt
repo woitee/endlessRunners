@@ -215,7 +215,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     /**
      * Advances everything one frame forward and returns a reverting object (IUndo).
      */
-    fun advanceUndoable(time: Double): IUndo {
+    fun advanceUndoable(time: Double = game.updateTime): IUndo {
         synchronized(gameObjects) {
             val undoList = DefaultUndoListPool.borrowObject()
             performActionsBasedOnButtonsUndoably(undoList)
@@ -329,7 +329,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
     /**
      * Advances the gameState when using a specific action.
      */
-    fun advanceByAction(action: GameButton.StateChange?, time: Double) {
+    fun advanceByAction(action: GameButton.StateChange?, time: Double = game.updateTime) {
         action?.applyOn(this)
         this.advance(time)
     }
@@ -467,19 +467,19 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             if (action !is HoldButtonAction && button.makesSenseToPress) {
                 results.add(
                     GameButton.StateChange(
-                        button,
+                        button.index,
                         if (onlyHolds) GameButton.InteractionType.HOLD else GameButton.InteractionType.PRESS
                     )
                 )
             } else if (action is HoldButtonAction && button.makesSenseToPress) {
                 results.add(
                     GameButton.StateChange(
-                        button,
+                            button.index,
                         GameButton.InteractionType.HOLD
                     )
                 )
             } else if (button.makesSenseToRelease) {
-                results.add(GameButton.StateChange(button, GameButton.InteractionType.RELEASE))
+                results.add(GameButton.StateChange(button.index, GameButton.InteractionType.RELEASE))
             }
         }
         return results

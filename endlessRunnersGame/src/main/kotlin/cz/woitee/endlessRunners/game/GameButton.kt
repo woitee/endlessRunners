@@ -14,7 +14,7 @@ import nl.pvdberg.hashkode.hashKode
  */
 data class GameButton(val action: GameAction, val gameState: GameState, val index: Int) {
     enum class InteractionType { PRESS, HOLD, RELEASE }
-    data class StateChange(val gameButton: GameButton, val interactionType: InteractionType) : IUndoable {
+    data class StateChange(val gameButtonIx: Int, val interactionType: InteractionType) : IUndoable {
         /**
          * Applies the buttonStateChange on a GameState. PRESS interactions are resolved immediately if applicable and
          * discarded otherwise. HOLD / RELEASE are just forwarded to the GameState which resolves them as soon
@@ -23,6 +23,8 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
          * A special case are so called "only on press" actions, which act as a press even if they are held.
          */
         fun applyOn(gameState: GameState) {
+            val gameButton = gameState.buttons[gameButtonIx]
+
             when (interactionType) {
                 InteractionType.PRESS -> {
                     if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
@@ -48,6 +50,8 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
          * Applies the button stateChange on a gameState - undoably. See @applyOn.
          */
         override fun applyUndoablyOn(gameState: GameState): IUndo {
+            val gameButton = gameState.buttons[gameButtonIx]
+
             when (interactionType) {
                 InteractionType.PRESS -> {
                     if (!gameButton.isPressed && gameButton.action.isApplicableOn(gameState)) {
@@ -83,15 +87,15 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
         }
 
         override fun toString(): String {
-            return "StateChange(${gameButton.index},$interactionType)"
+            return "StateChange(${gameButtonIx},$interactionType)"
         }
 
         override fun equals(other: Any?) = compareFields(other) {
-            equal = one.gameButton == two.gameButton &&
+            equal = one.gameButtonIx == two.gameButtonIx &&
                 one.interactionType == two.interactionType
         }
 
-        override fun hashCode() = hashKode(gameButton, interactionType)
+        override fun hashCode() = hashKode(gameButtonIx, interactionType)
 
         companion object {
             fun fromString(gameState: GameState, stringRep: String): StateChange? {
@@ -101,7 +105,7 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
                 val split = data.split(',')
                 val index = split[0].toInt()
                 val interactionType = InteractionType.valueOf(split[1])
-                return StateChange(gameState.buttons[index], interactionType)
+                return StateChange(index, interactionType)
             }
         }
     }
@@ -109,11 +113,11 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
     var isPressed: Boolean = false
     var pressedGameTime: Double = 0.0
 
-    var press: StateChange = StateChange(this, InteractionType.PRESS)
+    var press: StateChange = StateChange(this.index, InteractionType.PRESS)
         protected set
-    var hold: StateChange = StateChange(this, InteractionType.HOLD)
+    var hold: StateChange = StateChange(this.index, InteractionType.HOLD)
         protected set
-    var release: StateChange = StateChange(this, InteractionType.RELEASE)
+    var release: StateChange = StateChange(this.index, InteractionType.RELEASE)
         protected set
 
     fun interact(interactionType: InteractionType): StateChange {

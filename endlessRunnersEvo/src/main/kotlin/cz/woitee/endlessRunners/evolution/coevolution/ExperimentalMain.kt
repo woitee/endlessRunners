@@ -44,11 +44,15 @@ fun fullCoevolution(seed: Long) {
 
     // Burn-in 1
     coevolver.evolveController(1000)
+//    coevolver.saveToFile("out/controller.sav")
+//    coevolver.loadFromFile("out/controller.sav")
     coevolver.runGame(visualizationRunTime)
+
+//    return
 
     // Burn-in 2
     for (i in 1..burnInIterations) {
-        coevolver.evolveBlocks(20, true)
+        coevolver.evolveBlocks(200, true)
         coevolver.evolveController(300)
         coevolver.runGame(visualizationRunTime)
     }

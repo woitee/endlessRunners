@@ -78,6 +78,8 @@ class BlockValidator(val gameDescription: GameDescription, val playerControllerF
         val maxY = gameState.grid.height - 1
 
         for (x in 0 until block.width) {
+            // Remove default block at height 0
+            gameState.remove(gameState.grid[x, 0])
             for (y in 0 until block.height) {
                 gameState.addToGrid(block.definition[x, y]?.makeCopy(), x, y)
             }
@@ -88,7 +90,11 @@ class BlockValidator(val gameDescription: GameDescription, val playerControllerF
         gameState.player.y = ((block.startHeight + 1) * BlockHeight).toDouble()
 
         for (x in maxX - 1..maxX) {
-            gameState.addToGrid(SolidBlock(), x, block.endHeight)
+            gameState.addToGrid(block.definition[block.width - 1, block.endHeight]?.makeCopy(), x, block.endHeight)
+
+//            for (y in block.endHeight + 3 until gameState.grid.height) {
+//                gameState.addToGrid(SolidBlock(), x, y)
+//            }
         }
 
         return gameState

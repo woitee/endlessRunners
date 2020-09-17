@@ -93,13 +93,13 @@ class Coevolver(
             println("Avg block fitness: ${blockEvoStates.map { it!!.bestFitness }.average()}")
 
             for ((j, block) in currentBestBlocks.withIndex()) {
-                println("block $j attributes: ${evoBlockRunner.getFitnessValues(block, currentBestBlocks.except(j))}")
+                println("block $j attributes: ${evoBlockRunner.getFitnessValues(block)}")
             }
         }
 
         return evolvedBlocks
     }
-    fun evolveController(numGenerations: Long) {
+    fun evolveController(numGenerations: Long): EvolvedPlayerController {
         val evoControllerRunner = EvoControllerRunner(
             currentBestGameDescription,
             { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
@@ -118,6 +118,7 @@ class Coevolver(
         nextControllerPopulation = controllerEvoState!!.genotypes
 
         currentBestController = EvolvedPlayerController(controllerEvoState!!.bestPhenotype.genotype)
+        return currentBestController
     }
     fun evolveDescription(numGenerations: Long): EvoGameRunner.FitnessWithReasons {
         val evoGameRunner = EvoGameRunner(
@@ -173,13 +174,13 @@ class Coevolver(
 
         blockEvoStates.clear()
         repeat(numBlocks) {
-            blockEvoStates.add(ois.readObject() as EvolutionResult<IntegerGene, Int>)
+            blockEvoStates.add(ois.readObject() as EvolutionResult<IntegerGene, Int>?)
         }
         controllerEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>?
-        gameDescriptionEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>
+        gameDescriptionEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>?
 
         evolvedBlocks.clear()
-        repeat(numBlocks) {
+        repeat(blockEvoStates.count { it != null }) {
             evolvedBlocks.add(ois.readObject() as HeightBlock)
         }
 

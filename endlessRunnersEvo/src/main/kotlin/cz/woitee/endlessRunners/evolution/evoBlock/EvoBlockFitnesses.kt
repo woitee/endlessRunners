@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 open class EvoBlockFitnesses(
     gameDescription: GameDescription,
     playerControllerFactory: () -> PlayerController,
-    width: Int = 10,
+    width: Int = 9,
     height: Int = 7,
     seed: Long = Random().nextLong(),
     allowHoles: Boolean = false,
@@ -37,8 +37,8 @@ open class EvoBlockFitnesses(
         val plan: String = ""
     ) {
         override fun toString(): String {
-            return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness," +
-                "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan," +
+            return "FitnessValues(success=$success, maxX=${maxPlayerX.toInt()}, ruggedness=$ruggedness, " +
+                "difficulty=$difficulty, contribToMinority=$contributingToMinority, plan=$plan, " +
                 "minPlanDiff=$minimumPlanDifferenceFromOthers)\n" +
                 block.toString()
         }
@@ -79,12 +79,16 @@ open class EvoBlockFitnesses(
     /**
      * Calculate elementary fitness values for a given block, using the playerControllerFactory given.
      */
-    fun getFitnessValues(block: HeightBlock, otherBlocks: List<HeightBlock>? = null, otherPlans: List<BlockValidator.ActionPlan>? = null): FitnessValues {
+    fun getFitnessValues(block: HeightBlock): FitnessValues {
         val blockValidator = blockValidator
         val plan = blockValidator.getPlan(block)
 
-        val numUpBlocks = otherBlocks?.filter { it.goesUp }?.count() ?: 0
-        val numDownBlocks = otherBlocks?.filter { it.goesDown }?.count() ?: 0
+        val blockIx = existingBlocks.indexOfFirst { it == block }
+        val otherBlocks = if (blockIx == -1) existingBlocks else existingBlocks.filterIndexed { i, _ -> i != blockIx }
+        val otherPlans = if (blockIx == -1) existingPlans else existingPlans.filterIndexed { i, _ -> i != blockIx }
+
+        val numUpBlocks = otherBlocks.filter { it.goesUp }.count() ?: 0
+        val numDownBlocks = otherBlocks.filter { it.goesDown }.count() ?: 0
         var numCustomObjects = 0
         for (x in 0 until block.width) {
             for (y in 0 until block.height) {
@@ -102,9 +106,9 @@ open class EvoBlockFitnesses(
             EvoBlockUtils.calculateDifficulty(plan.actions),
             (block.goesUp && numUpBlocks < numDownBlocks) || (block.goesDown && numDownBlocks < numUpBlocks),
             numCustomObjects,
-            otherBlocks?.map { EvoBlockUtils.numDifferences(it, block) }?.minOrNull() ?: 0,
-            otherPlans?.map { EvoBlockUtils.numDifferences(it, plan) }?.minOrNull() ?: 0,
-            plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButton.index.toString() ?: "" }
+            otherBlocks.map { EvoBlockUtils.numDifferences(it, block) }.minOrNull() ?: 0,
+            otherPlans.map { EvoBlockUtils.numDifferences(it, plan) }.minOrNull() ?: 0,
+            plan.actions.filterNotNull().filter { it.interactionType != GameButton.InteractionType.RELEASE }.joinToString { it.gameButtonIx.toString() ?: "" }
         )
     }
 

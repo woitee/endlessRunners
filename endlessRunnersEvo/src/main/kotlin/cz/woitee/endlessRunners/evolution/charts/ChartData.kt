@@ -13,7 +13,7 @@ data class ChartData(
     val lineNames: List<String>,
     val xData: List<Number>,
     val yData: List<List<Number>>,
-    val xMarksEvery: Int = 50
+    val xMarks: List<Int> = emptyList(),
 ) {
 
     fun toXYChart(): XYChart {
@@ -52,8 +52,14 @@ data class ChartData(
     private fun customTicksLabels(): MutableMap<Any, Any> {
         val map = HashMap<Any, Any>()
 
-        for (i in 0 .. xData.size step xMarksEvery) {
-            map[i] = i
+        if (xMarks.isNotEmpty()) {
+            for (mark in xMarks) {
+                map[mark] = mark
+            }
+        } else {
+            for (i in 0 .. xData.size step 1000) {
+                map[i] = i
+            }
         }
 
         return map

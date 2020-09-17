@@ -18,7 +18,7 @@ class MultiCharter {
         val frame = JFrame("MultiCharter")
         javax.swing.SwingUtilities.invokeLater {
             frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-            frame.contentPane.layout = GridLayout(2, 2)
+            frame.contentPane.layout = GridLayout(1, 2)
         }
         frame
     }
@@ -61,6 +61,11 @@ class MultiCharter {
 
             chartPanels.forEach { frame.add(it) }
             additionalPanels.forEach { frame.add(it) }
+
+            val currentLayout = frame.contentPane.layout
+            if (currentLayout is GridLayout) {
+                currentLayout.rows = if (chartPanels.size <= 1) 1 else 2
+            }
 
             frame.pack()
             frame.isVisible = true

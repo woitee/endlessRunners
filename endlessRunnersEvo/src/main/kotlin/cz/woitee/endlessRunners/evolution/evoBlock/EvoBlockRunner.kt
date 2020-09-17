@@ -246,7 +246,7 @@ class EvoBlockRunner(
      * @param otherBlocks Other blocks to consider when evaluating the function.
      */
     fun printFitnessValuesOfBlock(heightBlock: HeightBlock, otherBlocks: List<HeightBlock> = ArrayList()) {
-        println(getFitnessValues(heightBlock, otherBlocks))
+        println(getFitnessValues(heightBlock))
         existingBlocks = otherBlocks
         println("Total fitness is ${fitness4(heightBlock)}")
     }
@@ -272,8 +272,7 @@ class EvoBlockRunner(
         try {
             for (action in plan.actions) {
                 if (action != null) {
-                    val button = game.gameState.buttons[action.gameButton.index]
-                    val buttonAction = GameButton.StateChange(button, action.interactionType)
+                    val buttonAction = GameButton.StateChange(action.gameButtonIx, action.interactionType)
                     game.gameState.advanceByAction(buttonAction, game.updateTime)
                 } else {
                     game.gameState.advanceByAction(null, game.updateTime)

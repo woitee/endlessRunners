@@ -474,7 +474,7 @@ class GameState(val game: Game, val levelGenerator: LevelGenerator?, var tag: St
             } else if (action is HoldButtonAction && button.makesSenseToPress) {
                 results.add(
                     GameButton.StateChange(
-                            button.index,
+                        button.index,
                         GameButton.InteractionType.HOLD
                     )
                 )

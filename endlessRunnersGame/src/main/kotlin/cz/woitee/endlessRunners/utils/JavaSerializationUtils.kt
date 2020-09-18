@@ -60,3 +60,7 @@ fun Serializable.saveToFile(filename: String) {
         }
     }
 }
+
+fun <T> ObjectInputStream.readTyped(): T {
+    return readObject() as T
+}

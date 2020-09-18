@@ -87,7 +87,7 @@ data class GameButton(val action: GameAction, val gameState: GameState, val inde
         }
 
         override fun toString(): String {
-            return "StateChange(${gameButtonIx},$interactionType)"
+            return "StateChange($gameButtonIx,$interactionType)"
         }
 
         override fun equals(other: Any?) = compareFields(other) {

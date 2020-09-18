@@ -43,12 +43,10 @@ fun fullCoevolution(seed: Long) {
     coevolver.seedWithBlocks(slowChameleonGameDefaultBlocks(coevolver.currentBestGameDescription), percentage)
 
     // Burn-in 1
-    coevolver.evolveController(1000)
-//    coevolver.saveToFile("out/controller.sav")
+    coevolver.evolveController(2000)
+    coevolver.saveToFile("out/controller.sav")
 //    coevolver.loadFromFile("out/controller.sav")
-    coevolver.runGame(visualizationRunTime)
-
-//    return
+    coevolver.runGame(visualizationRunTime * 2)
 
     // Burn-in 2
     for (i in 1..burnInIterations) {
@@ -201,6 +199,7 @@ fun Coevolver.seedWithBlocks(blocks: ArrayList<HeightBlock>, percentage: Double)
 
     blocks.forEachIndexed { i, block ->
         currentBestBlocks.addOrPut(i, block)
+        evolvedBlocks.addOrPut(i, block)
         nextBlockPopulations.addOrPut(
             i,
             arrayList(blockPopulationSize) { j ->

@@ -159,6 +159,14 @@ class Coevolver(
         oos.writeObject(controllerEvoState)
         oos.writeObject(gameDescriptionEvoState)
 
+        oos.writeInt(nextBlockPopulations.size)
+        for (nextBlockPopulation in nextBlockPopulations) {
+            oos.writeObject(nextBlockPopulation)
+        }
+        oos.writeObject(nextControllerPopulation)
+        oos.writeObject(nextGameDescriptionPopulation)
+
+        oos.writeInt(evolvedBlocks.size)
         for (block in evolvedBlocks) {
             oos.writeObject(block)
         }
@@ -174,18 +182,26 @@ class Coevolver(
 
         blockEvoStates.clear()
         repeat(numBlocks) {
-            blockEvoStates.add(ois.readObject() as EvolutionResult<IntegerGene, Int>?)
+            blockEvoStates.add(ois.readTyped())
         }
-        controllerEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>?
-        gameDescriptionEvoState = ois.readObject() as EvolutionResult<DoubleGene, Double>?
+        controllerEvoState = ois.readTyped()
+        gameDescriptionEvoState = ois.readTyped()
+
+        val numBlockPopulations = ois.readInt()
+        for (i in 0 until numBlockPopulations) {
+            nextBlockPopulations.addOrPut(i, ois.readTyped())
+        }
+        nextControllerPopulation = ois.readTyped()
+        nextGameDescriptionPopulation = ois.readTyped()
 
         evolvedBlocks.clear()
-        repeat(blockEvoStates.count { it != null }) {
+        val numEvolvedBlocks = ois.readInt()
+        repeat(numEvolvedBlocks) {
             evolvedBlocks.add(ois.readObject() as HeightBlock)
         }
 
-        currentBestController = EvolvedPlayerController(ois.readObject() as Genotype<DoubleGene>)
-        currentBestGameDescription = EvolvedGameDescription(ois.readObject() as Genotype<DoubleGene>)
+        (ois.readTyped<Genotype<DoubleGene>?>())?.let { currentBestController = EvolvedPlayerController(it) }
+        (ois.readTyped<Genotype<DoubleGene>?>())?.let { currentBestGameDescription = EvolvedGameDescription(it) }
 
         currentBestBlocks.clear()
         currentBestBlocks.addAll(

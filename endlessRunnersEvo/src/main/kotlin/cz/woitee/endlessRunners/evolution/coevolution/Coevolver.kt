@@ -29,7 +29,8 @@ class Coevolver(
     val blockPopulationSize: Int,
     val controllerPopulationSize: Int,
     val gameDescriptionPopulationSize: Int,
-    val seed: Long = Random.Default.nextLong()
+    val seed: Long = Random.Default.nextLong(),
+    val headless: Boolean = false,
 ) : MySerializable {
 
     val timestamp = DateUtils.timestampString()
@@ -51,7 +52,7 @@ class Coevolver(
     var currentBestController: EvolvedPlayerController
     var currentBestGameDescription: EvolvedGameDescription
 
-    val evoProgressAccumulator = EvoProgressAccumulator()
+    private val evoProgressAccumulator = if (headless) null else EvoProgressAccumulator()
 
     init {
         RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
@@ -180,7 +181,9 @@ class Coevolver(
 
     fun runGame(maxTime: Double = -1.0) {
         val runner = CoevolutionRunner()
-        runner.runGame(currentBestTriple(), maxTime, true, evoProgressAccumulator.charter)
+        if (!headless) {
+            runner.runGame(currentBestTriple(), maxTime, true, evoProgressAccumulator!!.charter)
+        }
     }
 
     override fun writeObject(oos: ObjectOutputStream): Coevolver {

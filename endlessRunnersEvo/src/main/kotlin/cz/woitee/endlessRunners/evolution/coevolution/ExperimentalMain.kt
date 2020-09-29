@@ -42,11 +42,11 @@ fun fullCoevolution(seed: Long) {
     coevolver.seedWithBlocks(bitTriGameDefaultBlocks(coevolver.currentBestGameDescription), percentage)
 
     // Burn-in 1
-//    coevolver.evolveController(2000)
+    coevolver.evolveController(2000)
 //    coevolver.saveToFile("out/controller.sav")
 //    coevolver.runGame(visualizationRunTime * 2)
 
-    coevolver.loadFromFile("out/controller.sav")
+//    coevolver.loadFromFile("out/controller.sav")
 
     // Burn-in 2
     for (i in 1..burnInIterations) {

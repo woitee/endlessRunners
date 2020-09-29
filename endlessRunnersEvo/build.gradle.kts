@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("org.jmailen.kotlinter") version "3.0.2"
+    id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
 group = "cz.woitee.endlessRunners.evolution"
 version = "1.0-SNAPSHOT"
+val experimentJar = "ExperimentalMain.jar"
 
 repositories {
     mavenCentral()
@@ -37,4 +40,14 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks {
+    named<ShadowJar>("shadowJar") {
+        archiveBaseName.set("experimentalMain")
+        mergeServiceFiles()
+        manifest {
+            attributes(mapOf("Main-Class" to "cz.woitee.endlessRunners.evolution.coevolution.ExperimentalMainKt"))
+        }
+    }
 }

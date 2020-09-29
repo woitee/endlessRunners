@@ -39,7 +39,7 @@ fun bitTriEvolvedGameDescription(): EvolvedGameDescription {
     newChromosomes.add(
         sampleGenotype[0].newInstance(
             ISeq.of(
-                speedGene(12.0)
+                speedGene(10.0)
             )
         )
     )

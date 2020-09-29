@@ -7,6 +7,7 @@ import cz.woitee.endlessRunners.evolution.evoController.EvolvedPlayerController
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.evolution.utils.DateUtils
+import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.utils.*
@@ -72,7 +73,7 @@ class Coevolver(
 
         for (j in 0 until numBlocks) {
             evoBlockRunner.accumulatorKey = "-$j"
-            val otherBlocks = evolvedBlocks.except(j)
+            val otherBlocks = evolvedBlocks.take(j)
             val blockResult = evoBlockRunner.evolveToResult(
                 otherBlocks,
                 nextBlockPopulations[j],
@@ -84,6 +85,9 @@ class Coevolver(
             blockEvoStates.addOrPut(j, blockResult)
             nextBlockPopulations.addOrPut(j, blockResult.genotypes)
         }
+        while (evolvedBlocks.size > numBlocks) {
+            evolvedBlocks.pop()
+        }
 
         currentBestBlocks.clear()
         currentBestBlocks.addAll(evoBlockRunner.defaultBlocks)
@@ -93,7 +97,10 @@ class Coevolver(
             println("Avg block fitness: ${blockEvoStates.map { it!!.bestFitness }.average()}")
 
             for ((j, block) in currentBestBlocks.withIndex()) {
-                println("block $j attributes: ${evoBlockRunner.getFitnessValues(block)}")
+                evoBlockRunner.existingBlocks = evolvedBlocks.take(j)
+                val fitnessValues = evoBlockRunner.getFitnessValues(block)
+                println("block $j attributes: $fitnessValues")
+                evoBlockRunner.getFitnessValues(block)
             }
         }
 
@@ -120,7 +127,7 @@ class Coevolver(
         currentBestController = EvolvedPlayerController(controllerEvoState!!.bestPhenotype.genotype)
         return currentBestController
     }
-    fun evolveDescription(numGenerations: Long): EvoGameRunner.FitnessWithReasons {
+    fun evolveDescription(numGenerations: Long, adaptControllers: Boolean = false): EvoGameRunner.FitnessWithReasons {
         val evoGameRunner = EvoGameRunner(
             { EvolvedPlayerController(currentBestController.genotype) },
             { EvolvedPlayerController(currentBestController.genotype) },
@@ -131,6 +138,33 @@ class Coevolver(
             seed = random.nextLong(),
             evoProgressAccumulator = evoProgressAccumulator
         )
+
+        if (adaptControllers) {
+            println("ADAPTING CONTROLLERS")
+            val fitness = { gameDescription: GameDescription ->
+                val evoControllerRunner = EvoControllerRunner(
+                        currentBestGameDescription,
+                        { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
+                        csvLoggingPrefix = "coevo/",
+                        numGenerations = 30,
+                        populationSize = controllerPopulationSize,
+                        seed = random.nextLong(),
+                )
+                val result = evoControllerRunner.evolveToResult(
+                        nextControllerPopulation,
+                        controllerEvoState?.generation ?: 1
+                )
+                val evoGameRunner2 = EvoGameRunner(
+                        { EvolvedPlayerController(result.bestPhenotype.genotype) },
+                        { EvolvedPlayerController(result.bestPhenotype.genotype) },
+                        currentBestBlocks,
+                        csvLoggingPrefix = "coevo/",
+                        seed = random.nextLong()
+                )
+                evoGameRunner2.fitness(gameDescription)
+            }
+            evoGameRunner.setFitness(fitness)
+        }
 
         gameDescriptionEvoState = evoGameRunner.evolveToResult(nextGameDescriptionPopulation, gameDescriptionEvoState?.generation ?: 1)
 

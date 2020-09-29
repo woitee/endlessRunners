@@ -101,7 +101,7 @@ internal class GameStateTest {
 
         var readButtonChange = GameButton.StateChange.fromString(gameState, stringRep)
         assertNotNull(readButtonChange)
-        assertEquals(0, readButtonChange!!.gameButton.index)
+        assertEquals(0, readButtonChange!!.gameButtonIx)
         assertEquals(GameButton.InteractionType.PRESS, readButtonChange.interactionType)
 
         // test release action
@@ -110,7 +110,7 @@ internal class GameStateTest {
 
         readButtonChange = GameButton.StateChange.fromString(gameState, stringRep)
         assertNotNull(readButtonChange)
-        assertEquals(1, readButtonChange!!.gameButton.index)
+        assertEquals(1, readButtonChange!!.gameButtonIx)
         assertEquals(GameButton.InteractionType.RELEASE, readButtonChange.interactionType)
     }
 

@@ -161,17 +161,19 @@ class EvoGameRunner(
     val fileWriter = FileWriter(fileWithCreatedPath("out/fitnesses.csv"), true)
     val csvPrinter = CSVPrinter(fileWriter, CSVFormat.DEFAULT)
 
+    var monitoringThreadShouldStop = false
+
     init {
         RandomRegistry.setRandom(LCG64ShiftRandom.ThreadSafe(seed))
-        runMonitoringThread()
     }
 
     /**
      * Starts a monitoring threads, that ends computations in evaluations after a certain time passes.
      */
     protected fun runMonitoringThread() {
+        monitoringThreadShouldStop = false
         Thread {
-            while (true) {
+            while (!monitoringThreadShouldStop) {
                 val currentMillis = System.currentTimeMillis()
                 for ((threadId, threadComputation) in runningFitnessComputations) {
                     val runningSeconds = (currentMillis - threadComputation.startMillis).toDouble() / 1000
@@ -188,19 +190,15 @@ class EvoGameRunner(
         }.start()
     }
 
-    /**
-     * Returns the fitness of a genotype.
-     */
-    val fitness = Function<Genotype<DoubleGene>, Double> { genotype -> fitness(genotype) }
-    fun fitness(genotype: Genotype<DoubleGene>): Double {
+    fun <T> adaptFitnessCallToGenotype(genotype: Genotype<DoubleGene>, fitnessFunc: (EvolvedGameDescription) -> (T)): T {
         val limitForDFS = samplePlayerControllerForBlocks is DFSPlayerController || samplePlayerControllerForGameRun is DFSPlayerController
 
         val gameDescription = EvolvedGameDescription(
-            genotype,
-            limitForDFS
+                genotype,
+                limitForDFS
         )
 
-        val fitness = fitness(gameDescription)
+        val fitness = fitnessFunc(gameDescription)
 
         csvPrinter.printRecord(genotype, gameDescription, fitness)
         csvPrinter.flush()
@@ -208,10 +206,14 @@ class EvoGameRunner(
         return fitness
     }
 
+    /**
+     * Returns the fitness of a genotype.
+     */
+    var fitness = Function<Genotype<DoubleGene>, Double> { genotype -> fitness(genotype) }
+    fun fitness(genotype: Genotype<DoubleGene>) = adaptFitnessCallToGenotype(genotype) { fitness(it) }
     fun fitness(gameDescription: GameDescription): Double {
         return fitnessWithReasoning(gameDescription).value
     }
-
     fun fitnessWithReasoning(gameDescription: GameDescription): FitnessWithReasons {
 //        println("${Thread.currentThread().id} evaluating $gameDescription")
         val threadId = Thread.currentThread().id
@@ -240,17 +242,17 @@ class EvoGameRunner(
             if (timeAirborne in 200..800) fitness.award(500.0, "reasonable time airborne ($timeAirborne)")
             if (timeOutOfScreen < 100) fitness.award(500.0, "low time spent out of screen ($timeOutOfScreen)")
             for ((shape, time) in timeInOtherDimensions) {
-                if (time > 10) fitness.award(500.0, "being in dimensions (${shape.x}, ${shape.y})")
+                if (time > 10) fitness.award(100.0, "being in dimensions (${shape.x}, ${shape.y})")
             }
             fitness.award(-100.0 * (numInits - 1), "number of restarts (${numInits - 1})")
         }
 
         with(fitnessValues.gameDescriptionTracking) {
             for (action in actions) {
-                if (action.timesUsed >= 2) fitness.award(200.0, "using action $action")
+                if (action.timesUsed >= 2) fitness.award(400.0, "using action $action")
             }
             for (holdAction in holdActions) {
-                if (holdAction.timesStarted >= 2) fitness.award(200.0, "using action $holdAction")
+                if (holdAction.timesStarted >= 2) fitness.award(400.0, "using action $holdAction")
             }
             for (effect in effects) {
                 if (effect.timesApplied >= 2) fitness.award(100.0, "applying effect $effect")
@@ -264,6 +266,10 @@ class EvoGameRunner(
         }
 
         return fitness
+    }
+
+    fun setFitness(fitnessFunc: (GameDescription) -> Double) {
+        fitness = Function<Genotype<DoubleGene>, Double> { genotype -> adaptFitnessCallToGenotype(genotype, fitnessFunc) }
     }
 
     /**
@@ -287,6 +293,7 @@ class EvoGameRunner(
     ): EvolutionResult<DoubleGene, Double> {
 
         val csvPeeker = CSVPrintingPeeker<Double>("out/${csvLoggingPrefix}evoGame/EvoGame_$seed")
+        runMonitoringThread()
 
         val engine = Engine
             .builder(fitness, EvolvedGameDescription.sampleGenotype())
@@ -328,6 +335,7 @@ class EvoGameRunner(
             .collect(collector)
 
         csvPeeker.close()
+        monitoringThreadShouldStop = true
 
         return result
     }

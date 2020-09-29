@@ -101,6 +101,18 @@ internal class BlockValidatorTest {
         )
     }
 
+    @org.junit.jupiter.api.Test
+    fun impossibleStepDown() {
+        runTest(
+            arrayListOf(
+                "P       P",
+                "P      #P",
+                "####### #",
+            ),
+            false
+        )
+    }
+
     fun runTest(stringBlock: ArrayList<String>, expectedResult: Boolean, gameDescription: GameDescription = CrouchGameDescription()) {
         val blockValidator = BlockValidator(gameDescription, { DFSPlayerController() })
         val block = HeightBlock(gameDescription, stringBlock)

@@ -189,7 +189,7 @@ class EvoBlockRunner(
             .offspringSelector(TournamentSelector())
             .alterers(
                 MultiPointCrossover(0.2),
-                GaussianMutator<IntegerGene, Int>(2.0 / factory.geneCount()),
+                GaussianMutator(2.0 / factory.geneCount()),
                 LargeBlockMutator<IntegerGene, Int>(0.05, 1, 3, blockDimension)
             )
             .build()

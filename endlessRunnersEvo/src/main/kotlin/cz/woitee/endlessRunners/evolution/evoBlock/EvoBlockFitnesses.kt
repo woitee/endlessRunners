@@ -83,7 +83,7 @@ open class EvoBlockFitnesses(
         val blockValidator = blockValidator
         val plan = blockValidator.getPlan(block)
 
-        val blockIx = existingBlocks.indexOfFirst { it == block }
+        val blockIx = existingBlocks.indexOfFirst { it === block }
         val otherBlocks = if (blockIx == -1) existingBlocks else existingBlocks.filterIndexed { i, _ -> i != blockIx }
         val otherPlans = if (blockIx == -1) existingPlans else existingPlans.filterIndexed { i, _ -> i != blockIx }
 

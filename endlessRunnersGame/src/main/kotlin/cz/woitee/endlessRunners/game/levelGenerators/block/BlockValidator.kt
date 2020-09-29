@@ -3,9 +3,9 @@ package cz.woitee.endlessRunners.game.levelGenerators.block
 import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
+import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.objects.SolidBlock
-import cz.woitee.endlessRunners.game.playerControllers.DFSPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController
 import cz.woitee.endlessRunners.game.playerControllers.PlayerController
 import java.util.*
@@ -38,22 +38,27 @@ class BlockValidator(val gameDescription: GameDescription, val playerControllerF
     fun getPlan(block: HeightBlock): ActionPlan {
         // If the player is DFS, get plan directly
         val playerController = playerControllerFactory()
-        if (playerController is DFSPlayerController) {
-            return getPlanFromDFS(block, playerController.dfs)
-        }
+//        if (playerController is DFSPlayerController) {
+//            return getPlanFromDFS(block, playerController.dfs)
+//        }
 
         var maxPlayerX = 0.0
         val actionList = ArrayList<GameButton.StateChange?>()
         val gameState = getBlockAsGameState(block)
-        while (!(gameState.isGameOver || gameState.isPlayerAtEnd())) {
+
+//        val visualizer = GamePanelVisualizer(debugging = true)
+//        visualizer.update(gameState)
+
+        while (!gameState.isGameOver && gameState.player.nextX() <= block.width * BlockWidth) {
             val action = playerController.onUpdate(gameState)
             actionList.add(action)
             gameState.advanceUndoableByAction(action)
+//            visualizer.update(gameState)
             if (gameState.player.x > maxPlayerX) maxPlayerX = gameState.player.x
         }
 
         val endHeightDiff = abs(gameState.player.y - 24 * (1 + block.endHeight))
-        val success = !gameState.isGameOver && endHeightDiff < 24.0
+        val success = !gameState.isGameOver && endHeightDiff < 4.0
         return ActionPlan(actionList, success, maxPlayerX)
     }
 

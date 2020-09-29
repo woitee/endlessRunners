@@ -194,8 +194,8 @@ class EvoGameRunner(
         val limitForDFS = samplePlayerControllerForBlocks is DFSPlayerController || samplePlayerControllerForGameRun is DFSPlayerController
 
         val gameDescription = EvolvedGameDescription(
-                genotype,
-                limitForDFS
+            genotype,
+            limitForDFS
         )
 
         val fitness = fitnessFunc(gameDescription)

@@ -3,7 +3,6 @@ package cz.woitee.endlessRunners.game.levelGenerators.block
 import cz.woitee.endlessRunners.game.*
 import cz.woitee.endlessRunners.game.algorithms.dfs.AbstractDFS
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
-import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
 import cz.woitee.endlessRunners.game.levelGenerators.FlatLevelGenerator
 import cz.woitee.endlessRunners.game.objects.SolidBlock
 import cz.woitee.endlessRunners.game.playerControllers.NoActionPlayerController

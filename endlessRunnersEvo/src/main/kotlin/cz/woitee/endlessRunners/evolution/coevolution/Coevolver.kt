@@ -143,23 +143,23 @@ class Coevolver(
             println("ADAPTING CONTROLLERS")
             val fitness = { gameDescription: GameDescription ->
                 val evoControllerRunner = EvoControllerRunner(
-                        currentBestGameDescription,
-                        { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
-                        csvLoggingPrefix = "coevo/",
-                        numGenerations = 30,
-                        populationSize = controllerPopulationSize,
-                        seed = random.nextLong(),
+                    currentBestGameDescription,
+                    { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
+                    csvLoggingPrefix = "coevo/",
+                    numGenerations = 30,
+                    populationSize = controllerPopulationSize,
+                    seed = random.nextLong(),
                 )
                 val result = evoControllerRunner.evolveToResult(
-                        nextControllerPopulation,
-                        controllerEvoState?.generation ?: 1
+                    nextControllerPopulation,
+                    controllerEvoState?.generation ?: 1
                 )
                 val evoGameRunner2 = EvoGameRunner(
-                        { EvolvedPlayerController(result.bestPhenotype.genotype) },
-                        { EvolvedPlayerController(result.bestPhenotype.genotype) },
-                        currentBestBlocks,
-                        csvLoggingPrefix = "coevo/",
-                        seed = random.nextLong()
+                    { EvolvedPlayerController(result.bestPhenotype.genotype) },
+                    { EvolvedPlayerController(result.bestPhenotype.genotype) },
+                    currentBestBlocks,
+                    csvLoggingPrefix = "coevo/",
+                    seed = random.nextLong()
                 )
                 evoGameRunner2.fitness(gameDescription)
             }

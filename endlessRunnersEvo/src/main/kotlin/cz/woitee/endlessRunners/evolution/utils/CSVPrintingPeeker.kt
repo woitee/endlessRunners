@@ -2,12 +2,16 @@ package cz.woitee.endlessRunners.evolution.utils
 
 import cz.woitee.endlessRunners.utils.JavaSerializationUtils
 import cz.woitee.endlessRunners.utils.fileWithCreatedPath
+import io.jenetics.DoubleGene
+import io.jenetics.Gene
 import io.jenetics.engine.EvolutionResult
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import java.io.FileWriter
 import java.util.*
 import java.util.function.Consumer
+import java.util.stream.Collector
+import java.util.stream.Stream
 
 /**
  * A CSV recording utility that prints stats from each generation of an evolutionary run into a CSV file.
@@ -59,4 +63,13 @@ class CSVPrintingPeeker<C> (val filepathBase: String, val serializeWholePopulati
     fun close() {
         csvPrinter.close()
     }
+}
+
+/** Collects the evolution stream using a given collector, noting the results into CSV */
+fun <G : Gene<*, G>?, T: Comparable<T>> Stream<EvolutionResult<G, T>>.collectWithCSVPeeker(
+        collector: Collector<EvolutionResult<G, T>, *, EvolutionResult<G, T>>,
+        filepathBase: String): EvolutionResult<G, T> {
+
+    val csvPeeker = CSVPrintingPeeker<T>(filepathBase)
+    return peek(csvPeeker).collect(collector).also { csvPeeker.close() }
 }

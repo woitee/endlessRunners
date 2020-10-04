@@ -5,6 +5,7 @@ import cz.woitee.endlessRunners.evolution.evoBlock.EvoBlockRunner
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.DateUtils
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
+import cz.woitee.endlessRunners.evolution.utils.collectWithCSVPeeker
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
@@ -292,7 +293,6 @@ class EvoGameRunner(
         startingGeneration: Long = 0L
     ): EvolutionResult<DoubleGene, Double> {
 
-        val csvPeeker = CSVPrintingPeeker<Double>("out/${csvLoggingPrefix}evoGame/EvoGame_$seed")
         runMonitoringThread()
 
         val engine = Engine
@@ -322,19 +322,22 @@ class EvoGameRunner(
             engine.stream(startingPopulation, startingGeneration)
         }
 
-        val result = stream
+        val stream2 = stream
             .limit(numGenerations)
             .peek { result ->
                 val best = result.bestPhenotype
 //                    println(EvolvedGameDescription(best.genotype))
                 println("${DateUtils.timestampString()} Generation ${result.generation}: The fitness is ${best.fitness}")
             }
-            .peek(csvPeeker)
             .peek(statistics)
             .peek { evoProgressAccumulator?.addData("game", it.bestFitness.toDouble()) }
-            .collect(collector)
 
-        csvPeeker.close()
+        val result = if (csvLoggingPrefix != "") {
+            stream2.collectWithCSVPeeker(collector, "out/${csvLoggingPrefix}evoGame/EvoGame_$seed")
+        } else {
+            stream2.collect(collector)
+        }
+
         monitoringThreadShouldStop = true
 
         return result

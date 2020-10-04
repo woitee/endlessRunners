@@ -7,6 +7,7 @@ import cz.woitee.endlessRunners.evolution.evoController.EvoControllerRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvoGameRunner
 import cz.woitee.endlessRunners.evolution.evoGame.EvolvedGameDescription
 import cz.woitee.endlessRunners.evolution.evoGame.evolved.bitTriEvolvedGameDescription
+import cz.woitee.endlessRunners.evolution.evoGame.evolved.chameleonEvolvedGameDescription
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.BitTriGameDescription
 import cz.woitee.endlessRunners.game.descriptions.imitators.CanabalGameDescription
@@ -16,6 +17,7 @@ import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlock
 import cz.woitee.endlessRunners.game.levelGenerators.block.HeightBlockLevelGenerator
 import cz.woitee.endlessRunners.gameLaunchers.bitTriGameDefaultBlocks
 import cz.woitee.endlessRunners.gameLaunchers.chameleonGameDefaultBlocks
+import cz.woitee.endlessRunners.gameLaunchers.slowChameleonGameDefaultBlocks
 import cz.woitee.endlessRunners.utils.addOrPut
 import cz.woitee.endlessRunners.utils.arrayList
 import kotlin.random.Random
@@ -31,15 +33,18 @@ fun main() {
 
 fun fullCoevolution(seed: Long) {
     val numIterations = 20
-    val burnInIterations = 3
+    val burnInIterations = 5
     val numBlocks = 7
-    val coevolver = Coevolver(numBlocks, 30, 50, 50, seed)
+    val coevolver = Coevolver(
+            numBlocks, 30, 50, 50, seed,
+            headless = true
+    )
     val visualizationRunTime = 30.0
 
     // Voluntary seeding
     val percentage = 0.5
-    coevolver.seedWithGameDescription(bitTriEvolvedGameDescription(), percentage)
-    coevolver.seedWithBlocks(bitTriGameDefaultBlocks(coevolver.currentBestGameDescription), percentage)
+//    coevolver.seedWithGameDescription(chameleonEvolvedGameDescription(), percentage)
+//    coevolver.seedWithBlocks(slowChameleonGameDefaultBlocks(coevolver.currentBestGameDescription), percentage)
 
     // Burn-in 1
     coevolver.evolveController(2000)
@@ -56,8 +61,6 @@ fun fullCoevolution(seed: Long) {
     }
 
     // Main coevolution
-
-    coevolver.loadFromFile("out/snapshots/17-3.snap")
     for (i in 1..numIterations) {
         val paddedI = i.toString().padStart(2, '0')
         println("ITERATION $i")

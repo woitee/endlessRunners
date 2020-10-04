@@ -146,7 +146,7 @@ class Coevolver(
                 val evoControllerRunner = EvoControllerRunner(
                     currentBestGameDescription,
                     { HeightBlockLevelGenerator(currentBestGameDescription, currentBestBlocks) },
-                    csvLoggingPrefix = "coevo/",
+                    csvLoggingPrefix = "",
                     numGenerations = 30,
                     populationSize = controllerPopulationSize,
                     seed = random.nextLong(),

@@ -4,6 +4,7 @@ import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.alterers.LargeBlockMutator
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
+import cz.woitee.endlessRunners.evolution.utils.collectWithCSVPeeker
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.GameButton
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
@@ -219,24 +220,11 @@ class EvoBlockRunner(
 //                        }
 
         val csvFilePath = "out/${csvLoggingPrefix}evoBlock/${gameDescription.javaClass.simpleName}/EvoBlock_${otherBlocks.count()}others"
-        val csvPeeker = CSVPrintingPeeker<Int>(csvFilePath)
-        stream = stream.peek(csvPeeker)
-
-//        if (printStats) stream = stream.peek {
-//            state ->
-//                println("${state.generation} - Fitness: ${state.bestPhenotype}")
-//        }
-
-        val result = stream.collect(collector)
-        csvPeeker.close()
-//        println(statistics)
-//        val generations = statistics.evaluationDuration.count
-//        print("($generations)")
-
-//        if (printStats) println(statistics)
-//        if (printStats) println()
-
-        return result
+        return if (csvLoggingPrefix != "") {
+            stream.collectWithCSVPeeker(collector, csvFilePath)
+        } else {
+            stream.collect(collector)
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package cz.woitee.endlessRunners.evolution.evoController
 import cz.woitee.endlessRunners.evolution.EvoProgressAccumulator
 import cz.woitee.endlessRunners.evolution.utils.CSVPrintingPeeker
 import cz.woitee.endlessRunners.evolution.utils.MyConcurrentEvaluator
+import cz.woitee.endlessRunners.evolution.utils.collectWithCSVPeeker
 import cz.woitee.endlessRunners.game.Game
 import cz.woitee.endlessRunners.game.descriptions.GameDescription
 import cz.woitee.endlessRunners.game.gui.GamePanelVisualizer
@@ -96,15 +97,13 @@ class EvoControllerRunner(
         val statistics = EvolutionStatistics.ofNumber<Double>()
         val collector = EvolutionResult.toBestEvolutionResult<DoubleGene, Double>()
 
-        val csvPeeker = CSVPrintingPeeker<Double>("out/${csvLoggingPrefix}evoController/${gameDescription.javaClass.simpleName}/EvoController_")
-
         val stream = if (startingPopulation == null) {
             engine.stream()
         } else {
             engine.stream(startingPopulation, startingGeneration)
         }
 
-        var stream2 = stream
+        val stream2 = stream
             .limit(numGenerations)
             .peek { result ->
                 if (debugPrints) {
@@ -114,12 +113,11 @@ class EvoControllerRunner(
             }.peek(statistics)
             .peek { evoProgressAccumulator?.addData("controller", it.bestFitness.toDouble()) }
 
-        stream2 = stream2.peek(csvPeeker)
-        val result = stream2
-            .peek(statistics)
-            .collect(collector)
-
-        return result
+        return if (csvLoggingPrefix != "") {
+            stream2.collectWithCSVPeeker(collector, "out/${csvLoggingPrefix}evoGame/EvoGame_$seed")
+        } else {
+            stream2.collect(collector)
+        }
     }
 
     /**

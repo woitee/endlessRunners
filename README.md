@@ -1,5 +1,5 @@
 
-# Endless Runners project
+# Z-ERG (Zealous Endless Runner Generator) project
 
 This is a project that aims to help prototype / generate various endless runner games.
 
